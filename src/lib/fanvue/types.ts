@@ -5,8 +5,9 @@
  * (`getAppStoreListing`), response `200`:
  * https://api.fanvue.com/docs/openapi.json
  *
- * A resolved JSON Schema excerpt of the same response lives in
- * `docs/listing-schema.json`. If the two ever disagree, the spec wins.
+ * The relevant excerpt of that spec (operation `GET /apps/{appUuid}`,
+ * response `200`) is vendored in `docs/openapi.apps.json`. If the two ever
+ * disagree, the live spec wins.
  */
 
 export type PricingType = "free" | "monthly";

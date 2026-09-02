@@ -211,7 +211,9 @@ function Field({ label, value, mono = false }: { label: string; value: string; m
   return (
     <div>
       <FieldLabel>{label}</FieldLabel>
-      <p className={`typography-body-small-14px-regular m-0 whitespace-pre-wrap break-words ${mono ? "font-mono" : ""}`}>
+      <p
+        className={`typography-body-small-14px-regular m-0 whitespace-pre-wrap break-words ${mono ? "font-mono" : ""}`}
+      >
         {value || <Muted>empty</Muted>}
       </p>
     </div>

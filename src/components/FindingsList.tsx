@@ -35,17 +35,12 @@ export function FindingsList({ issues }: { issues: Issue[] }) {
   return (
     <ul className="m-0 flex list-none flex-col gap-3 p-0">
       {issues.map((issue, index) => (
-        <li
-          key={`${issue.code}-${index}`}
-          className="flex flex-col gap-1 rounded-2xl border border-border-primary p-4"
-        >
+        <li key={`${issue.code}-${index}`} className="flex flex-col gap-1 rounded-2xl border border-border-primary p-4">
           <div className="flex flex-wrap items-center gap-2">
             <Badge variant={SEVERITY_BADGE_VARIANT[issue.severity]} leftDot>
               {SEVERITY_LABEL[issue.severity]}
             </Badge>
-            <span className="typography-description-12px-semibold text-content-secondary">
-              Rule {issue.rule}
-            </span>
+            <span className="typography-description-12px-semibold text-content-secondary">Rule {issue.rule}</span>
             <code className="typography-description-12px-regular text-content-tertiary">{issue.code}</code>
           </div>
           <p className="typography-body-small-14px-regular m-0">{issue.message}</p>
