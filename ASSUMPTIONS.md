@@ -1,3 +1,5 @@
 # Assumptions
 
-Anything you check that the requirements doc does not state in so many words (a number, a word list, a URL pattern) goes here, one bullet each: what you assumed, which rule it supports, and why.
+One bullet for every check that the docs do not state in so many words (a number, a word list, a URL pattern): the rule it supports, what you assumed, and why. Replace the example below.
+
+- **Rule 2.1** placeholder words: lorem, ipsum, TODO. The doc says remove placeholder content but lists no words. (Example, replace with your own.)
