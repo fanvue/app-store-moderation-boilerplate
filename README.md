@@ -1,6 +1,6 @@
 # App Store moderation boilerplate
 
-> **Interview candidates: read [`TASK.md`](TASK.md) first.** It is the full brief: what to build, what to do before the call, how the hour runs, and how to share your work.
+> **Interview candidates: read [`TASK.md`](TASK.md) first.** It is the full brief: what to build, how the hour runs, and how to share your work.
 
 A starting point for a moderation tool for Fanvue App Store listings: Next.js 15 with the Fanvue design system (`@fanvue/ui`), fifteen synthetic listings behind a mock of the public Fanvue `/v0/apps` API, a review queue UI, an empty rule engine (`validateListing`) and a test harness. The task is in [`TASK.md`](TASK.md). No Fanvue account or credentials are needed.
 

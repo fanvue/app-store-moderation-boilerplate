@@ -29,24 +29,21 @@ If time remains after the rules, in this order: sort the queue so listings that 
 
 Use the copies in `docs/`: they match the live pages at https://api.fanvue.com/docs/app-store, and your AI tool's sandbox may be offline.
 
-## Before the call (about 20 minutes)
+## Setup (first 10 minutes of the call, together)
 
-- [ ] Set up the repo by following the Quick start in the README at https://github.com/fanvue/app-store-moderation-boilerplate: Node 24, `pnpm install`, `pnpm dev`, then check http://localhost:3000 shows 15 listings
-- [ ] git, and a GitHub account you can push to (or plan to share a zip, see Deliverable)
-- [ ] Your AI coding tool installed and signed in (Codex, Claude Code, Cursor, Copilot, any is fine)
-- [ ] Skim `docs/listing-requirements.md`, starting with the "Common rejection reasons" table at the bottom (about 10 minutes). At the start of the call you will be asked which rules a machine could check and which need a person
+No preparation is needed before the call. In the first minutes we get the repo running on your machine, following the Quick start in the README: Node 24 (Node 22 works with a warning), `pnpm install`, `pnpm dev`, then check http://localhost:3000 shows 15 listings. Have your AI coding tool signed in (Codex, Claude Code, Cursor, Copilot, any is fine) and git plus a GitHub account you can push to (or plan to share a zip, see Deliverable).
 
-You do not need a Fanvue account or API credentials. Everything runs locally from fixture data. If something fails to install, do not lose time on it: reply to Simon's email and we will sort it at the start of the call.
+You do not need a Fanvue account or API credentials. Everything runs locally from fixture data. If something fails to install, say so and we move to Simon's machine; that does not count against you.
 
 ## The hour
 
-| Time      | What happens                                                                                                                          |
-| --------- | ------------------------------------------------------------------------------------------------------------------------------------- |
-| 0-5 min   | Hello, confirm the app runs on your machine                                                                                           |
-| 5-15 min  | You say which rules you can automate and what severity each gets. Simon asks you to justify a couple                                  |
-| 15-45 min | You build: rules and tests first, UI if time remains. Use your AI tool as much as you like                                            |
-| 45-55 min | You walk through your diff as if it were a PR, then demo as if Simon were a Fanvue app reviewer: what fired, where, what happens next |
-| 55-60 min | Share your work                                                                                                                       |
+| Time      | What happens                                                                                                                                         |
+| --------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 0-10 min  | Hello, get the repo running, quick tour of the files                                                                                                 |
+| 10-20 min | You read the "Common rejection reasons" table, then say which rules you can automate and what severity each gets. Simon asks you to justify a couple |
+| 20-45 min | You build: rules and tests first, UI if time remains. Use your AI tool as much as you like                                                           |
+| 45-55 min | You walk through your diff as if it were a PR, then demo as if Simon were a Fanvue app reviewer: what fired, where, what happens next                |
+| 55-60 min | Share your work                                                                                                                                      |
 
 Simon will interrupt with questions. That is the format, not a sign something is wrong. Ask anything at any time; "I'd look that up" is a fine answer, then look it up. There is no scheduled break; say so if you need one.
 
