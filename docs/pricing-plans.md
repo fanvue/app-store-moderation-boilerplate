@@ -1,10 +1,6 @@
 <!-- Snapshot taken 2026-09-02 of https://api.fanvue.com/docs/app-store/payments/pricing-plans (canonical URL).
      Vendored so the task works offline. If this file and the live page differ, the live page wins. -->
 
-> ## Documentation Index
-> Fetch the complete documentation index at: https://api.fanvue.com/docs/llms.txt
-> Use this file to discover all available pages before exploring further.
-
 # Pricing Plans
 
 > Set up monthly subscription pricing for your app: plan fields and limits, statuses, plan IDs, and the events each subscription emits.

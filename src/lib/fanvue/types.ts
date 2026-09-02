@@ -23,6 +23,10 @@ export type PricingPlan = {
   name: string;
   description: string | null;
   billingType: BillingType;
+  /**
+   * `null` for free and one-time plans. The public spec's enum omits `null`
+   * but declares the field nullable; the data has nulls.
+   */
   interval: BillingInterval | null;
   /** Price in minor currency units (e.g. cents). 0 for free plans. */
   price: number;
@@ -75,8 +79,11 @@ export type AppListing = AppListingSummary & {
   descriptionTitle: string;
   descriptionBody: string;
   highlights: string[];
+  /** Banner at the top of the listing. Branding, not a screenshot. */
   heroImageUrl: string;
+  /** The listing's screenshots. This is the array rule 2.3 counts. */
   previewImageUrls: string[];
+  /** Thumbnails shown beside the hero. Not counted as screenshots. */
   galleryImageUrls: string[];
   pricingPlans: PricingPlan[];
   ratingDistribution: RatingDistributionEntry[] | null;
