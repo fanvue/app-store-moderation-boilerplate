@@ -1,8 +1,10 @@
 # Fanvue product engineer session: App Store listing moderation
 
-Thanks for making time. This is a two-hour pairing session, not an exam. You will share your screen and build a small tool with an AI coding assistant (whichever you normally use) while your interviewer watches, pairs a little, and asks questions along the way. We care about how you think, how you verify what the AI gives you, and how you make product decisions. A finished product is not expected. An honest "here is what works, here is what does not" at the end is worth more than polish.
+Thanks for making time. This is a one-hour pairing session, not an exam. You will share your screen and build a small tool with an AI coding assistant (whichever you normally use) while your interviewer watches, pairs a little, and asks questions along the way. We care about how you think, how you verify what the AI gives you, and how you make product decisions. A finished product is not expected. An honest "here is what works, here is what does not" at the end is worth more than polish.
 
-## Before the call (about 10 minutes)
+## Before the call (about 20 minutes)
+
+Setup (about 10 minutes):
 
 - [ ] Node 24 (any 24.x): `nvm install 24` or `fnm install 24`. Node 22 prints an engine warning but still works
 - [ ] `corepack enable` (gives you pnpm). If `corepack` is not found or `corepack enable` errors, run `npm i -g pnpm@10` instead
@@ -13,6 +15,10 @@ Thanks for making time. This is a two-hour pairing session, not an exam. You wil
 - [ ] Clone the repo: `git clone https://github.com/fanvue/app-store-moderation-boilerplate`
 - [ ] `pnpm install`
 - [ ] `pnpm dev`, then open http://localhost:3000 and check you see 15 listings. The first page load in dev takes 10 to 20 seconds. Images are external placeholders, so they show as broken when you are offline; that is expected
+
+Reading (about 10 minutes):
+
+- [ ] Skim `docs/listing-requirements.md` in the repo, starting with the "Common rejection reasons" table. The hour is short, so we will not spend it reading: at the start of the call you will be asked which rules a machine could check and which need a person
 
 You do not need a Fanvue account or any API credentials. Everything runs locally from fixture data.
 
@@ -26,15 +32,15 @@ Fanvue is a platform where creators publish content and earn from subscribers. T
 
 Implement `validateListing(listing)` in `src/lib/moderation/rules.ts` so it returns a list of findings for the deterministic rules in the requirements doc, with tests in `src/lib/moderation/rules.test.ts`.
 
-Then finish the UI. The review queue (`app/page.tsx`) already shows a Findings column and the detail page (`app/listings/[uuid]/page.tsx`) already lists findings. What is left:
+Each finding should cite the rule number from the doc (for example `2.3`) and carry a severity. The types are already in the stub: `Issue = { code, rule, severity: "reject" | "fix" | "warn", message, field? }`. You decide what each severity means and which rules get which. Be ready to explain your reasoning.
+
+**Two rules with red-then-green tests wired into the queue is a complete result.** More is welcome, but depth beats breadth. "Wired into the queue" needs no UI work from you: the review queue (`app/page.tsx`) already shows a Findings column and the detail page (`app/listings/[uuid]/page.tsx`) already lists findings.
+
+If you have time after the rules, improve the UI, in this order:
 
 - Sort the queue so listings that need rejecting come first.
 - Make "no findings" distinct from "not checked".
 - Link each finding to its rule in the doc.
-
-Each finding should cite the rule number from the doc (for example `2.3`) and carry a severity. The types are already in the stub: `Issue = { code, rule, severity: "reject" | "fix" | "warn", message, field? }`. You decide what each severity means and which rules get which. Be ready to explain your reasoning.
-
-**Three rules with red-then-green tests wired into the queue is a complete result.** More is welcome, but depth beats breadth.
 
 **Record your assumptions.** The requirements doc contains very few numbers. The price range for paid plans ($3.99 to $500) is public and you may use it (link below). Anything else you add, such as a list of placeholder words, a length limit, or an interpretation of an ambiguous rule, is an assumption: write it down in `ASSUMPTIONS.md` and emit it as `warn` unless the doc is explicit.
 
@@ -61,7 +67,7 @@ If you are unsure whether a rule is automatable, say so and move on. That is the
 | Typed API client the UI already uses       | `src/lib/fanvue/api.ts` in the repo                                                                                                                                   |
 | `@fanvue/ui` component library             | Source https://github.com/fanvue/fanv-ui, Storybook https://main--697a1b6dd4dad73ee9c0e5f5.chromatic.com/, offline types in `node_modules/@fanvue/ui/dist/index.d.ts` |
 
-Start with the vendored docs in the repo: your AI tool's sandbox may be offline, and the files are the same content as the public pages. A good place to begin reading is the "Common rejection reasons" table in the requirements doc.
+Start with the vendored docs in the repo: your AI tool's sandbox may be offline, and the files are the same content as the public pages.
 
 The mock API mirrors the live endpoints documented at https://api.fanvue.com/docs: same paths, same params, same response envelope and listing shape. Auth and version headers are ignored locally.
 
@@ -69,15 +75,13 @@ Useful scripts: `pnpm dev`, `pnpm test`, `pnpm test:watch`, `pnpm typecheck`, `p
 
 ## How we will run it
 
-| Time        | What happens                                                                                                                                              |
-| ----------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 0-10 min    | Hello, quick tour of the repo, make sure it runs on your machine                                                                                          |
-| 10-25 min   | You read the requirements and tell your interviewer which rules you can automate and what severity each should get. They will ask you to justify a couple |
-| 25-85 min   | You build: rules and tests first, then the UI. Use your AI tool as much as you like. Your interviewer will ask questions as you go                        |
-| 85-90 min   | Break                                                                                                                                                     |
-| 90-105 min  | Your interviewer asks a few questions about your code and the problem, and you review your diff together                                                  |
-| 105-115 min | You demo to your interviewer as if they were a Fanvue app reviewer: what fired, where, what happens next                                                  |
-| 115-120 min | Share your work                                                                                                                                           |
+| Time      | What happens                                                                                                                                                  |
+| --------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 0-5 min   | Hello, confirm the app runs on your machine                                                                                                                   |
+| 5-15 min  | You tell your interviewer which rules you can automate and what severity each should get. They will ask you to justify a couple                               |
+| 15-45 min | You build: rules and tests first, then the UI if time remains. Use your AI tool as much as you like. Your interviewer will ask questions as you go            |
+| 45-55 min | You walk your interviewer through your diff as if it were a PR, then demo to them as if they were a Fanvue app reviewer: what fired, where, what happens next |
+| 55-60 min | Share your work                                                                                                                                               |
 
 Your interviewer will interrupt with questions. That is the format, not a sign something is wrong.
 
@@ -121,5 +125,5 @@ And make sure `ASSUMPTIONS.md` is in there.
 - Ask questions at any time
 - No need to memorise anything. "I'd look that up" is a fine answer, and then look it up
 - Plain HTML is fine if the component library is slowing you down. UI polish is not what we are assessing
-- There is a 5 minute break around the 85 minute mark
+- There is no scheduled break in the hour. Say so if you need one
 - Your work stays yours. We will not reuse it, and you can delete it after the process
