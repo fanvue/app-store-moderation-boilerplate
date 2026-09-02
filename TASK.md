@@ -4,18 +4,19 @@ Thanks for making time. This is a two-hour pairing session, not an exam. You wil
 
 ## Before the call (about 10 minutes)
 
-- [ ] Node 24 (any 24.x): `nvm install 24` or `fnm install 24`
+- [ ] Node 24 (any 24.x): `nvm install 24` or `fnm install 24`. Node 22 prints an engine warning but still works
 - [ ] `corepack enable` (gives you pnpm). If `corepack` is not found or `corepack enable` errors, run `npm i -g pnpm@10` instead
-- [ ] Windows: use WSL and clone inside `~/`, not `/mnt/c`
-- [ ] git, and a GitHub account you can push to
+- [ ] The first `pnpm` command may ask once `Corepack is about to download pnpm ... continue?`. Answer `y`
+- [ ] Windows works natively. WSL is optional; if you use it, clone inside `~/`, not `/mnt/c`
+- [ ] git, and a GitHub account you can push to (or plan to share a zip instead, see Deliverable)
 - [ ] Your AI coding tool installed and signed in (Codex, Claude Code, Cursor, Copilot, any is fine)
 - [ ] Clone the repo: `git clone https://github.com/fanvue/app-store-moderation-boilerplate`
 - [ ] `pnpm install`
-- [ ] `pnpm dev`, then open http://localhost:3000 and check you see 15 listings. The first page load in dev takes 10 to 20 seconds
+- [ ] `pnpm dev`, then open http://localhost:3000 and check you see 15 listings. The first page load in dev takes 10 to 20 seconds. Images are external placeholders, so they show as broken when you are offline; that is expected
 
 You do not need a Fanvue account or any API credentials. Everything runs locally from fixture data.
 
-If something fails to install, do not lose time on it. Tell your interviewer and we will sort it at the start of the call.
+If something fails to install, do not lose time on it. Reply to the email you received and we will sort it at the start of the call.
 
 ## Context
 
@@ -25,10 +26,11 @@ Fanvue is a platform where creators publish content and earn from subscribers. T
 
 Implement `validateListing(listing)` in `src/lib/moderation/rules.ts` so it returns a list of findings for the deterministic rules in the requirements doc, with tests in `src/lib/moderation/rules.test.ts`.
 
-Then surface the findings in the UI:
+Then finish the UI. The review queue (`app/page.tsx`) already shows a Findings column and the detail page (`app/listings/[uuid]/page.tsx`) already lists findings. What is left:
 
-- The review queue (`app/page.tsx`) should show which listings have findings and be sorted so listings that need rejecting come first.
-- The listing detail page (`app/listings/[uuid]/page.tsx`) should show every finding for that listing.
+- Sort the queue so listings that need rejecting come first.
+- Make "no findings" distinct from "not checked".
+- Link each finding to its rule in the doc.
 
 Each finding should cite the rule number from the doc (for example `2.3`) and carry a severity. The types are already in the stub: `Issue = { code, rule, severity: "reject" | "fix" | "warn", message, field? }`. You decide what each severity means and which rules get which. Be ready to explain your reasoning.
 
@@ -46,18 +48,18 @@ If you are unsure whether a rule is automatable, say so and move on. That is the
 
 ## Inputs
 
-| What | Where |
-| --- | --- |
-| Listing Requirements (the spec) | `docs/listing-requirements.md` in the repo (snapshot dated 2026-09-02); live copy at https://api.fanvue.com/docs/app-store/listing-requirements |
-| Pricing plans (source for the price range) | `docs/pricing-plans.md` in the repo (snapshot dated 2026-09-02); live copy at https://api.fanvue.com/docs/app-store/payments/pricing-plans |
-| Boilerplate repo | https://github.com/fanvue/app-store-moderation-boilerplate |
-| Sample listings (15, typed) | `fixtures/listings.ts` in the repo |
-| Listing type | `src/lib/fanvue/types.ts` in the repo |
-| Public API spec excerpt | `docs/openapi.apps.json` in the repo |
-| Mock API (list) | `GET http://localhost:3000/api/v0/apps`, params `page`, `size`, `search`, returns `{ data, pagination }` |
-| Mock API (detail) | `GET http://localhost:3000/api/v0/apps/{uuid}`, returns one listing |
-| Typed API client the UI already uses | `src/lib/fanvue/api.ts` in the repo |
-| `@fanvue/ui` component library | https://github.com/fanvue/fanv-ui (Storybook linked from the README) |
+| What                                       | Where                                                                                                                                                                 |
+| ------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Listing Requirements (the spec)            | `docs/listing-requirements.md` in the repo (snapshot dated 2026-09-02); live copy at https://api.fanvue.com/docs/app-store/listing-requirements                       |
+| Pricing plans (source for the price range) | `docs/pricing-plans.md` in the repo (snapshot dated 2026-09-02); live copy at https://api.fanvue.com/docs/app-store/payments/pricing-plans                            |
+| Boilerplate repo                           | https://github.com/fanvue/app-store-moderation-boilerplate                                                                                                            |
+| Sample listings (15, typed)                | `fixtures/listings.ts` in the repo                                                                                                                                    |
+| Listing type                               | `src/lib/fanvue/types.ts` in the repo                                                                                                                                 |
+| Public API spec excerpt                    | `docs/openapi.apps.json` in the repo                                                                                                                                  |
+| Mock API (list)                            | `GET http://localhost:3000/api/v0/apps`, params `page`, `size`, `search`, returns `{ data, pagination }`                                                              |
+| Mock API (detail)                          | `GET http://localhost:3000/api/v0/apps/{uuid}`, returns one listing                                                                                                   |
+| Typed API client the UI already uses       | `src/lib/fanvue/api.ts` in the repo                                                                                                                                   |
+| `@fanvue/ui` component library             | Source https://github.com/fanvue/fanv-ui, Storybook https://main--697a1b6dd4dad73ee9c0e5f5.chromatic.com/, offline types in `node_modules/@fanvue/ui/dist/index.d.ts` |
 
 Start with the vendored docs in the repo: your AI tool's sandbox may be offline, and the files are the same content as the public pages. A good place to begin reading is the "Common rejection reasons" table in the requirements doc.
 
@@ -67,19 +69,21 @@ Useful scripts: `pnpm dev`, `pnpm test`, `pnpm test:watch`, `pnpm typecheck`, `p
 
 ## How we will run it
 
-| Time | What happens |
-| --- | --- |
-| First 10 min | Hello, quick tour of the repo, make sure it runs on your machine |
-| Next 15 min | You read the requirements and tell your interviewer which rules you can automate and what severity each should get. He will ask you to justify a couple |
-| Next 60 min | You build: rules and tests first, then the UI. Use your AI tool as much as you like. your interviewer will ask questions as you go |
-| Next 20 min | Your interviewer asks a few questions about your code and the problem, and you review your diff together |
-| Next 10 min | You demo to your interviewer as if they were a Fanvue app reviewer: what fired, where, what happens next |
-| Last 5 min | Share your work |
+| Time        | What happens                                                                                                                                              |
+| ----------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 0-10 min    | Hello, quick tour of the repo, make sure it runs on your machine                                                                                          |
+| 10-25 min   | You read the requirements and tell your interviewer which rules you can automate and what severity each should get. They will ask you to justify a couple |
+| 25-85 min   | You build: rules and tests first, then the UI. Use your AI tool as much as you like. Your interviewer will ask questions as you go                        |
+| 85-90 min   | Break                                                                                                                                                     |
+| 90-105 min  | Your interviewer asks a few questions about your code and the problem, and you review your diff together                                                  |
+| 105-115 min | You demo to your interviewer as if they were a Fanvue app reviewer: what fired, where, what happens next                                                  |
+| 115-120 min | Share your work                                                                                                                                           |
 
 Your interviewer will interrupt with questions. That is the format, not a sign something is wrong.
 
 ## What we are looking for
 
+- You read the requirements and can say which rules a machine can check and which need a person
 - You read what the AI generates before accepting it, and check its claims about the rules against the actual doc
 - You write tests and you see them fail before they pass
 - Your types match reality (some fields are nullable, prices are in minor units)
@@ -90,9 +94,14 @@ Your interviewer will interrupt with questions. That is the format, not a sign s
 
 ## Deliverable
 
-At the end, push your work to **your own fork** of the repo and share the link, or share a zip of the folder if you prefer. Please do not open a pull request against the fanvue repo: it is public and your work would be too.
+At the end, share your work in one of two ways:
 
-Include a few lines (in the fork's README, a PR on your fork, or the chat) covering:
+- Create your own **private** repository from this template (the green "Use this template" button on GitHub, choose Private), push your work there and invite your interviewer as a collaborator.
+- Or share a zip of the folder.
+
+Please do not fork the repo or open a pull request against it: the repo is public and your work would be too.
+
+Include a few lines (in a `NOTES.md` or your README, or in the chat) covering:
 
 - What is done
 - What is not done
@@ -112,3 +121,5 @@ And make sure `ASSUMPTIONS.md` is in there.
 - Ask questions at any time
 - No need to memorise anything. "I'd look that up" is a fine answer, and then look it up
 - Plain HTML is fine if the component library is slowing you down. UI polish is not what we are assessing
+- There is a 5 minute break around the 85 minute mark
+- Your work stays yours. We will not reuse it, and you can delete it after the process

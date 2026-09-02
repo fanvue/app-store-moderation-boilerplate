@@ -13,14 +13,15 @@ export type Severity = "reject" | "fix" | "warn";
  *   https://api.fanvue.com/docs/app-store/listing-requirements
  * - `severity`: what a reviewer should do about it.
  * - `message`: human-readable explanation shown to the reviewer.
- * - `field`: the listing field the finding points at, when there is one.
+ * - `field`: a path into the listing the finding points at, when there is
+ *   one, for example `appUrl` or `pricingPlans[0].price`.
  */
 export type Issue = {
   code: string;
   rule: string;
   severity: Severity;
   message: string;
-  field?: keyof AppListing;
+  field?: string;
 };
 
 /**
