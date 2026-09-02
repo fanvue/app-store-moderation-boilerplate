@@ -1,0 +1,894 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Fanvue API (App Store apps excerpt)",
+    "version": "0.1",
+    "description": "Excerpt of the public Fanvue OpenAPI spec at https://api.fanvue.com/docs/openapi.json, trimmed to the App Store listing operations (GET /apps, GET /apps/{appUuid}) and the components they reference. The mock API in this repo serves the same paths under /api/v0 from fixtures. The public spec is the source of truth."
+  },
+  "servers": [
+    {
+      "url": "https://api.fanvue.com/v0",
+      "description": "Live Fanvue API (not used by this repo)"
+    },
+    {
+      "url": "http://localhost:3000/api/v0",
+      "description": "Local mock served from fixtures/listings.json"
+    }
+  ],
+  "paths": {
+    "/apps": {
+      "get": {
+        "summary": "List published app store apps",
+        "description": "Returns the published App Store listings with their marketing metadata (title, tagline, description, pricing type, rating summary, logo and developer). Use `search` to filter and paginate for discovery.",
+        "operationId": "listAppStoreListings",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/ApiVersionHeader"
+          },
+          {
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "default": 1,
+              "description": "Page number to retrieve (starts from 1)"
+            },
+            "required": false,
+            "description": "Page number to retrieve (starts from 1)",
+            "name": "page",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 50,
+              "default": 15,
+              "description": "Number of items to return per page (1-50, default: 15)"
+            },
+            "required": false,
+            "description": "Number of items to return per page (1-50, default: 15)",
+            "name": "size",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "description": "Case-insensitive filter matched against the app's listing metadata."
+            },
+            "required": false,
+            "description": "Case-insensitive filter matched against the app's listing metadata.",
+            "name": "search",
+            "in": "query"
+          }
+        ],
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Paginated list of published app store apps",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "uuid": {
+                            "type": "string",
+                            "format": "uuid"
+                          },
+                          "name": {
+                            "type": "string",
+                            "description": "User-facing app title."
+                          },
+                          "tagline": {
+                            "type": "string"
+                          },
+                          "description": {
+                            "type": "string",
+                            "description": "Marketing description of the app."
+                          },
+                          "logoUrl": {
+                            "type": "string"
+                          },
+                          "appUrl": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
+                          "pricingType": {
+                            "type": "string",
+                            "enum": [
+                              "free",
+                              "monthly"
+                            ]
+                          },
+                          "rating": {
+                            "type": "object",
+                            "properties": {
+                              "average": {
+                                "type": [
+                                  "number",
+                                  "null"
+                                ],
+                                "description": "Weighted average rating (1-5), or null until the app has enough ratings to show."
+                              },
+                              "count": {
+                                "type": [
+                                  "number",
+                                  "null"
+                                ],
+                                "description": "Number of genuine ratings, or null until the app has enough to show."
+                              }
+                            },
+                            "required": [
+                              "average",
+                              "count"
+                            ]
+                          },
+                          "developer": {
+                            "type": "object",
+                            "properties": {
+                              "name": {
+                                "type": [
+                                  "string",
+                                  "null"
+                                ],
+                                "description": "The developer's public display name."
+                              },
+                              "handle": {
+                                "type": [
+                                  "string",
+                                  "null"
+                                ],
+                                "description": "The developer's public Fanvue handle."
+                              }
+                            },
+                            "required": [
+                              "name",
+                              "handle"
+                            ]
+                          }
+                        },
+                        "required": [
+                          "uuid",
+                          "name",
+                          "tagline",
+                          "description",
+                          "logoUrl",
+                          "appUrl",
+                          "pricingType",
+                          "rating",
+                          "developer"
+                        ]
+                      },
+                      "description": "Array of app listings"
+                    },
+                    "pagination": {
+                      "type": "object",
+                      "properties": {
+                        "page": {
+                          "type": "number",
+                          "description": "Current page number"
+                        },
+                        "size": {
+                          "type": "number",
+                          "description": "Number of records returned in this response"
+                        },
+                        "hasMore": {
+                          "type": "boolean",
+                          "description": "Whether there are more items available on subsequent pages"
+                        }
+                      },
+                      "required": [
+                        "page",
+                        "size",
+                        "hasMore"
+                      ],
+                      "description": "Pagination information"
+                    }
+                  },
+                  "required": [
+                    "data",
+                    "pagination"
+                  ]
+                },
+                "example": {
+                  "data": [
+                    {
+                      "uuid": "00000000-0000-4000-8000-000000000001",
+                      "name": "Content Studio",
+                      "tagline": "AI-assisted content generation for creators",
+                      "description": "Generate captions, ideas and post drafts tailored to your audience.",
+                      "logoUrl": "https://cdn.fanvue.com/app-store/content-studio/logo.png",
+                      "appUrl": "https://contentstudio.example.com",
+                      "pricingType": "monthly",
+                      "rating": {
+                        "average": 4.6,
+                        "count": 128
+                      },
+                      "developer": {
+                        "name": "Content Studio Inc.",
+                        "handle": "contentstudio"
+                      }
+                    }
+                  ],
+                  "pagination": {
+                    "page": 1,
+                    "size": 1,
+                    "hasMore": false
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request - API version not supported OR validation failed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/UnsupportedVersionError"
+                    },
+                    {
+                      "$ref": "#/components/schemas/ValidationError"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedResponse"
+          },
+          "403": {
+            "$ref": "#/components/responses/UnauthorizedResponse"
+          },
+          "410": {
+            "$ref": "#/components/responses/SunsetVersionResponse"
+          },
+          "429": {
+            "$ref": "#/components/responses/RateLimitResponse"
+          },
+          "502": {
+            "description": "Failed to load app listings from upstream",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "App store upstream is not configured",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/apps/{appUuid}": {
+      "get": {
+        "summary": "Get a published app store app's full listing",
+        "description": "Returns the full listing for a single published app: description body, highlights, screenshots, pricing plans and rating distribution.",
+        "operationId": "getAppStoreListing",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/ApiVersionHeader"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "example": "00000000-0000-4000-8000-000000000001"
+            },
+            "required": true,
+            "name": "appUuid",
+            "in": "path"
+          }
+        ],
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The app's full store listing",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "uuid": {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "name": {
+                      "type": "string",
+                      "description": "User-facing app title."
+                    },
+                    "tagline": {
+                      "type": "string"
+                    },
+                    "description": {
+                      "type": "string",
+                      "description": "Marketing description of the app."
+                    },
+                    "logoUrl": {
+                      "type": "string"
+                    },
+                    "appUrl": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "pricingType": {
+                      "type": "string",
+                      "enum": [
+                        "free",
+                        "monthly"
+                      ]
+                    },
+                    "rating": {
+                      "type": "object",
+                      "properties": {
+                        "average": {
+                          "type": [
+                            "number",
+                            "null"
+                          ],
+                          "description": "Weighted average rating (1-5), or null until the app has enough ratings to show."
+                        },
+                        "count": {
+                          "type": [
+                            "number",
+                            "null"
+                          ],
+                          "description": "Number of genuine ratings, or null until the app has enough to show."
+                        }
+                      },
+                      "required": [
+                        "average",
+                        "count"
+                      ]
+                    },
+                    "developer": {
+                      "type": "object",
+                      "properties": {
+                        "name": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "The developer's public display name."
+                        },
+                        "handle": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "The developer's public Fanvue handle."
+                        }
+                      },
+                      "required": [
+                        "name",
+                        "handle"
+                      ]
+                    },
+                    "descriptionTitle": {
+                      "type": "string"
+                    },
+                    "descriptionBody": {
+                      "type": "string"
+                    },
+                    "highlights": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "heroImageUrl": {
+                      "type": "string"
+                    },
+                    "previewImageUrls": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "galleryImageUrls": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "pricingPlans": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "uuid": {
+                            "type": "string"
+                          },
+                          "name": {
+                            "type": "string"
+                          },
+                          "description": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
+                          "billingType": {
+                            "type": "string",
+                            "enum": [
+                              "free",
+                              "one_time",
+                              "recurring"
+                            ]
+                          },
+                          "interval": {
+                            "type": [
+                              "string",
+                              "null"
+                            ],
+                            "enum": [
+                              "monthly",
+                              "yearly"
+                            ]
+                          },
+                          "price": {
+                            "type": "number",
+                            "description": "Price in minor currency units (e.g. cents). 0 for free plans."
+                          },
+                          "currencyCode": {
+                            "type": "string"
+                          },
+                          "status": {
+                            "type": "string",
+                            "enum": [
+                              "pending_setup",
+                              "active",
+                              "withdrawn"
+                            ]
+                          },
+                          "highlights": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            },
+                            "description": "Marketing feature bullets for this plan's store card."
+                          }
+                        },
+                        "required": [
+                          "uuid",
+                          "name",
+                          "description",
+                          "billingType",
+                          "interval",
+                          "price",
+                          "currencyCode",
+                          "status",
+                          "highlights"
+                        ]
+                      }
+                    },
+                    "ratingDistribution": {
+                      "type": [
+                        "array",
+                        "null"
+                      ],
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "rating": {
+                            "type": "integer",
+                            "minimum": 1,
+                            "maximum": 5
+                          },
+                          "proportion": {
+                            "type": "number",
+                            "description": "Share of genuine ratings at this star, 0..1."
+                          },
+                          "count": {
+                            "type": [
+                              "number",
+                              "null"
+                            ],
+                            "description": "Genuine count at this star, or null below the floor."
+                          }
+                        },
+                        "required": [
+                          "rating",
+                          "proportion",
+                          "count"
+                        ]
+                      }
+                    }
+                  },
+                  "required": [
+                    "uuid",
+                    "name",
+                    "tagline",
+                    "description",
+                    "logoUrl",
+                    "appUrl",
+                    "pricingType",
+                    "rating",
+                    "developer",
+                    "descriptionTitle",
+                    "descriptionBody",
+                    "highlights",
+                    "heroImageUrl",
+                    "previewImageUrls",
+                    "galleryImageUrls",
+                    "pricingPlans",
+                    "ratingDistribution"
+                  ]
+                },
+                "example": {
+                  "uuid": "00000000-0000-4000-8000-000000000001",
+                  "name": "Content Studio",
+                  "tagline": "AI-assisted content generation for creators",
+                  "description": "Generate captions, ideas and post drafts tailored to your audience.",
+                  "logoUrl": "https://cdn.fanvue.com/app-store/content-studio/logo.png",
+                  "appUrl": "https://contentstudio.example.com",
+                  "pricingType": "monthly",
+                  "rating": {
+                    "average": 4.6,
+                    "count": 128
+                  },
+                  "developer": {
+                    "name": "Content Studio Inc.",
+                    "handle": "contentstudio"
+                  },
+                  "descriptionTitle": "Create more, faster",
+                  "descriptionBody": "Content Studio turns a few prompts into ready-to-post captions, hooks and ideas, all matched to your voice.",
+                  "highlights": [
+                    "AI captions",
+                    "Idea generator",
+                    "Brand voice matching"
+                  ],
+                  "heroImageUrl": "https://cdn.fanvue.com/app-store/content-studio/hero.png",
+                  "previewImageUrls": [
+                    "https://cdn.fanvue.com/app-store/content-studio/preview-1.png"
+                  ],
+                  "galleryImageUrls": [
+                    "https://cdn.fanvue.com/app-store/content-studio/gallery-1.png"
+                  ],
+                  "pricingPlans": [
+                    {
+                      "uuid": "00000000-0000-4000-8000-000000000002",
+                      "name": "Pro Monthly",
+                      "description": "Everything you need to scale your content.",
+                      "billingType": "recurring",
+                      "interval": "monthly",
+                      "price": 999,
+                      "currencyCode": "USD",
+                      "status": "active",
+                      "highlights": [
+                        "Unlimited generations",
+                        "Priority support"
+                      ]
+                    }
+                  ],
+                  "ratingDistribution": [
+                    {
+                      "rating": 5,
+                      "proportion": 0.72,
+                      "count": 92
+                    },
+                    {
+                      "rating": 4,
+                      "proportion": 0.18,
+                      "count": 23
+                    },
+                    {
+                      "rating": 3,
+                      "proportion": 0.06,
+                      "count": 8
+                    },
+                    {
+                      "rating": 2,
+                      "proportion": 0.02,
+                      "count": 3
+                    },
+                    {
+                      "rating": 1,
+                      "proportion": 0.02,
+                      "count": 2
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request - API version not supported OR validation failed OR invalid UUID",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/UnsupportedVersionError"
+                    },
+                    {
+                      "$ref": "#/components/schemas/ValidationError"
+                    },
+                    {
+                      "$ref": "#/components/schemas/InvalidUuidError"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedResponse"
+          },
+          "403": {
+            "$ref": "#/components/responses/UnauthorizedResponse"
+          },
+          "404": {
+            "description": "App not found or not published",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "410": {
+            "$ref": "#/components/responses/SunsetVersionResponse"
+          },
+          "429": {
+            "$ref": "#/components/responses/RateLimitResponse"
+          },
+          "502": {
+            "description": "Failed to load app listings from upstream",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "App store upstream is not configured",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "parameters": {
+      "ApiVersionHeader": {
+        "name": "X-Fanvue-API-Version",
+        "in": "header",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "default": "2025-06-26",
+          "example": "2025-06-26"
+        },
+        "description": "API version to use for the request"
+      }
+    },
+    "responses": {
+      "SunsetVersionResponse": {
+        "description": "API version no longer supported (sunset)",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string"
+                },
+                "message": {
+                  "type": "string"
+                },
+                "nextVersion": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "error",
+                "message"
+              ]
+            }
+          }
+        }
+      },
+      "UnauthorizedResponse": {
+        "description": "Unauthorized Response",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "error"
+              ]
+            }
+          }
+        }
+      },
+      "RateLimitResponse": {
+        "description": "Too many requests - rate limit exceeded",
+        "headers": {
+          "Retry-After": {
+            "description": "Number of seconds to wait before retrying the request",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          "X-RateLimit-Limit": {
+            "description": "The maximum number of requests allowed in the current window",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          "X-RateLimit-Remaining": {
+            "description": "The number of requests remaining in the current window",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          "X-RateLimit-Reset": {
+            "description": "The Unix timestamp (seconds) when the rate limit window resets",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        },
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "error"
+              ]
+            }
+          }
+        }
+      }
+    },
+    "schemas": {
+      "ValidationError": {
+        "type": "object",
+        "properties": {
+          "errors": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "errors"
+        ],
+        "description": "Request validation failed"
+      },
+      "InvalidUuidError": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "message"
+        ],
+        "description": "Invalid UUID format provided"
+      },
+      "UnsupportedVersionError": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "error",
+          "message"
+        ],
+        "description": "API version not supported"
+      }
+    },
+    "securitySchemes": {
+      "BearerAuth": {
+        "type": "oauth2",
+        "description": "OAuth 2.0 access token, presented as a JWT bearer token in the `Authorization` header. Obtain a token via the authorization-code flow; the scopes granted to the token determine which operations it may call.",
+        "flows": {
+          "authorizationCode": {
+            "authorizationUrl": "https://auth.fanvue.com/oauth2/auth",
+            "tokenUrl": "https://auth.fanvue.com/oauth2/token",
+            "refreshUrl": "https://auth.fanvue.com/oauth2/token",
+            "scopes": {
+              "read:self": "Access your own user profile information, including basic account details and settings.",
+              "read:chat": "Read chat conversations, messages, and chat-related data. This includes viewing chat lists and message history.",
+              "write:chat": "Create new chats and send messages. This scope is required for any chat-related actions that modify data.",
+              "read:experience": "Exchange a fan's experience token for the resolved experience and the fan's identity, so an embedded fan-facing experience can render the right content.",
+              "write:experience": "Request that the creator publish or unpublish a fan-facing experience. The app mints a request token; the creator confirms and Fanvue performs the change.",
+              "read:fan": "Access fan-related data and information within the platform.",
+              "read:post": "Read posts, including post details, comments, likes, and tips.",
+              "write:post": "Create, edit, and manage posts and content on behalf of users.",
+              "read:media": "Access media files, images, videos, and other content assets.",
+              "write:media": "Upload, modify, and manage media files and content assets. Also required for vault folder management.",
+              "read:creator": "Access creator profiles, content, and creator-specific information.",
+              "write:creator": "Modify creator profiles, settings, and creator-specific data.",
+              "read:insights": "Access analytics, metrics, and insights data for performance tracking.",
+              "read:tracking_links": "Read tracking links and the users associated with them, including per-user tracking metadata.",
+              "write:tracking_links": "Create and delete tracking links.",
+              "read:agency": "Read agency information, including the agency's team members.",
+              "write:agency": "Manage agency team members and invites, including inviting new team members and creators."
+            }
+          }
+        }
+      }
+    }
+  }
+}
