@@ -1,6 +1,6 @@
 # Fanvue product engineer session: App Store listing moderation
 
-Thanks for making time. This is a one-hour pairing session, not an exam. You will share your screen and build a small tool with an AI coding assistant (whichever you normally use) while your interviewer watches, pairs a little, and asks questions. We care about how you think, how you check what the AI gives you, and how you make product decisions. A finished product is not expected. An honest "here is what works, here is what does not" beats polish.
+Thanks for making time. This is a one-hour pairing session, not an exam. You will share your screen and build a small tool with an AI coding assistant (whichever you normally use) while Simon (your interviewer) watches, pairs a little, and asks questions. We care about how you think, how you check what the AI gives you, and how you make product decisions. A finished product is not expected. An honest "here is what works, here is what does not" beats polish.
 
 ## The task
 
@@ -36,25 +36,25 @@ Use the copies in `docs/`: they match the live pages at https://api.fanvue.com/d
 - [ ] Your AI coding tool installed and signed in (Codex, Claude Code, Cursor, Copilot, any is fine)
 - [ ] Skim `docs/listing-requirements.md`, starting with the "Common rejection reasons" table at the bottom (about 10 minutes). At the start of the call you will be asked which rules a machine could check and which need a person
 
-You do not need a Fanvue account or API credentials. Everything runs locally from fixture data. If something fails to install, do not lose time on it: reply to the email and we will sort it at the start of the call.
+You do not need a Fanvue account or API credentials. Everything runs locally from fixture data. If something fails to install, do not lose time on it: reply to Simon's email and we will sort it at the start of the call.
 
 ## The hour
 
-| Time      | What happens                                                                                                                                     |
-| --------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
-| 0-5 min   | Hello, confirm the app runs on your machine                                                                                                      |
-| 5-15 min  | You say which rules you can automate and what severity each gets. Your interviewer asks you to justify a couple                                  |
-| 15-45 min | You build: rules and tests first, UI if time remains. Use your AI tool as much as you like                                                       |
-| 45-55 min | You walk through your diff as if it were a PR, then demo as if your interviewer were a Fanvue app reviewer: what fired, where, what happens next |
-| 55-60 min | Share your work                                                                                                                                  |
+| Time      | What happens                                                                                                                          |
+| --------- | ------------------------------------------------------------------------------------------------------------------------------------- |
+| 0-5 min   | Hello, confirm the app runs on your machine                                                                                           |
+| 5-15 min  | You say which rules you can automate and what severity each gets. Simon asks you to justify a couple                                  |
+| 15-45 min | You build: rules and tests first, UI if time remains. Use your AI tool as much as you like                                            |
+| 45-55 min | You walk through your diff as if it were a PR, then demo as if Simon were a Fanvue app reviewer: what fired, where, what happens next |
+| 55-60 min | Share your work                                                                                                                       |
 
-Your interviewer will interrupt with questions. That is the format, not a sign something is wrong. Ask anything at any time; "I'd look that up" is a fine answer, then look it up. There is no scheduled break; say so if you need one.
+Simon will interrupt with questions. That is the format, not a sign something is wrong. Ask anything at any time; "I'd look that up" is a fine answer, then look it up. There is no scheduled break; say so if you need one.
 
 ## Deliverable
 
 Share your work in one of two ways:
 
-- Create your own **private** repository from this template (the green "Use this template" button on GitHub, choose Private), push, and invite your interviewer as a collaborator.
+- Create your own **private** repository from this template (the green "Use this template" button on GitHub, choose Private), push, and invite Simon (GitHub: `simonstaton`) as a collaborator.
 - Or share a zip of the folder.
 
 Do not fork the repo or open a pull request against it: the repo is public and your work would be too. Your work stays yours; we will not reuse it, and you can delete it after the process.
