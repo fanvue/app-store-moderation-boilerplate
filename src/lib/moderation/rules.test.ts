@@ -50,7 +50,7 @@ describe("validateListing", () => {
     expect(validateListing(cleanListing)).toEqual([]);
   });
 
-  it.todo("flags a listing that fails a listing-quality requirement");
-  it.todo("flags a listing that fails a business or payments requirement");
-  it.todo("flags a listing that fails an integration requirement");
+  // Replace these with your rules. Run `pnpm test:watch` and see each one fail before you make it pass.
+  it.todo("flags a listing that breaks your first rule");
+  it.todo("flags a listing that breaks your second rule");
 });
