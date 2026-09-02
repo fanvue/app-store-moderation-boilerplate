@@ -1,9 +1,6 @@
 <!-- Snapshot taken 2026-09-02 of https://api.fanvue.com/docs/app-store/listing-requirements (canonical URL).
-     Vendored so the task works offline. If this file and the live page differ, the live page wins. -->
-
-> ## Documentation Index
-> Fetch the complete documentation index at: https://api.fanvue.com/docs/llms.txt
-> Use this file to discover all available pages before exploring further.
+     Vendored so the task works offline. If this file and the live page differ, the live page wins.
+     Start with the "Common rejection reasons" table at the end; sections 1 to 6 are the numbered rules. -->
 
 # App Store Listing Requirements
 

@@ -1,129 +1,71 @@
 # Fanvue product engineer session: App Store listing moderation
 
-Thanks for making time. This is a one-hour pairing session, not an exam. You will share your screen and build a small tool with an AI coding assistant (whichever you normally use) while your interviewer watches, pairs a little, and asks questions along the way. We care about how you think, how you verify what the AI gives you, and how you make product decisions. A finished product is not expected. An honest "here is what works, here is what does not" at the end is worth more than polish.
-
-## Before the call (about 20 minutes)
-
-Setup (about 10 minutes):
-
-- [ ] Node 24 (any 24.x): `nvm install 24` or `fnm install 24`. Node 22 prints an engine warning but still works
-- [ ] `corepack enable` (gives you pnpm). If `corepack` is not found or `corepack enable` errors, run `npm i -g pnpm@10` instead
-- [ ] The first `pnpm` command may ask once `Corepack is about to download pnpm ... continue?`. Answer `y`
-- [ ] Windows works natively. WSL is optional; if you use it, clone inside `~/`, not `/mnt/c`
-- [ ] git, and a GitHub account you can push to (or plan to share a zip instead, see Deliverable)
-- [ ] Your AI coding tool installed and signed in (Codex, Claude Code, Cursor, Copilot, any is fine)
-- [ ] Clone the repo: `git clone https://github.com/fanvue/app-store-moderation-boilerplate`
-- [ ] `pnpm install`
-- [ ] `pnpm dev`, then open http://localhost:3000 and check you see 15 listings. The first page load in dev takes 10 to 20 seconds. Images are external placeholders, so they show as broken when you are offline; that is expected
-
-Reading (about 10 minutes):
-
-- [ ] Skim `docs/listing-requirements.md` in the repo, starting with the "Common rejection reasons" table. The hour is short, so we will not spend it reading: at the start of the call you will be asked which rules a machine could check and which need a person
-
-You do not need a Fanvue account or any API credentials. Everything runs locally from fixture data.
-
-If something fails to install, do not lose time on it. Reply to the email you received and we will sort it at the start of the call.
-
-## Context
-
-Fanvue is a platform where creators publish content and earn from subscribers. The Fanvue App Store lets third-party developers build apps for those creators and list them for discovery. Every listing has to meet a public set of Listing Requirements before it goes live, covering things like screenshots, naming, pricing, links, and not promoting other platforms. Today a human reads each listing against those rules. Some of the rules need a human; several can be checked automatically and would save the reviewer time. You are going to build that automatic part.
+Thanks for making time. This is a one-hour pairing session, not an exam. You will share your screen and build a small tool with an AI coding assistant (whichever you normally use) while your interviewer watches, pairs a little, and asks questions. We care about how you think, how you check what the AI gives you, and how you make product decisions. A finished product is not expected. An honest "here is what works, here is what does not" beats polish.
 
 ## The task
 
-Implement `validateListing(listing)` in `src/lib/moderation/rules.ts` so it returns a list of findings for the deterministic rules in the requirements doc, with tests in `src/lib/moderation/rules.test.ts`.
+Fanvue is a platform where creators publish content and earn from subscribers. The Fanvue App Store lets third-party developers list apps for those creators. Every listing must meet the public Listing Requirements before it goes live: screenshots, naming, pricing, links, not promoting other platforms. Today a human checks each listing against those rules. Several of the rules can be checked automatically. You build that part.
 
-Each finding should cite the rule number from the doc (for example `2.3`) and carry a severity. The types are already in the stub: `Issue = { code, rule, severity: "reject" | "fix" | "warn", message, field? }`. You decide what each severity means and which rules get which. Be ready to explain your reasoning.
+Implement `validateListing(listing)` in `src/lib/moderation/rules.ts` so it returns findings for the deterministic rules in the requirements doc (rules a program can decide from the listing data alone), with tests in `src/lib/moderation/rules.test.ts`.
 
-**Two rules with red-then-green tests wired into the queue is a complete result.** More is welcome, but depth beats breadth. "Wired into the queue" needs no UI work from you: the review queue (`app/page.tsx`) already shows a Findings column and the detail page (`app/listings/[uuid]/page.tsx`) already lists findings.
+**Two rules with red-then-green tests wired into the queue is a complete result.** Red-then-green means you saw the test fail before the rule existed. Wiring needs no UI work: the review queue and the detail page already render whatever `validateListing` returns. More rules are welcome, but depth beats breadth.
 
-If you have time after the rules, improve the UI, in this order:
+Each finding cites the rule number from the doc (for example `2.3`) and carries a severity. The types are in the stub: `Issue = { code, rule, severity: "reject" | "fix" | "warn", message, field? }`. You decide what each severity means and which rules get which. Be ready to explain why.
 
-- Sort the queue so listings that need rejecting come first.
-- Make "no findings" distinct from "not checked".
-- Link each finding to its rule in the doc.
+**Record your assumptions.** The doc contains very few numbers. The price range for paid plans, $3.99 to $500, is public and you may use it. Anything else you add (a placeholder word list, a length limit, a reading of an ambiguous rule) is an assumption. Write it in `ASSUMPTIONS.md` and emit it as `warn` unless the doc is explicit.
 
-**Record your assumptions.** The requirements doc contains very few numbers. The price range for paid plans ($3.99 to $500) is public and you may use it (link below). Anything else you add, such as a list of placeholder words, a length limit, or an interpretation of an ambiguous rule, is an assumption: write it down in `ASSUMPTIONS.md` and emit it as `warn` unless the doc is explicit.
+Out of scope: anything that needs a human eye (image quality, originality, NSFW imagery, interface quality, whether a description is "clear"), typo or grammar detection, and fetching URLs to see if they respond. If you are unsure whether a rule is automatable, say so and move on. That is the right call.
 
-Out of scope, do not attempt:
-
-- Anything that needs a human eye: image quality, originality, NSFW imagery, interface quality, whether a description is "clear"
-- Typo or grammar detection
-- Fetching URLs to see if they respond
-
-If you are unsure whether a rule is automatable, say so and move on. That is the right call.
+If time remains after the rules, in this order: sort the queue so listings that need rejecting come first; make "no findings" look different from "not checked"; link each finding to its rule in the doc. UI polish is not assessed. Plain HTML is fine; if you want `@fanvue/ui`, its props are in `node_modules/@fanvue/ui/dist/index.d.ts`.
 
 ## Inputs
 
-| What                                       | Where                                                                                                                                                                 |
-| ------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Listing Requirements (the spec)            | `docs/listing-requirements.md` in the repo (snapshot dated 2026-09-02); live copy at https://api.fanvue.com/docs/app-store/listing-requirements                       |
-| Pricing plans (source for the price range) | `docs/pricing-plans.md` in the repo (snapshot dated 2026-09-02); live copy at https://api.fanvue.com/docs/app-store/payments/pricing-plans                            |
-| Boilerplate repo                           | https://github.com/fanvue/app-store-moderation-boilerplate                                                                                                            |
-| Sample listings (15, typed)                | `fixtures/listings.ts` in the repo                                                                                                                                    |
-| Listing type                               | `src/lib/fanvue/types.ts` in the repo                                                                                                                                 |
-| Public API spec excerpt                    | `docs/openapi.apps.json` in the repo                                                                                                                                  |
-| Mock API (list)                            | `GET http://localhost:3000/api/v0/apps`, params `page`, `size`, `search`, returns `{ data, pagination }`                                                              |
-| Mock API (detail)                          | `GET http://localhost:3000/api/v0/apps/{uuid}`, returns one listing                                                                                                   |
-| Typed API client the UI already uses       | `src/lib/fanvue/api.ts` in the repo                                                                                                                                   |
-| `@fanvue/ui` component library             | Source https://github.com/fanvue/fanv-ui, Storybook https://main--697a1b6dd4dad73ee9c0e5f5.chromatic.com/, offline types in `node_modules/@fanvue/ui/dist/index.d.ts` |
+| What                                      | Where                                                                                                                  |
+| ----------------------------------------- | ---------------------------------------------------------------------------------------------------------------------- |
+| Listing Requirements (the spec)           | `docs/listing-requirements.md`. Start with the "Common rejection reasons" table at the bottom                          |
+| Pricing plans (source of the price range) | `docs/pricing-plans.md`                                                                                                |
+| 15 sample listings                        | `fixtures/listings.ts`                                                                                                 |
+| Listing type                              | `src/lib/fanvue/types.ts`. The field comments say which array holds the screenshots and that prices are in minor units |
 
-Start with the vendored docs in the repo: your AI tool's sandbox may be offline, and the files are the same content as the public pages.
+Use the copies in `docs/`: they match the live pages at https://api.fanvue.com/docs/app-store, and your AI tool's sandbox may be offline.
 
-The mock API mirrors the live endpoints documented at https://api.fanvue.com/docs: same paths, same params, same response envelope and listing shape. Auth and version headers are ignored locally.
+## Before the call (about 20 minutes)
 
-Useful scripts: `pnpm dev`, `pnpm test`, `pnpm test:watch`, `pnpm typecheck`, `pnpm lint`, `pnpm build`.
+- [ ] Set up the repo by following the Quick start in the README at https://github.com/fanvue/app-store-moderation-boilerplate: Node 24, `pnpm install`, `pnpm dev`, then check http://localhost:3000 shows 15 listings
+- [ ] git, and a GitHub account you can push to (or plan to share a zip, see Deliverable)
+- [ ] Your AI coding tool installed and signed in (Codex, Claude Code, Cursor, Copilot, any is fine)
+- [ ] Skim `docs/listing-requirements.md`, starting with the "Common rejection reasons" table at the bottom (about 10 minutes). At the start of the call you will be asked which rules a machine could check and which need a person
 
-## How we will run it
+You do not need a Fanvue account or API credentials. Everything runs locally from fixture data. If something fails to install, do not lose time on it: reply to the email and we will sort it at the start of the call.
 
-| Time      | What happens                                                                                                                                                  |
-| --------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 0-5 min   | Hello, confirm the app runs on your machine                                                                                                                   |
-| 5-15 min  | You tell your interviewer which rules you can automate and what severity each should get. They will ask you to justify a couple                               |
-| 15-45 min | You build: rules and tests first, then the UI if time remains. Use your AI tool as much as you like. Your interviewer will ask questions as you go            |
-| 45-55 min | You walk your interviewer through your diff as if it were a PR, then demo to them as if they were a Fanvue app reviewer: what fired, where, what happens next |
-| 55-60 min | Share your work                                                                                                                                               |
+## The hour
 
-Your interviewer will interrupt with questions. That is the format, not a sign something is wrong.
+| Time      | What happens                                                                                                                                     |
+| --------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
+| 0-5 min   | Hello, confirm the app runs on your machine                                                                                                      |
+| 5-15 min  | You say which rules you can automate and what severity each gets. Your interviewer asks you to justify a couple                                  |
+| 15-45 min | You build: rules and tests first, UI if time remains. Use your AI tool as much as you like                                                       |
+| 45-55 min | You walk through your diff as if it were a PR, then demo as if your interviewer were a Fanvue app reviewer: what fired, where, what happens next |
+| 55-60 min | Share your work                                                                                                                                  |
 
-## What we are looking for
-
-- You read the requirements and can say which rules a machine can check and which need a person
-- You read what the AI generates before accepting it, and check its claims about the rules against the actual doc
-- You write tests and you see them fail before they pass
-- Your types match reality (some fields are nullable, prices are in minor units)
-- Your severities and queue order make sense for the person who has to act on them
-- You write down assumptions instead of presenting them as rules
-- You explain your thinking as you go and ask when something is unclear
-- You are honest about what is unfinished
+Your interviewer will interrupt with questions. That is the format, not a sign something is wrong. Ask anything at any time; "I'd look that up" is a fine answer, then look it up. There is no scheduled break; say so if you need one.
 
 ## Deliverable
 
-At the end, share your work in one of two ways:
+Share your work in one of two ways:
 
-- Create your own **private** repository from this template (the green "Use this template" button on GitHub, choose Private), push your work there and invite your interviewer as a collaborator.
+- Create your own **private** repository from this template (the green "Use this template" button on GitHub, choose Private), push, and invite your interviewer as a collaborator.
 - Or share a zip of the folder.
 
-Please do not fork the repo or open a pull request against it: the repo is public and your work would be too.
+Do not fork the repo or open a pull request against it: the repo is public and your work would be too. Your work stays yours; we will not reuse it, and you can delete it after the process.
 
-Include a few lines (in a `NOTES.md` or your README, or in the chat) covering:
+Include a few lines (in `NOTES.md`, your README, or the chat) on what is done, what is not, and what you would do next. Make sure `ASSUMPTIONS.md` is in there.
 
-- What is done
-- What is not done
-- What you would do next
+## What we are looking for
 
-And make sure `ASSUMPTIONS.md` is in there.
-
-## Stretch (only if time)
-
-- Show the developer a plain-English explanation of each finding and how to fix it, with a link to the rule
-- Give each listing a risk score so the queue orders by overall risk, not just the worst finding
-- `descriptionBody` may contain markdown: make sure formatting does not cause false positives in your text checks
-
-## Ground rules
-
-- Use any AI tool you like. If yours is having a bad day, switch to another
-- Ask questions at any time
-- No need to memorise anything. "I'd look that up" is a fine answer, and then look it up
-- Plain HTML is fine if the component library is slowing you down. UI polish is not what we are assessing
-- There is no scheduled break in the hour. Say so if you need one
-- Your work stays yours. We will not reuse it, and you can delete it after the process
+- You can say which rules a machine can check and which need a person, and you check the AI's claims about the rules against the actual doc
+- You write tests and see them fail before they pass
+- Your types match reality (some fields are nullable, prices are in minor units)
+- Your severities and queue order make sense for the person who has to act on them
+- You write down assumptions instead of presenting them as rules
+- You explain your thinking as you go, ask when something is unclear, and are honest about what is unfinished
