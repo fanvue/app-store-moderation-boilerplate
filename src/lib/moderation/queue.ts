@@ -9,8 +9,7 @@ export const SEVERITY_ORDER: readonly Severity[] = ["reject", "fix", "warn"];
  * TODO: implement. `src/lib/moderation/queue.acceptance.test.ts` says what is expected.
  */
 export function worstSeverity(issues: Issue[]): Severity | null {
-  void issues;
-  return null;
+  return SEVERITY_ORDER.find((severity) => issues.some((issue) => issue.severity === severity)) ?? null;
 }
 
 /**
@@ -20,5 +19,9 @@ export function worstSeverity(issues: Issue[]): Severity | null {
  * TODO: implement. Pure: return a new array, do not mutate `rows`.
  */
 export function sortQueue<T extends { issues: Issue[] }>(rows: T[]): T[] {
-  return rows;
+  return [...rows].sort((left, right) => severityRank(worstSeverity(left.issues)) - severityRank(worstSeverity(right.issues)));
+}
+
+function severityRank(severity: Severity | null): number {
+  return severity === null ? SEVERITY_ORDER.length : SEVERITY_ORDER.indexOf(severity);
 }

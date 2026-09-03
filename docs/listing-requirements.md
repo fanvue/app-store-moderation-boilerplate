@@ -280,21 +280,21 @@ Your app's homepage must link back to the Fanvue App Store. This can point to yo
 
 A quick map from the issues we see most often to the section that governs them. Check your app against these before you submit.
 
-| Reason                                                                                                          | Section                                                                |
+| Reason                                                                                                          | Section                                                                | Notes |
 | --------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------- |
-| Invalid / missing / non-owned URL                                                                               | [6.2](#6-2-valid-owned-url)                                            |
-| App doesn't use the Fanvue API                                                                                  | [6.1](#6-1-genuine-fanvue-integration)                                 |
-| Not really an app (funnel / landing page / single-creator)                                                      | [4.1](#4-1-useful-apps)                                                |
-| Template / copycat / AI-slop                                                                                    | [4.2](#4-2-originality)                                                |
-| Off-platform payments / external checkout                                                                       | [3.1](#3-1-fanvue-payments-only), [3.2](#3-2-no-external-checkout)     |
-| Explicit, adult, or suggestive imagery in the listing or marketing (including swimwear, underwear, or lingerie) | [1.1](#1-1-safe-for-work-listings)                                     |
-| Broken auth / test credentials don't work                                                                       | [2.2](#2-2-review-access)                                              |
-| Fewer than two previews / previews don't show the app                                                           | [2.3](#2-3-listing-quality)                                            |
-| Naming (implies another platform, typo)                                                                         | [2.4](#2-4-app-naming)                                                 |
-| Listing not in English                                                                                          | [2.3](#2-3-listing-quality)                                            |
-| Links to / promotion of other platforms                                                                         | [1.6](#1-6-no-promotion-of-other-platforms)                            |
-| No discoverable support channel                                                                                 | [2.6](#2-6-support)                                                    |
-| Typos, poor layout / spacing, low-quality UI                                                                    | [4.3](#4-3-interface-quality), [4.4](#4-4-listing-and-content-quality) |
+| Invalid / missing / non-owned URL                                                                               | [6.2](#6-2-valid-owned-url)                                            | Straightforward - code 
+| App doesn't use the Fanvue API                                                                                  | [6.1](#6-1-genuine-fanvue-integration)                                 | Difficult without codebase
+| Not really an app (funnel / landing page / single-creator)                                                      | [4.1](#4-1-useful-apps)                                                | Straightforward - AI - but careful of false positives
+| Template / copycat / AI-slop                                                                                    | [4.2](#4-2-originality)                                                | Difficult 
+| Off-platform payments / external checkout                                                                       | [3.1](#3-1-fanvue-payments-only), [3.2](#3-2-no-external-checkout)     | Straightforward - a little bit of work - code based
+| Explicit, adult, or suggestive imagery in the listing or marketing (including swimwear, underwear, or lingerie) | [1.1](#1-1-safe-for-work-listings)                                     | AI solution/internal platform
+| Broken auth / test credentials don't work                                                                       | [2.2](#2-2-review-access)                                              | Possible - AI as a backup
+| Fewer than two previews / previews don't show the app                                                           | [2.3](#2-3-listing-quality)                                            |  Code for cardinality/ AI for the showing of apps
+| Naming (implies another platform, typo)                                                                         | [2.4](#2-4-app-naming)                                                 | typo - spellcheckers, AI 
+| Listing not in English                                                                                          | [2.3](#2-3-listing-quality)                                            | code - 
+| Links to / promotion of other platforms                                                                         | [1.6](#1-6-no-promotion-of-other-platforms)                            | code
+| No discoverable support channel                                                                                 | [2.6](#2-6-support)                                                    | code for support validation 
+| Typos, poor layout / spacing, low-quality UI                                                                    | [4.3](#4-3-interface-quality), [4.4](#4-4-listing-and-content-quality) | typos - spellcheck, AI
 
 ## Ongoing compliance
 

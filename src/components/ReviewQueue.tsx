@@ -1,6 +1,7 @@
 import Link from "next/link";
 
 import type { AppListing } from "@/lib/fanvue/types";
+import { sortQueue, worstSeverity } from "@/lib/moderation/queue";
 import type { Issue } from "@/lib/moderation/rules";
 
 export type ReviewQueueRow = {
@@ -23,6 +24,8 @@ export type ReviewQueueRow = {
  * Plain HTML is fine. `@fanvue/ui` is installed if you want it.
  */
 export function ReviewQueue({ rows }: { rows: ReviewQueueRow[] }) {
+  const sortedRows = sortQueue(rows);
+
   return (
     <section className="flex flex-col gap-4">
       <h1 className="text-2xl font-semibold">Review queue</h1>
@@ -40,8 +43,7 @@ export function ReviewQueue({ rows }: { rows: ReviewQueueRow[] }) {
           </tr>
         </thead>
         <tbody>
-          {/* TODO: sort rows before rendering */}
-          {rows.map(({ listing, issues }) => (
+          {sortedRows.map(({ listing, issues }) => (
             <tr key={listing.uuid} className="border-b">
               <td className="py-2 pr-4">
                 <Link href={`/listings/${listing.uuid}`} className="underline">
@@ -51,8 +53,7 @@ export function ReviewQueue({ rows }: { rows: ReviewQueueRow[] }) {
               <td className="py-2 pr-4">{listing.developer.handle ? `@${listing.developer.handle}` : "-"}</td>
               <td className="py-2 pr-4">{listing.pricingType}</td>
               <td className="py-2 pr-4">{listing.previewImageUrls.length}</td>
-              {/* TODO: replace with a real status */}
-              <td className="py-2 pr-4">{issues.length === 0 ? "Not checked" : `${issues.length} findings`}</td>
+              <td className="py-2 pr-4">{worstSeverity(issues) ?? "No findings"}</td>
             </tr>
           ))}
         </tbody>

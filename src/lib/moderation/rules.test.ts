@@ -50,9 +50,82 @@ describe("validateListing", () => {
     expect(validateListing(cleanListing)).toEqual([]);
   });
 
-  // Your own tests, one or more per rule. Run `pnpm test:watch` and see each one fail before you make it pass.
-  // The acceptance tests in `*.acceptance.test.*` describe the finished product; these describe your rules.
-  it.todo("flags a listing that breaks your first rule");
-  it.todo("flags a listing that breaks your second rule");
-  it.todo("tells a listing nobody has checked apart from one that passed every rule");
+  it("rejects a listing with fewer than two screenshots", () => {
+    expect(codes({ ...cleanListing, previewImageUrls: [cleanListing.previewImageUrls[0]!] })).toContain(
+      "too_few_screenshots",
+    );
+  });
+
+  it("rejects a missing, invalid, insecure, or Fanvue-hosted app URL", () => {
+    expect(codes({ ...cleanListing, appUrl: null })).toContain("missing_app_url");
+    expect(codes({ ...cleanListing, appUrl: "not a URL" })).toContain("invalid_app_url");
+    expect(codes({ ...cleanListing, appUrl: "http://postplanner.example.com" })).toContain("app_url_not_https");
+    expect(codes({ ...cleanListing, appUrl: "https://studio.fanvue.com/app" })).toContain("app_url_uses_fanvue_domain");
+  });
+
+  it("flags paid USD plans outside the supported price range", () => {
+    const [plan] = cleanListing.pricingPlans;
+
+    expect(codes({ ...cleanListing, pricingPlans: [{ ...plan!, price: 50_001 }] })).toContain(
+      "paid_plan_price_out_of_range",
+    );
+  });
+
+  it("flags paid plans that are not recurring monthly subscriptions", () => {
+    const [plan] = cleanListing.pricingPlans;
+
+    expect(codes({ ...cleanListing, pricingPlans: [{ ...plan!, billingType: "one_time", interval: null }] })).toContain(
+      "paid_plan_not_monthly",
+    );
+  });
+
+  it("flags plan names and highlight lists that exceed their limits", () => {
+    const [plan] = cleanListing.pricingPlans;
+    const issues = codes({
+      ...cleanListing,
+      pricingPlans: [
+        {
+          ...plan!,
+          name: "A plan name longer than twenty",
+          highlights: ["One", "Two", "Three", "Four", "Five", "Six"],
+        },
+      ],
+    });
+
+    expect(issues).toEqual(expect.arrayContaining(["plan_name_too_long", "too_many_plan_highlights"]));
+  });
+
+  it("warns when copy promotes a competing creator platform", () => {
+    expect(codes({ ...cleanListing, tagline: "Grow your 0nlyFans faster" })).toContain("competitor_platform_promotion");
+  });
+
+  it("warns when copy refers to an external payment provider", () => {
+    expect(codes({ ...cleanListing, highlights: ["Upgrade through our Stripe checkout"] })).toContain(
+      "external_payment_promotion",
+    );
+    expect(codes({ ...cleanListing, highlights: ["Buy through our payment link"] })).toContain(
+      "external_payment_promotion",
+    );
+  });
+
+  it("warns when the pricing type does not match the available plans", () => {
+    expect(codes({ ...cleanListing, pricingType: "free" })).toContain("pricing_type_does_not_match_plans");
+  });
+
+  it("warns when listing copy contains placeholder text", () => {
+    expect(codes({ ...cleanListing, descriptionBody: "Lorem ipsum TODO" })).toContain("placeholder_listing_copy");
+  });
+
+  it("warns when listing copy has multiple Spanish-language signals", () => {
+    expect(
+      codes({
+        ...cleanListing,
+        description: "Organiza tu biblioteca de contenido en carpetas inteligentes.",
+      }),
+    ).toContain("listing_may_not_be_english");
+  });
 });
+
+function codes(listing: AppListing): string[] {
+  return validateListing(listing).map((issue) => issue.code);
+}
