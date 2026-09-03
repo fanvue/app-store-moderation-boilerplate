@@ -10,6 +10,7 @@ export type ReviewQueueRow = {
 
 /**
  * The moderator's queue. Deliberately bare: this screen is the product you build.
+ * `ReviewQueue.acceptance.test.tsx` says what it must show; `src/lib/moderation/queue.ts` has the helpers to fill in.
  *
  * TODO (yours):
  * - Status per app. Today every row says "Not checked" because `validateListing`
