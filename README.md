@@ -18,17 +18,19 @@ A one-hour pairing session: you build a moderation UI where a Fanvue moderator c
 
 Fanvue is a platform where creators publish content and earn from subscribers. The Fanvue App Store lets third-party developers list apps for those creators, and every listing must meet the public Listing Requirements before it goes live; today a human checks each one.
 
-You build the tool that moderator uses: one screen that lists every app with its status (reject, needs fix, warning, clean, or not yet checked), worst first, and a listing page that says which rule fired and where. The repo gives you a bare skeleton: a plain table of apps and a plain dump of each listing, with `TODO` markers where the status, the ordering and the findings go. Both call `validateListing(listing)`, which today returns nothing. Implement the rules a program can decide from the listing data alone in `src/lib/moderation/rules.ts`, prove them with tests in `src/lib/moderation/rules.test.ts`, then build the queue the moderator needs.
+You build the tool that moderator uses: one screen that lists every app with its status (reject, needs fix, warning, clean, or not yet checked), worst first, and a listing page that says which rule fired and where. The repo gives you a bare skeleton with `TODO` markers, and five acceptance tests that describe the finished product and fail today. Run `pnpm test` to see them. They pass when the queue shows a status per app in the right order, and when `validateListing` in `src/lib/moderation/rules.ts` fires at least two rules on the sample listings using only what a program can decide from the listing data. You also write your own test for each rule in `src/lib/moderation/rules.test.ts`.
 
-**Done means a moderator could use it: at least two rules with tests you saw fail before they passed, every app showing a status, rejects at the top of the queue, and "No findings" told apart from "Not checked".** More rules are welcome, but a moderator who can trust two well-tested rules beats six they cannot.
+**Done means `pnpm test` is green and a moderator could use the queue: the acceptance tests pass, each rule has a test you saw fail before it passed, and "No findings" is told apart from "Not checked".** More rules are welcome, but a moderator who can trust two well-tested rules beats six they cannot.
 
 ## Where to work
 
 | File                               | What to do there                                                                 |
 | ---------------------------------- | -------------------------------------------------------------------------------- |
+| `*.acceptance.test.*` (3 files)    | The product contract. Red today. Do not edit them; make them pass                |
 | `src/lib/moderation/rules.ts`      | Implement `validateListing`. It returns `Issue[]`                                |
-| `src/lib/moderation/rules.test.ts` | Your tests. Two `it.todo` placeholders to replace                                |
-| `src/components/ReviewQueue.tsx`   | Skeleton of the moderator's queue. Follow the `TODO`s: status per app, worst first |
+| `src/lib/moderation/rules.test.ts` | Your own tests per rule. Three `it.todo` placeholders to replace                 |
+| `src/lib/moderation/queue.ts`      | Stub of `worstSeverity` and `sortQueue`. The queue acceptance test describes them |
+| `src/components/ReviewQueue.tsx`   | Skeleton of the moderator's queue. Its acceptance test says what it must show    |
 | `src/components/FindingsList.tsx`  | Skeleton of how findings show on the listing page. Make it useful to a moderator |
 | `ASSUMPTIONS.md`                   | Anything you decided that the doc does not say                                   |
 | `docs/listing-requirements.md`     | The spec. Start with the "Common rejection reasons" table at the bottom          |
@@ -60,7 +62,7 @@ Simon will interrupt with questions; that is the format. Use your AI tool as muc
 ## What we look for
 
 - You classify rules as machine-checkable or human, and check the AI's claims against the doc
-- Tests seen failing before they pass
+- Acceptance tests turned green honestly, and your own rule tests seen failing before they pass
 - Types match reality: `appUrl` is nullable, prices are in minor units
 - You think about the moderator using the screen: what is at the top of the queue, what they see on a listing, what they do next
 - Severities and queue order make sense for the moderator who acts on them
@@ -92,7 +94,7 @@ pnpm dev
 
 ## Scripts
 
-`pnpm dev` (dev server on port 3000), `pnpm build` and `pnpm start` (production build and serve), `pnpm test` (Vitest, once) and `pnpm test:watch`, `pnpm typecheck` (`tsc --noEmit`), `pnpm lint` (ESLint with Next.js and TypeScript rules).
+`pnpm dev` (dev server on port 3000), `pnpm build` and `pnpm start` (production build and serve), `pnpm test` (Vitest, everything, once) and `pnpm test:watch`, `pnpm test:acceptance` (only the five acceptance tests) and `pnpm test:smoke` (everything else), `pnpm typecheck` (`tsc --noEmit`), `pnpm lint` (ESLint with Next.js and TypeScript rules).
 
 ## Field glossary
 

@@ -50,7 +50,9 @@ describe("validateListing", () => {
     expect(validateListing(cleanListing)).toEqual([]);
   });
 
-  // Replace these with your rules. Run `pnpm test:watch` and see each one fail before you make it pass.
+  // Your own tests, one or more per rule. Run `pnpm test:watch` and see each one fail before you make it pass.
+  // The acceptance tests in `*.acceptance.test.*` describe the finished product; these describe your rules.
   it.todo("flags a listing that breaks your first rule");
   it.todo("flags a listing that breaks your second rule");
+  it.todo("tells a listing nobody has checked apart from one that passed every rule");
 });
