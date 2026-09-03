@@ -1,6 +1,6 @@
 # Fanvue product engineer session: App Store listing moderation
 
-A one-hour pairing session: you implement automatic checks for App Store listings against the public Listing Requirements, with tests, while Simon watches and asks questions.
+A one-hour pairing session: you build a moderation UI where a Fanvue moderator can see every App Store listing and its status at a glance, checked against the public Listing Requirements, while Simon watches and asks questions.
 
 - [The task](#the-task)
 - [Where to work](#where-to-work)
@@ -18,9 +18,9 @@ A one-hour pairing session: you implement automatic checks for App Store listing
 
 Fanvue is a platform where creators publish content and earn from subscribers. The Fanvue App Store lets third-party developers list apps for those creators, and every listing must meet the public Listing Requirements before it goes live; today a human checks each one.
 
-You build the automatic part: implement `validateListing(listing)` in `src/lib/moderation/rules.ts` so it returns findings for the rules a program can decide from the listing data alone, with tests in `src/lib/moderation/rules.test.ts`.
+You build the tool that moderator uses: one screen that lists every app with its status (reject, needs fix, warning, clean, or not yet checked), worst first, and a listing page that says which rule fired and where. The repo gives you a bare skeleton: a plain table of apps and a plain dump of each listing, with `TODO` markers where the status, the ordering and the findings go. Both call `validateListing(listing)`, which today returns nothing. Implement the rules a program can decide from the listing data alone in `src/lib/moderation/rules.ts`, prove them with tests in `src/lib/moderation/rules.test.ts`, then build the queue the moderator needs.
 
-**Two rules with red-then-green tests wired into the queue is a complete result.** Red-then-green means you saw each test fail before the rule existed. Wired into the queue needs no UI work: the review queue and the detail page already render whatever `validateListing` returns. More rules are welcome, but depth beats breadth.
+**Done means a moderator could use it: at least two rules with tests you saw fail before they passed, every app showing a status, rejects at the top of the queue, and "No findings" told apart from "Not checked".** More rules are welcome, but a moderator who can trust two well-tested rules beats six they cannot.
 
 ## Where to work
 
@@ -28,6 +28,8 @@ You build the automatic part: implement `validateListing(listing)` in `src/lib/m
 | ---------------------------------- | -------------------------------------------------------------------------------- |
 | `src/lib/moderation/rules.ts`      | Implement `validateListing`. It returns `Issue[]`                                |
 | `src/lib/moderation/rules.test.ts` | Your tests. Two `it.todo` placeholders to replace                                |
+| `src/components/ReviewQueue.tsx`   | Skeleton of the moderator's queue. Follow the `TODO`s: status per app, worst first |
+| `src/components/FindingsList.tsx`  | Skeleton of how findings show on the listing page. Make it useful to a moderator |
 | `ASSUMPTIONS.md`                   | Anything you decided that the doc does not say                                   |
 | `docs/listing-requirements.md`     | The spec. Start with the "Common rejection reasons" table at the bottom          |
 | `docs/pricing-plans.md`            | Source of the $3.99 to $500 price range for paid plans                           |
@@ -40,7 +42,8 @@ You build the automatic part: implement `validateListing(listing)` in `src/lib/m
 - Only rules a program can decide from the listing data alone.
 - Out of scope: anything needing a human eye (image quality, originality, NSFW, interface quality, whether a description is "clear"), typos and grammar, fetching URLs.
 - Anything not explicit in the docs (word lists, limits, interpretations) is an assumption. Write it in `ASSUMPTIONS.md` and emit it as `warn`.
-- If time remains, in this order: sort the queue so rejects come first; make "No findings" look different from "Not checked"; link each finding to its anchor in the doc. UI polish is not assessed.
+- Build for the moderator. The queue is the product: can they see every app's status at a glance and clear it quickly, and does the listing page tell them what to decide? Visual polish is not assessed; whether a moderator can act on the screen is.
+- If time remains: link each finding to its anchor in the doc, filter the queue by status, or anything else you think a moderator needs. Plain HTML is fine; `@fanvue/ui` is installed if you want it.
 
 ## The hour
 
@@ -48,8 +51,8 @@ You build the automatic part: implement `validateListing(listing)` in `src/lib/m
 | --------- | ---------------------------------------------------------------------------------------------------------------- |
 | 0-10 min  | Hello, get the repo running, tour of the files                                                                   |
 | 10-20 min | You read the "Common rejection reasons" table, then say which rules you can automate and what severity each gets |
-| 20-45 min | You build: rules and tests first, UI if time remains                                                             |
-| 45-55 min | You walk through your diff as a PR, then demo as if Simon were a Fanvue app reviewer                             |
+| 20-45 min | You build: rules with tests, then the queue a moderator needs                                                    |
+| 45-55 min | You walk through your diff as a PR, then demo as if Simon were the moderator                                     |
 | 55-60 min | Share your work                                                                                                  |
 
 Simon will interrupt with questions; that is the format. Use your AI tool as much as you like. Commit before each prompt and show the diff after, so Simon can follow.
@@ -59,7 +62,8 @@ Simon will interrupt with questions; that is the format. Use your AI tool as muc
 - You classify rules as machine-checkable or human, and check the AI's claims against the doc
 - Tests seen failing before they pass
 - Types match reality: `appUrl` is nullable, prices are in minor units
-- Severities and queue order make sense for the reviewer who acts on them
+- You think about the moderator using the screen: what is at the top of the queue, what they see on a listing, what they do next
+- Severities and queue order make sense for the moderator who acts on them
 - Assumptions written down, not presented as rules
 - You explain your thinking and are honest about what is unfinished
 
