@@ -1,20 +1,13 @@
-"use client";
-
-import { Badge, Link } from "@fanvue/ui";
-import NextLink from "next/link";
+import Link from "next/link";
 
 export function Header() {
   return (
-    <header className="border-b border-border-primary">
+    <header className="border-b">
       <div className="mx-auto flex w-full max-w-6xl items-center justify-between gap-4 px-4 py-4 sm:px-6">
-        <Link asChild variant="primary">
-          <NextLink href="/" className="typography-header-heading-sm no-underline">
-            App Store moderation
-          </NextLink>
+        <Link href="/" className="font-semibold no-underline">
+          App Store moderation
         </Link>
-        <Badge variant="default" leftDot>
-          Mock API · fixtures
-        </Badge>
+        <span className="text-xs">Mock API · fixtures</span>
       </div>
     </header>
   );
