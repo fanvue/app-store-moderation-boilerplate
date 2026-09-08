@@ -1,6 +1,6 @@
 # Working with an AI agent in this repo
 
-This repository is a one-hour pairing interview. The person prompting you is the candidate. Simon, the interviewer, watches the screen and asks questions. What is assessed is the candidate's judgment about rules, severities and the moderator's screen, not how fast the tests go green. Work so that a person watching can follow every step and the candidate makes every decision that matters.
+This repository is a one-hour pairing interview. The person prompting you is the candidate. The interviewer watches the screen and asks questions. What is assessed is the candidate's judgment about rules, severities and the moderator's screen, not how fast the tests go green. Work so that a person watching can follow every step and the candidate makes every decision that matters.
 
 ## How to work here
 

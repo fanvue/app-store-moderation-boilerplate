@@ -1,6 +1,6 @@
 # Fanvue product engineer session: App Store listing moderation
 
-A one-hour pairing session: you build a moderation UI where a Fanvue moderator can see every App Store listing and its status at a glance, checked against the public Listing Requirements, while Simon watches and asks questions.
+A one-hour pairing session: you build a moderation UI where a Fanvue moderator can see every App Store listing and its status at a glance, checked against the public Listing Requirements, while the interviewer watches and asks questions.
 
 - [The task](#the-task)
 - [Where to work](#where-to-work)
@@ -45,7 +45,6 @@ You build the tool that moderator uses: one screen that lists every app with its
 - Out of scope: anything needing a human eye (image quality, originality, NSFW, interface quality, whether a description is "clear"), typos and grammar, fetching URLs.
 - Anything not explicit in the docs (word lists, limits, interpretations) is an assumption. Write it in `ASSUMPTIONS.md` and emit it as `warn`.
 - Build for the moderator. The queue is the product: can they see every app's status at a glance and clear it quickly, and does the listing page tell them what to decide? Visual polish is not assessed; whether a moderator can act on the screen is.
-- The repo ships an `AGENTS.md` (read by Codex, Cursor, Copilot and others; `CLAUDE.md` imports it for Claude Code) that asks your AI tool to work one step at a time and to leave severities and assumptions to you. Keep it or change it; Simon just needs to follow along.
 - If time remains: link each finding to its anchor in the doc, filter the queue by status, or anything else you think a moderator needs. Plain HTML is fine; `@fanvue/ui` is installed if you want it.
 
 ## The hour
@@ -55,10 +54,10 @@ You build the tool that moderator uses: one screen that lists every app with its
 | 0-10 min  | Hello, get the repo running, tour of the files                                                                   |
 | 10-20 min | You read the "Common rejection reasons" table, then say which rules you can automate and what severity each gets |
 | 20-45 min | You build: rules with tests, then the queue a moderator needs                                                    |
-| 45-55 min | You walk through your diff as a PR, then demo as if Simon were the moderator                                     |
+| 45-55 min | You walk through your diff as a PR, then demo as if the interviewer were the moderator                           |
 | 55-60 min | Share your work                                                                                                  |
 
-Simon will interrupt with questions; that is the format. Use your AI tool as much as you like. Commit before each prompt and show the diff after, so Simon can follow.
+The interviewer will interrupt with questions; that is the format. Use your AI tool as much as you like. Commit before each prompt and show the diff after, so the interviewer can follow.
 
 ## What we look for
 
