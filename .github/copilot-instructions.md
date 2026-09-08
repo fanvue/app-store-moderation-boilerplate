@@ -1,0 +1,1 @@
+Read `AGENTS.md` at the repository root and follow it. It asks you to work in one small step per turn, write each rule's test before its implementation, never edit `*.acceptance.test.*` files, and leave severities and assumptions for the candidate to decide.
