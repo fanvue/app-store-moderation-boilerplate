@@ -45,6 +45,7 @@ You build the tool that moderator uses: one screen that lists every app with its
 - Out of scope: anything needing a human eye (image quality, originality, NSFW, interface quality, whether a description is "clear"), typos and grammar, fetching URLs.
 - Anything not explicit in the docs (word lists, limits, interpretations) is an assumption. Write it in `ASSUMPTIONS.md` and emit it as `warn`.
 - Build for the moderator. The queue is the product: can they see every app's status at a glance and clear it quickly, and does the listing page tell them what to decide? Visual polish is not assessed; whether a moderator can act on the screen is.
+- The repo ships an `AGENTS.md` (read by Codex, Cursor, Copilot and others; `CLAUDE.md` imports it for Claude Code) that asks your AI tool to work one step at a time and to leave severities and assumptions to you. Keep it or change it; Simon just needs to follow along.
 - If time remains: link each finding to its anchor in the doc, filter the queue by status, or anything else you think a moderator needs. Plain HTML is fine; `@fanvue/ui` is installed if you want it.
 
 ## The hour
