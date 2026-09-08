@@ -1,0 +1,3 @@
+# Vendored snapshots of public pages, kept byte for byte so they can be diffed against the live copies.
+docs/
+pnpm-lock.yaml
