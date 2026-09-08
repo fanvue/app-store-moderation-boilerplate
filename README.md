@@ -3,8 +3,8 @@
 A one-hour pairing session: you build a moderation UI where a Fanvue moderator can see every App Store listing and its status at a glance, checked against the public Listing Requirements, while the interviewer watches and asks questions.
 
 - [The task](#the-task)
-- [Where to work](#where-to-work)
 - [Rules of the game](#rules-of-the-game)
+- [Where to work](#where-to-work)
 - [The hour](#the-hour)
 - [What we look for](#what-we-look-for)
 - [Share your work](#share-your-work)
@@ -16,36 +16,52 @@ A one-hour pairing session: you build a moderation UI where a Fanvue moderator c
 
 ## The task
 
-Fanvue is a platform where creators publish content and earn from subscribers. The Fanvue App Store lets third-party developers list apps for those creators, and every listing must meet the public Listing Requirements before it goes live; today a human checks each one.
+Fanvue is a platform where creators publish content and earn from subscribers. The Fanvue App Store lets third-party developers list apps for those creators. Every listing must meet the public Listing Requirements before it goes live, and today a human moderator checks each one by hand.
 
-You build the tool that moderator uses: one screen that lists every app with its status (reject, needs fix, warning, clean, or not yet checked), worst first, and a listing page that says which rule fired and where. The repo gives you a bare skeleton with `TODO` markers, and five acceptance tests that describe the finished product and fail today. Run `pnpm test` to see them. They pass when the queue shows a status per app in the right order, and when `validateListing` in `src/lib/moderation/rules.ts` fires at least two rules on the sample listings using only what a program can decide from the listing data. You also write your own test for each rule in `src/lib/moderation/rules.test.ts`.
+You build the tool that moderator uses. The queue lists every listing with its status, worst first. The listing page says which rule a listing breaks and on which field.
 
-**Done means `pnpm test` is green and a moderator could use the queue: the acceptance tests pass, each rule has a test you saw fail before it passed, and "No findings" is told apart from "Not checked".** More rules are welcome, but a moderator who can trust two well-tested rules beats six they cannot.
+### How the pieces fit
 
-## Where to work
+`validateListing` in `src/lib/moderation/rules.ts` takes one listing and returns its findings. Each finding names the rule the listing breaks and how serious it is. The queue at `/` calls that function for every listing and shows the results, worst first, using the helpers in `src/lib/moderation/queue.ts`.
 
-| File                               | What to do there                                                                 |
-| ---------------------------------- | -------------------------------------------------------------------------------- |
-| `*.acceptance.test.*` (3 files)    | The product contract. Red today. Do not edit them; make them pass                |
-| `src/lib/moderation/rules.ts`      | Implement `validateListing`. It returns `Issue[]`                                |
-| `src/lib/moderation/rules.test.ts` | Your own tests per rule. Three `it.todo` placeholders to replace                 |
-| `src/lib/moderation/queue.ts`      | Stub of `worstSeverity` and `sortQueue`. The queue acceptance test describes them |
-| `src/components/ReviewQueue.tsx`   | Skeleton of the moderator's queue. Its acceptance test says what it must show    |
-| `src/components/FindingsList.tsx`  | Skeleton of how findings show on the listing page. Make it useful to a moderator |
-| `ASSUMPTIONS.md`                   | Anything you decided that the doc does not say                                   |
-| `docs/listing-requirements.md`     | The spec. Start with the "Common rejection reasons" table at the bottom          |
-| `docs/pricing-plans.md`            | Source of the $3.99 to $500 price range for paid plans                           |
-| `src/lib/fanvue/types.ts`          | The listing shape. The [Field glossary](#field-glossary) explains the image and price fields |
-| `fixtures/listings.ts`             | The sample listings the UI shows                                                 |
+The three `*.acceptance.test.*` files are ours. They already call `validateListing` and render the queue, they fail today, and you never edit them. `src/lib/moderation/rules.test.ts` is yours: one test per rule you write. Those are the only tests you write.
+
+Build in this order:
+
+1. Read the "Common rejection reasons" table at the bottom of `docs/listing-requirements.md`. Pick a rule a program can check.
+2. Write a test for it in `rules.test.ts`. Run `pnpm test:watch` and watch it fail.
+3. Implement it in `rules.ts` and watch it pass. Repeat for a second rule.
+4. Fill in `queue.ts` and `src/components/ReviewQueue.tsx` until the queue shows a status per listing, worst first.
+
+**Done means `pnpm test` is green and a moderator could use the queue: the acceptance tests pass untouched, each rule has a test you saw fail before it passed, and "No findings" is told apart from "Not checked".** More rules are welcome, but a moderator who can trust two well-tested rules beats six they cannot.
 
 ## Rules of the game
 
-- Each `Issue` cites a rule number from the doc (for example `2.3`) and a severity: `reject`, `fix` or `warn`. You decide what each severity means and must be able to justify it.
+- Every finding is an `Issue` (see `src/lib/moderation/rules.ts`): the rule it breaks, a severity, and a message.
+- **Rule numbers are section headings.** A rule is one numbered section of `docs/listing-requirements.md`. The heading `2.3 Listing quality` is rule `2.3`, so a finding about it sets `rule: "2.3"`. The "Common rejection reasons" table at the bottom of the doc has a Section column linking to each heading.
+- **Severity says who acts next.** `reject`: the listing cannot go live as it is. `fix`: the developer can correct it without anyone's judgement. `warn`: a human should look. Pick one per rule and be ready to say why. Argue for a different scheme if you prefer one, and write it down.
 - Only rules a program can decide from the listing data alone.
 - Out of scope: anything needing a human eye (image quality, originality, NSFW, interface quality, whether a description is "clear"), typos and grammar, fetching URLs.
-- Anything not explicit in the docs (word lists, limits, interpretations) is an assumption. Write it in `ASSUMPTIONS.md` and emit it as `warn`.
+- Anything not explicit in the docs (word lists, limits, interpretations) is an assumption. Write it in `ASSUMPTIONS.md`, and default any finding that rests on one to `warn`.
 - Build for the moderator. The queue is the product: can they see every app's status at a glance and clear it quickly, and does the listing page tell them what to decide? Visual polish is not assessed; whether a moderator can act on the screen is.
 - If time remains: link each finding to its anchor in the doc, filter the queue by status, or anything else you think a moderator needs. Plain HTML is fine; `@fanvue/ui` is installed if you want it.
+
+## Where to work
+
+Four files to edit:
+
+| File                               | What to do there                                                  |
+| ---------------------------------- | ----------------------------------------------------------------- |
+| `src/lib/moderation/rules.ts`      | Implement `validateListing`. It returns `Issue[]`                 |
+| `src/lib/moderation/rules.test.ts` | Your own tests, one per rule                                      |
+| `src/components/ReviewQueue.tsx`   | The moderator's queue. Its acceptance test says what it must show |
+| `ASSUMPTIONS.md`                   | Anything you decided that the doc does not say                    |
+
+Two more are in play: `src/lib/moderation/queue.ts` holds stubs of `worstSeverity` and `sortQueue` that the queue needs, and `src/components/FindingsList.tsx` is how findings show on the listing page. No test covers `FindingsList`, so make it useful and show it in the demo.
+
+Never edit the three `*.acceptance.test.*` files. They are red today and they define done.
+
+To read: `docs/listing-requirements.md` is the spec, and the "Common rejection reasons" table at the bottom is where to start. `docs/pricing-plans.md` is the source of the $3.99 to $500 price range for paid plans. `src/lib/fanvue/types.ts` is the listing shape, explained by the [Field glossary](#field-glossary). `fixtures/listings.ts` holds the sample listings that both the UI and the acceptance tests use.
 
 ## The hour
 
@@ -98,13 +114,13 @@ pnpm dev
 
 ## Field glossary
 
-| Field                  | Meaning                                                  |
-| ---------------------- | -------------------------------------------------------- |
-| `previewImageUrls`     | The listing's screenshots                                |
-| `galleryImageUrls`     | Thumbnails beside the hero. Not counted as screenshots   |
-| `heroImageUrl`         | Banner at the top of the listing                         |
-| `logoUrl`              | The app icon                                             |
-| `pricingPlans[].price` | Minor currency units (cents for USD)                     |
+| Field                  | Meaning                                                |
+| ---------------------- | ------------------------------------------------------ |
+| `previewImageUrls`     | The listing's screenshots                              |
+| `galleryImageUrls`     | Thumbnails beside the hero. Not counted as screenshots |
+| `heroImageUrl`         | Banner at the top of the listing                       |
+| `logoUrl`              | The app icon                                           |
+| `pricingPlans[].price` | Minor currency units (cents for USD)                   |
 
 ## Project map and mock API
 
