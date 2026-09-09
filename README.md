@@ -68,7 +68,7 @@ The rest is reading. `docs/listing-requirements.md` is the spec, and the [Common
 | Time      | What happens                                                                                                                             |
 | --------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
 | 0-8 min   | Hello, get the repo running, quick tour                                                                                                  |
-| 8-16 min  | You read the [Common rejection reasons](docs/listing-requirements.md#common-rejection-reasons) table and answer the four questions below |
+| 8-16 min  | You read the [Common rejection reasons](docs/listing-requirements.md#common-rejection-reasons) table and pick the rules you will build  |
 | 16-46 min | You build: first rule with its test, then the queue, then a second rule                                                                  |
 | 46-54 min | You walk through your diff as if it were a pull request, then demo with the interviewer as the moderator                                 |
 | 54-60 min | Hand the code over: private repo or zip, three lines on what is done, then your questions for us                                         |
