@@ -73,19 +73,6 @@ The rest is reading. `docs/listing-requirements.md` is the spec, and the [Common
 | 46-54 min | You walk through your diff as if it were a pull request, then demo with the interviewer as the moderator                                 |
 | 54-60 min | Hand the code over: private repo or zip, three lines on what is done, then your questions for us                                         |
 
-In the 8-16 slot, four bullets is the whole ask. Write them in `ASSUMPTIONS.md` or a scratch file:
-
-1. Two rows you could decide in code from the listing data alone, with the section number for each.
-2. One row you would refuse to automate, and the word in it that makes it a human's job.
-3. A severity for each of your two.
-4. One thing you had to decide that the doc does not actually say.
-
-Read the table, then open only the sections you picked. Three bullets when time is up is fine. Your two picks are not a commitment; change your mind while you build.
-
-The interviewer will interrupt with questions throughout; that is the format, not a sign something is wrong. You do not need to plan for them. Spend your time on the task and answer as you go, including from a half-built screen.
-
-Use your AI tool as much as you like. Commit before each prompt and show the diff after, so the interviewer can follow. Two rules and a queue a moderator could use is the bar, and unfinished work is normal.
-
 ## What we look for
 
 - You separate the rules a program can check from the ones that need a human.
