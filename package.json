@@ -13,8 +13,8 @@
     "start": "next start",
     "test": "vitest run",
     "test:watch": "vitest",
-    "test:acceptance": "vitest run acceptance",
-    "test:smoke": "vitest run --exclude \"**/*.acceptance.test.*\"",
+    "test:spec": "vitest run spec",
+    "test:smoke": "vitest run --exclude \"**/spec.test.*\"",
     "typecheck": "tsc --noEmit",
     "lint": "eslint ."
   },
