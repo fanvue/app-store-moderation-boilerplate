@@ -1,5 +1,7 @@
 # Assumptions
 
-One bullet for every check that the docs do not state in so many words (a number, a word list, a URL pattern): the rule it supports, what you assumed, and why. Replace the example below.
+The rules doc leaves things open on purpose: how close two descriptions have to be before they are the same listing, which currencies a quoted price can be in, whether a withdrawn plan can hold up an approval, how far to chase a disguised platform name.
 
-- **Rule 2.1** placeholder words: lorem, ipsum, TODO. The doc says remove placeholder content but lists no words. (Example, replace with your own.)
+One bullet each for the ones you decided: the rule it belongs to, what you chose, and why. Two minutes at the end of the session is enough.
+
+- **Rule 4.2** two descriptions count as the same listing above N% overlap of three-word runs, because ... (example, replace with your own)

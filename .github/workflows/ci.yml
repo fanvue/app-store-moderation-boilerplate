@@ -19,6 +19,6 @@ jobs:
       - run: npm run typecheck
       - run: npm run lint
       - run: npm run test:smoke
-      - name: Acceptance tests must be red on the boilerplate
-        run: if npm run test:acceptance; then echo 'acceptance tests passed on the unmodified boilerplate' && exit 1; fi
+      - name: The spec must be red on the boilerplate
+        run: if npm run test:spec; then echo 'the spec passed on the unmodified boilerplate' && exit 1; fi
       - run: npm run build

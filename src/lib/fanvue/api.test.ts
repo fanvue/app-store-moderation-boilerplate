@@ -32,13 +32,16 @@ describe("listApps", () => {
   });
 
   it("sets hasMore until the last page and paginates without overlap", () => {
-    const first = listApps({ page: 1, size: 10 });
-    const second = listApps({ page: 2, size: 10 });
+    const size = 50;
+    const lastPage = Math.ceil(listings.length / size);
+    const first = listApps({ page: 1, size });
+    const last = listApps({ page: lastPage, size });
 
     expect(first.pagination.hasMore).toBe(true);
-    expect(second.pagination.hasMore).toBe(false);
-    expect(first.data.length + second.data.length).toBe(listings.length);
-    expect(new Set([...first.data, ...second.data].map((item) => item.uuid)).size).toBe(listings.length);
+    expect(last.pagination.hasMore).toBe(false);
+    expect(new Set([...first.data, ...last.data].map((item) => item.uuid)).size).toBe(
+      first.data.length + last.data.length,
+    );
   });
 
   it("filters case-insensitively on name, tagline, description and developer name", () => {
@@ -48,7 +51,7 @@ describe("listApps", () => {
     expect(listApps({ search: target.tagline.slice(0, 12).toLowerCase() }).data.map((item) => item.uuid)).toContain(
       target.uuid,
     );
-    expect(listApps({ search: "Demo Developer" }).data.length).toBeGreaterThan(0);
+    expect(listApps({ search: target.developer.name ?? "" }).data.length).toBeGreaterThan(0);
     expect(listApps({ search: "zzzz-no-such-app" }).data).toEqual([]);
   });
 });

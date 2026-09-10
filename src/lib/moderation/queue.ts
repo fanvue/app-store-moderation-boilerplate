@@ -6,7 +6,8 @@ export const SEVERITY_ORDER: readonly Severity[] = ["reject", "fix", "warn"];
 /**
  * The worst severity among a listing's findings, or `null` when there are none.
  *
- * TODO: implement. `src/lib/moderation/queue.acceptance.test.ts` says what is expected.
+ * TODO: implement, and decide what `null` means on the queue: a listing every
+ * rule passed, or one nothing has checked yet.
  */
 export function worstSeverity(issues: Issue[]): Severity | null {
   void issues;
