@@ -4,7 +4,6 @@
   "private": true,
   "description": "Interview boilerplate: a Fanvue App Store listing moderation tool (Next.js 15, @fanvue/ui, fixtures-backed mock of the public /v0/apps API)",
   "license": "MIT",
-  "packageManager": "pnpm@10.30.1",
   "engines": {
     "node": ">=24"
   },
@@ -42,17 +41,5 @@
     "tailwindcss": "^4.1.11",
     "typescript": "^5.9.3",
     "vitest": "^4.1.11"
-  },
-  "pnpm": {
-    "peerDependencyRules": {
-      "ignoreMissing": [
-        "motion",
-        "react-day-picker",
-        "recharts"
-      ]
-    },
-    "ignoredBuiltDependencies": [
-      "unrs-resolver"
-    ]
   }
 }

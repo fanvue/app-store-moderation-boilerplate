@@ -10,17 +10,15 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: pnpm/action-setup@v4
-
       - uses: actions/setup-node@v4
         with:
           node-version-file: .nvmrc
-          cache: pnpm
+          cache: npm
 
-      - run: pnpm install --frozen-lockfile
-      - run: pnpm typecheck
-      - run: pnpm lint
-      - run: pnpm test:smoke
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm run lint
+      - run: npm run test:smoke
       - name: Acceptance tests must be red on the boilerplate
-        run: if pnpm test:acceptance; then echo 'acceptance tests passed on the unmodified boilerplate' && exit 1; fi
-      - run: pnpm build
+        run: if npm run test:acceptance; then echo 'acceptance tests passed on the unmodified boilerplate' && exit 1; fi
+      - run: npm run build

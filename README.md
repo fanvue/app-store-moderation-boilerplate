@@ -59,13 +59,6 @@ Five files to edit:
 | 5 min | Demo |
 | 5 min | Questions for us |
 
-## What we look for
-
-- You separate the rules a program can check from the ones that need a human.
-- You check what the AI tells you against the doc rather than taking its word for it.
-- The acceptance tests pass without being edited, and each of your own tests pass.
-- The queue order and the severities make sense to the moderator who has to act on them.
-
 ## Hand your code over
 
 Make a private repo from this template with the green "Use this template" button, choose Private, and invite the GitHub user `simonstaton`. You can also email a git diff to simon.staton@fanvue.com.

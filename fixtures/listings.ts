@@ -2,7 +2,7 @@ import type { AppListing } from "@/lib/fanvue/types";
 
 /**
  * Synthetic App Store listings served by the mock API. Every entry is typed as
- * `AppListing`, so `pnpm typecheck` is the schema check: a typo in a field name
+ * `AppListing`, so `npm run typecheck` is the schema check: a typo in a field name
  * or an invalid enum value fails the build. All apps, developers and URLs are
  * made up; images are placeholders.
  */
