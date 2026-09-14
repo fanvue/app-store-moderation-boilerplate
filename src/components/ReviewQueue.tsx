@@ -1,32 +1,28 @@
 import Link from "next/link";
 
-import type { AppListing } from "@/lib/fanvue/types";
-import type { Issue } from "@/lib/moderation/rules";
-
-export type ReviewQueueRow = {
-  listing: AppListing;
-  issues: Issue[];
-};
+import type { Review } from "@/lib/moderation/rules";
 
 /**
- * The moderator's queue. Deliberately bare: this screen is the product you build.
- * `ReviewQueue.acceptance.test.tsx` says what it must show; `src/lib/moderation/queue.ts` has the helpers to fill in.
+ * The moderator's queue, and the product you are building. Deliberately bare:
+ * it renders every listing in submission order and calls anything with no
+ * findings "Not checked".
  *
  * TODO (yours):
- * - Status per app. Today every row says "Not checked" because `validateListing`
- *   returns nothing. Once rules exist, a clean listing also returns `[]`, so
- *   decide how to tell "No findings" apart from "Not checked".
- * - Order. Worst first: reject, then fix, then warn, then clean.
- * - Whatever else a moderator needs to clear the queue quickly: counts by
- *   severity, which rule fired, a filter by status.
+ * - Status per app. A listing with no findings today is one nothing has
+ *   checked; once your rules run it might also be one that passed everything.
+ *   Decide how a moderator tells those apart.
+ * - Order. Worst first — `src/lib/moderation/queue.ts` has the stubs.
+ * - Whatever else someone clearing a backlog of two thousand needs: counts by
+ *   severity, which rule fired, filters, and a table this long that still
+ *   feels quick.
  *
  * Plain HTML is fine. `@fanvue/ui` is installed if you want it.
  */
-export function ReviewQueue({ rows }: { rows: ReviewQueueRow[] }) {
+export function ReviewQueue({ rows }: { rows: Review[] }) {
   return (
     <section className="flex flex-col gap-4">
       <h1 className="text-2xl font-semibold">Review queue</h1>
-      <p>{rows.length} listings. Open one to see the full listing.</p>
+      <p>{rows.length} listings awaiting review. Open one to see the full listing.</p>
 
       <table className="w-full border-collapse text-left text-sm">
         <thead>

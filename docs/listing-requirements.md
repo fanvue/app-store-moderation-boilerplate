@@ -1,110 +1,100 @@
-<!-- Snapshot taken 2026-09-02 of https://api.fanvue.com/docs/app-store/listing-requirements (canonical URL).
-     Vendored so the task works offline, and cut down so it can be read inside the hour: whole sections are
-     removed, a couple of the sections that remain have had bullets removed, and the table at the top has been
-     rewritten to point only at sections that remain. Section numbers follow the live page, so there are gaps.
-     The wording of what remains is unchanged, apart from cross-references to sections that are not here.
-     If this file and the live page differ, the live page wins. -->
+<!-- Internal moderation edition. Section numbers follow the public Listing Requirements page
+     (https://api.fanvue.com/docs/app-store/listing-requirements), so there are gaps: only the sections
+     the review tool is expected to cover are reproduced in full. Wording here is written for reviewers,
+     which is why it is more specific than the public page. If this file and the public page differ for a
+     developer-facing question, the public page wins. -->
 
-# App Store Listing Requirements
+# App Store Listing Requirements — moderation edition
 
-What your app needs to be approved for the Fanvue App Store. Each rule is numbered so review feedback can cite the exact section.
+What an app needs to be approved for the Fanvue App Store, written for the people doing the reviewing. Each rule is numbered so review feedback can cite the exact section.
 
 ## Common rejection reasons
 
-The problems we see most often, and the rule that governs each one. Start here.
+The problems we see most often, and the rule that governs each one.
 
-| Reason                                                                                                          | Section                                                            |
-| --------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------ |
-| Fewer than two previews / previews don't show the app                                                           | [2.3](#23-listing-quality)                                        |
-| Invalid / missing / non-owned URL                                                                               | [6.2](#62-valid-owned-url)                                        |
-| Explicit, adult, or suggestive imagery in the listing or marketing (including swimwear, underwear, or lingerie) | [1.1](#11-safe-for-work-listings)                                 |
-| Off-platform payments / external checkout                                                                       | [3.1](#31-fanvue-payments-only), [3.2](#32-no-external-checkout)  |
-| Price outside the supported range                                                                               | [3.3](#33-pricing)                                                |
-| Template / copycat / AI-slop                                                                                    | [4.2](#42-originality)                                            |
-| Links to / promotion of other platforms                                                                         | [1.6](#16-no-promotion-of-other-platforms)                        |
-| Not really an app (funnel / landing page / single-creator)                                                      | [4.1](#41-useful-apps)                                            |
+| Reason                                                          | Section                                        |
+| --------------------------------------------------------------- | ---------------------------------------------- |
+| Placeholder or draft copy left in the listing                    | [2.1](#21-production-ready)                    |
+| Fewer than two screenshots of the product                        | [2.3](#23-listing-quality)                     |
+| Pricing in the copy that does not match the plans                | [3.3](#33-pricing-accuracy)                    |
+| A price outside the supported range                              | [3.3](#33-pricing-accuracy)                    |
+| Naming or promoting another creator platform                     | [1.6](#16-no-promotion-of-other-platforms)     |
+| A description that is a near-copy of another listing             | [4.2](#42-originality)                         |
+| An app URL we cannot accept                                      | [6.2](#62-valid-owned-url)                     |
+
+Everything in that table is decidable from the listing data alone. [What we do not automate](#what-we-do-not-automate) covers the rest.
 
 ***
 
 ## 1. Safety & content
 
-### 1.1 Safe-for-work listings
-
-Everything a user can see before they open your app must be safe for work: app name, description, logo, screenshots and preview images, and promotional material.
-
-**The bar.** Your listing must sit comfortably in a mainstream, general-audience app store. If you'd hesitate to show a preview to a broad audience, leave it out.
-
-Not permitted on any listing surface, including for apps aimed at adult creators:
-
-* Nudity or partial nudity
-* Lingerie, underwear, swimwear, or bikinis
-* Sexualised AI-generated imagery
-
-**Use instead.** Show the product doing its job: the real interface, dashboards, workflows, and outputs. Where a person appears, they must be fully clothed in everyday attire and shown in a non-sexual context.
-
-This rule governs the listing surface only.
-
 ### 1.6 No promotion of other platforms
 
-Your app shouldn't encourage creators or fans to leave Fanvue for another creator platform. This includes links, onboarding flows, or promotional messaging directing users to competing services.
+A listing must not name or promote a competing creator platform. As of this revision the platforms we treat as competing are:
+
+**OnlyFans, Fansly, Patreon, LoyalFans, ManyVids, JustForFans.**
+
+The rule covers every piece of copy a user can read before opening the app: the app name, tagline, description, description title and body, and the listing highlights.
+
+**Disguised mentions count.** Developers know we look for these names, so reviewers regularly see them written to defeat a search: digits standing in for letters (`0nlyFans`, `Fans1y`), separators inserted between the words (`only.fans`, `Only Fans`, `only-fans`), or unusual casing. A name written any of these ways is still that name.
 
 ## 2. Performance & completeness
 
 ### 2.1 Production ready
 
-Before submitting, remove placeholder content, empty pages and dead links, fix known bugs, and make sure the app works reliably. Apps with obvious crashes or incomplete functionality won't be approved until these issues are resolved.
+The listing copy must be finished. A listing still carrying draft or placeholder content is not ready for review, and the markers we see are consistent: `lorem`, `ipsum`, `TODO`, `TBD`, `FIXME`, `coming soon`, `placeholder`, `sample text`.
+
+Empty listing highlights are the other common sign of a listing submitted half-written.
 
 ### 2.3 Listing quality
 
-Your listing should accurately represent your product.
-
-**Required:**
-
-* English language
-* Accurate description
-* Accurate pricing
-* At least two screenshots showing the product in use
+**At least two screenshots of the product.** The screenshots are `previewImageUrls`. Two entries pointing at the same image are one screenshot, not two: reviewers see the same file padded out to hit the minimum. `heroImageUrl` is branding and `galleryImageUrls` are thumbnails; neither counts towards the minimum.
 
 ## 3. Business & payments
 
-### 3.1 Fanvue payments only
+### 3.3 Pricing accuracy
 
-All paid functionality must use Fanvue Payments. External payment providers aren't permitted.
+Pricing shown to a creator must be true, and it must be inside the range Fanvue supports. Three things go wrong:
 
-### 3.2 No external checkout
-
-Don't send creators to another website to pay for features. All purchases should happen through Fanvue.
-
-### 3.3 Pricing
-
-Paid plans are priced through Fanvue within the platform's supported range. Today this means setting up paid plans at one or more tiers; on-demand credit purchasing may follow later. Pricing and plan details must be accurate, with no hidden charges.
+1. **A plan priced outside the supported range.** The range, and the plan lifecycle, are in [Pricing Plans](pricing-plans.md).
+2. **A price in the copy that no plan matches.** If the listing copy quotes a price, a plan must actually cost that. Copy quotes prices in whatever form the developer felt like: `$9.99 a month`, `9.99 USD`, `just $12/mo`, `from $5`.
+3. **A free tier that does not exist.** Copy advertising a free plan (`free plan`, `free tier`, `free forever`, `free to start`) needs a free plan on the listing.
 
 ## 4. Design & quality
 
-### 4.1 Useful apps
-
-Your app should solve a genuine problem for creators.
-
-Examples we'd approve: analytics, CRM, automation, AI tools, scheduling, creator productivity.
-
-Examples we wouldn't: landing pages, sales funnels, collections of links, single-creator websites, placeholder applications.
-
 ### 4.2 Originality
 
-Build something original. We won't approve obvious template exports, generic AI-generated products with minimal refinement, or near-identical copies of existing apps.
+We will not approve the same listing twice under two names. This is the failure mode: a developer exports a template, changes the app name and the developer handle, and submits the result as a new app. The giveaway is the description.
+
+So originality is decided **across the store, not within one listing**: a listing's description is compared against every other listing's. Compare on `description` and `descriptionBody`, ignoring case, punctuation and the app's own name — the name is the one thing they always change.
+
+Two listings that match each other are both flagged; a human decides which of them was first. How close two descriptions have to be before they count as the same listing is a judgement, and reviewers should be able to say what they settled on and why.
 
 ### 4.5 How we apply this bar
 
-An isolated listing typo or a minor spacing nit on an otherwise solid app is **accept-with-fixes**: we approve and ask you to fix it, rather than rejecting. Repeated or pervasive quality problems (overflowing layouts, template sameness, multiple typos, AI-slop imagery) are a **rejection**.
-
-## 5. Privacy & security
-
-### 5.3 Security & authentication
-
-* All endpoints, web pages, and OAuth redirect URIs must use HTTPS with valid TLS certificates and no browser warnings.
+An isolated listing typo or a minor spacing nit on an otherwise solid app is **accept-with-fixes**: we approve and ask the developer to fix it, rather than rejecting. Repeated or pervasive quality problems are a **rejection**.
 
 ## 6. Integration & listing
 
 ### 6.2 Valid, owned URL
 
-Your app must be hosted on a working domain that you own. Placeholder sites, parked domains, and Fanvue domains aren't accepted.
+`appUrl` is where the app actually runs, and it must be a working address on a domain the developer owns. We reject a listing when the URL:
+
+* is missing
+* is not `https` — an app served over plain HTTP is not approvable
+* has no host, or has an IP address for a host
+* is on `fanvue.com` or any subdomain of it — the app must not be hosted on our domain
+* is on a domain-parking or site-builder placeholder host. The ones we see: `parkingcrew.net`, `sedoparking.com`, `afternic.com`, `godaddysites.com`, `wixsite.com`
+
+A domain that merely has our name inside it is fine. Plenty of legitimate tools are called something-fanvue-something, and third-party developers are allowed to say what their app is for.
+
+***
+
+## What we do not automate
+
+These rules are in the public requirements and are decided by a person looking at the listing. Nothing in the listing data settles them, so the tool should not pretend to:
+
+* **1.1 Safe-for-work listings.** Everything a user can see before opening the app must be safe for work. Judged from the images.
+* **2.3 Accuracy and language.** Whether the description is honest about what the app does, and whether the copy is English.
+* **4.1 Useful apps.** Whether the app solves a real problem for creators, rather than being a funnel, a link collection or a single-creator site.
+* **4.2 Originality, beyond near-duplicates.** Template exports and AI slop that do not share copy with anything already in the store.
