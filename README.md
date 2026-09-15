@@ -2,16 +2,18 @@
 
 A pairing session. You build the screen a Fanvue moderator uses to check App Store listings against the [Listing Requirements](docs/listing-requirements.md), and the interviewer watches and asks questions as you go.
 
-## Before the call
+## Getting Started
+
+Fork [https://github.com/fanvue/app-store-moderation-boilerplate](https://github.com/fanvue/app-store-moderation-boilerplate) and add `simonstaton` as a contributor, do all your working in a pull-request.
 
 ```bash
-git clone https://github.com/fanvue/app-store-moderation-boilerplate.git
+git clone https://github.com/yourname/app-store-moderation-boilerplate.git
 cd app-store-moderation-boilerplate
 npm i
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) and check you see a queue of listings. Doing this beforehand means we spend the session on the work rather than on npm.
+Open [http://localhost:3000](http://localhost:3000) and check you see a queue of listings.
 
 ## The task
 
@@ -59,11 +61,3 @@ It says which listings are in trouble and under which rule. It says nothing abou
 | [`ASSUMPTIONS.md`](ASSUMPTIONS.md) | Anything you decided that the docs do not say |
 
 Everything else — the fixtures, the mock API, the types — is there to be read, not changed.
-
-## How the session runs
-
-Intros and your questions about Fanvue first, then the task, then a look at what you built. We will interrupt with questions while you work: why that rule first, why that severity, where this validation should run when it is 2,000 listings and not 11, what you would do about the rules a program cannot decide.
-
-## Hand your code over
-
-Make a private repo from this template with the green "Use this template" button, choose Private, and invite the GitHub user `simonstaton`. You can also email a git diff to simon.staton@fanvue.com.

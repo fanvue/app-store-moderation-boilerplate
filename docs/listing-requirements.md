@@ -14,11 +14,11 @@ The problems we see most often, and the rule that governs each one.
 
 | Reason                                                          | Section                                        |
 | --------------------------------------------------------------- | ---------------------------------------------- |
+| Naming or promoting another creator platform                     | [1.6](#16-no-promotion-of-other-platforms)     |
 | Placeholder or draft copy left in the listing                    | [2.1](#21-production-ready)                    |
 | Fewer than two screenshots of the product                        | [2.3](#23-listing-quality)                     |
 | Pricing in the copy that does not match the plans                | [3.3](#33-pricing-accuracy)                    |
 | A price outside the supported range                              | [3.3](#33-pricing-accuracy)                    |
-| Naming or promoting another creator platform                     | [1.6](#16-no-promotion-of-other-platforms)     |
 | A description that is a near-copy of another listing             | [4.2](#42-originality)                         |
 | An app URL we cannot accept                                      | [6.2](#62-valid-owned-url)                     |
 
