@@ -29,6 +29,11 @@ const EXPECTED: Record<string, string[]> = {
   "Studio Ledger": ["3.3"],
   "Creator Copilot": ["4.2"],
   "Copilot for Creators": ["4.2"],
+  // The cases the doc states explicitly. Read the sentence in the doc before the fixture.
+  "Superfan Rewards": [], // 1.6: "the only fans who tip" is grammar, not a platform
+  "Ledger Lite": [], // 4.2: same developer, shared boilerplate, not a resubmission
+  "Ledger Pro": [], // 4.2: the other half of the pair
+  "Studio Euro": ["3.3"], // 3.3: a EUR plan cannot be checked against a USD range
 };
 
 const reviews = reviewListings(namedListings);

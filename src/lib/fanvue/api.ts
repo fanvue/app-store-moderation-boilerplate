@@ -1,5 +1,7 @@
+import { experiences } from "@fixtures/experiences";
 import { listings } from "@fixtures/listings";
 
+import type { FanExperience } from "./experiences";
 import type { AppListing, AppListingSummary, PaginatedAppListings } from "./types";
 
 /**
@@ -73,6 +75,18 @@ export function getAllApps(): AppListing[] {
     page += 1;
   }
   return all;
+}
+
+/**
+ * Every live experience, newest first.
+ *
+ * The public API has no cross-creator list: `GET /experiences?appUuid=` is
+ * scoped to one app and the creator whose token is calling. A review tool
+ * reads an internal feed instead, and this stands in for it. In production the
+ * feed is event-driven: a publish or an update arrives as it happens.
+ */
+export function getAllExperiences(): FanExperience[] {
+  return [...experiences].sort((a, b) => b.publishedAt.localeCompare(a.publishedAt));
 }
 
 /** Projects a full listing down to exactly the fields `GET /apps` returns per item. */
