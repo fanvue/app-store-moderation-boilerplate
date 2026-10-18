@@ -90,3 +90,17 @@ export type FanExperience = {
   activeSubscribers: number;
   reports: ExperienceReport[];
 };
+
+/**
+ * What the platform sends when an experience is published or changed. An
+ * update carries the whole experience as it now is. Delivery is at least once,
+ * so the same `id` can arrive more than once.
+ */
+export type ExperienceEvent = {
+  /** Unique per event, stable across redeliveries. */
+  id: string;
+  type: "experience.published" | "experience.updated";
+  /** ISO 8601. */
+  occurredAt: string;
+  experience: FanExperience;
+};

@@ -17,6 +17,6 @@ One line per rule: the severity you chose and why, citing 4.5 where it applies.
 
 ## Everything else
 
-One bullet each for the things you decided: the rule it belongs to, what you chose, and why. Include where `reviewListings` runs in production and what it reads and writes.
+One bullet each for the things you decided: the rule it belongs to, what you chose, and why. Include what triggers the review job, your schema and why, and what the job re-reviews when one listing changes.
 
 - **Rule 4.2** two descriptions count as the same listing above N% overlap of three-word runs, because ... (example, replace with your own)

@@ -26,11 +26,12 @@ export type ModeratorDecision = {
 };
 
 /**
- * Stores a decision. Where it goes is yours to choose, but it must still be
- * there after `npm run dev` restarts, and two moderators deciding the same
- * listing at the same time must not silently overwrite each other.
+ * Stores a decision in Postgres (a migration in `db/migrations/` is yours to
+ * write). Two moderators deciding the same listing at the same time must not
+ * silently overwrite each other: the route in `app/api/moderation/decisions`
+ * answers `409` when that happens, and the storage is where it is detected.
  *
- * TODO: implement. Say in `ASSUMPTIONS.md` what happens on a conflict.
+ * TODO: implement. Say in `ASSUMPTIONS.md` what counts as a conflict.
  */
 export async function recordDecision(decision: ModeratorDecision): Promise<void> {
   void decision;
