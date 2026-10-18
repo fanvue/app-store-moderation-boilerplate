@@ -40,8 +40,19 @@ export async function migrate(client: Queryable, dir = MIGRATIONS_DIR): Promise<
     const sql = await readFile(path.join(dir, name), "utf8");
     await client.query("begin");
     try {
+      // Claim the name before running the file. Two migrators starting at
+      // once (the web server and `npm run db:migrate`) both see it unapplied;
+      // the second insert waits on the first's transaction and then finds
+      // the row taken, so only one of them runs the SQL.
+      const claim = await client.query(
+        "insert into schema_migrations (name) values ($1) on conflict (name) do nothing returning name",
+        [name],
+      );
+      if (claim.rows.length === 0) {
+        await client.query("rollback");
+        continue;
+      }
       await (client.exec ? client.exec(sql) : client.query(sql));
-      await client.query("insert into schema_migrations (name) values ($1)", [name]);
       await client.query("commit");
     } catch (error) {
       await client.query("rollback");
@@ -51,6 +62,9 @@ export async function migrate(client: Queryable, dir = MIGRATIONS_DIR): Promise<
   }
   return newlyApplied;
 }
+
+/** Thrown when the database never answered. A failing migration throws a plain Error naming the file. */
+export class DatabaseUnreachableError extends Error {}
 
 /**
  * Runs {@link migrate} against the pool, waiting for the database to come up
@@ -74,7 +88,7 @@ export async function migrateWithRetry({ attempts = 60, delayMs = 500 } = {}): P
     }
     await new Promise((resolve) => setTimeout(resolve, delayMs));
   }
-  throw new Error(
+  throw new DatabaseUnreachableError(
     `could not reach Postgres after ${attempts} attempts: ${lastError instanceof Error ? lastError.message : String(lastError)}`,
   );
 }

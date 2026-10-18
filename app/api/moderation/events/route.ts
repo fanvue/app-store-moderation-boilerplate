@@ -8,11 +8,14 @@ export const dynamic = "force-dynamic";
  * in `fixtures/experience-events.ts` here, one at a time, the way the
  * platform would.
  *
- * Two things the platform guarantees, and one it does not:
+ * Three kinds of event: `experience.published`, `experience.updated` and
+ * `experience.reported`. Each carries the whole experience as it is at that
+ * moment, reports included, not a diff. Two things the platform guarantees,
+ * and one it does not:
  *
  * - Every event has an `id`, and events for one experience arrive in order.
- * - An `experience.updated` event carries the whole experience as it now is,
- *   not a diff.
+ * - A report arrives as its own event. E6 is decided from reports, so a
+ *   review that only runs on publish never sees it.
  * - Delivery is at least once. The same event can arrive twice. The replay
  *   sends one twice on purpose.
  *

@@ -4,7 +4,7 @@ Part two of the exercise. Experiences are live before anyone looks at them, fans
 
 ## Where the review runs
 
-Experiences arrive one at a time, by event, and each update re-triggers review. The listing queue reviews a batch on request. Does `reviewExperiences` run on the event, on a schedule, on page load, or somewhere else? What does E5 need that a single event does not carry?
+Experiences arrive one at a time, by event: published, updated, reported. Each one re-triggers review. The listing queue reviews a batch from a job. Does `reviewExperiences` run inside the events route, in something the route enqueues to, on a schedule, or somewhere else? What does E5 need that a single event does not carry? `getAllExperiences()` in the mock API is a one-off backfill of what was live before the events started flowing; does the design need it, and what happens to findings from the backfill when the first event for that experience arrives?
 
 ## What happens without a person
 

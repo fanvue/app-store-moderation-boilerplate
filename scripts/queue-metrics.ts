@@ -14,7 +14,7 @@
 import { generatedListings, GENERATED_LISTING_COUNT, listings } from "@fixtures/listings";
 
 import { reviewListings } from "@/lib/moderation/rules";
-import { worstSeverity } from "@/lib/moderation/queue";
+import { SEVERITY_ORDER } from "@/lib/moderation/queue";
 
 const EXPECTED_GENERATED: Record<string, (index: number) => boolean> = {
   "1.6": (i) => i % 31 === 0,
@@ -67,6 +67,12 @@ for (const rule of rules) {
 console.log(`\nfindings by severity: reject ${findingsPerSeverity.reject}, fix ${findingsPerSeverity.fix}, warn ${findingsPerSeverity.warn}`);
 console.log(`listings with no findings: ${clean} of ${reviews.length}`);
 
-const worst = reviews.map(({ issues }) => worstSeverity(issues));
-const needsPerson = worst.filter((severity) => severity === "reject" || severity === "warn").length;
-console.log(`listings a person has to look at (reject or warn as worst): ${needsPerson}`);
+const byWorst: Record<string, number> = { reject: 0, fix: 0, warn: 0, none: 0 };
+for (const { issues } of reviews) {
+  const worst = SEVERITY_ORDER.find((severity) => issues.some((issue) => issue.severity === severity)) ?? "none";
+  byWorst[worst] = (byWorst[worst] ?? 0) + 1;
+}
+console.log(
+  `listings by worst severity: reject ${byWorst.reject}, fix ${byWorst.fix}, warn ${byWorst.warn}, none ${byWorst.none}`,
+);
+console.log("which of those a person has to look at depends on the severities you chose in ASSUMPTIONS.md");

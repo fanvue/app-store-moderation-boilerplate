@@ -39,7 +39,7 @@ Open the queue and look at the footer first. The page you are looking at fetches
 
 1. Read [`docs/experience-requirements.md`](docs/experience-requirements.md). Six rules again, same shape as the listing rules, and a different vocabulary for what a finding leads to.
 2. Write the design in [`DESIGN.md`](DESIGN.md). It has the headings. Where the review runs, what it may do with nobody watching, what happens to fans who paid, how reports and findings share a queue, and what the record shows afterwards.
-3. If there is time, make [`app/api/moderation/events/route.ts`](app/api/moderation/events/route.ts) accept the event sequence that `npm run replay-events` sends, and implement one rule in [`src/lib/moderation/experiences/rules.ts`](src/lib/moderation/experiences/rules.ts). One event in the sequence is delivered twice; one experience is published clean and then updated into a violation.
+3. If there is time, make [`app/api/moderation/events/route.ts`](app/api/moderation/events/route.ts) accept the event sequence that `npm run replay-events` sends, and implement one rule in [`src/lib/moderation/experiences/rules.ts`](src/lib/moderation/experiences/rules.ts). The sequence is described at the top of [`fixtures/experience-events.ts`](fixtures/experience-events.ts): one event is delivered twice, one experience is published clean and then updated into a violation, two updates change nothing, and the reports that put an experience over the E6 bar arrive weeks after it was published.
 
 The design is the deliverable for part two. A rule with no design is worth less than a design with no rule.
 
@@ -71,7 +71,7 @@ The fixtures are here so the repo works offline. The mock API behaves like the r
 - The live API allows 200 calls a minute. The mock does not enforce that, but at that rate fetching everything takes about ten minutes. Nothing that runs on a page load can do it, and nothing that runs on a page load should.
 - `GET /apps` is in submission order and cannot filter by severity or rule. Worst-first across pages has to come from an index you keep.
 - Editing a listing or a pricing plan starts a new submission, and a webhook says so. Listings are reviewed again after every edit. Rule 4.2 compares listings to each other, so one edit can change another listing's findings.
-- Experiences arrive as events, at least once each, in order per experience. An update carries the whole experience.
+- Experiences arrive as events: published, updated and reported, at least once each, in order per experience. Every event carries the whole experience as it then is. A review that only runs on publish never sees a report. `getAllExperiences()` in the mock API stands in for a one-off backfill of what is already live; it is not how new experiences arrive.
 - Your storage is Postgres. `src/lib/db/client.ts` is the pool, `db/migrations/` is the schema, and `0001_review_runs.sql` is the worked example. `npm run review` and `npm run dev` are different processes, so anything the job writes that the page should read goes through the database, not memory.
 - The requirements doc is on revision 3, and revision 4 changes a word list and a price ceiling next quarter. Decisions made under revision 3 stay made.
 

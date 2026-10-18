@@ -92,14 +92,15 @@ export type FanExperience = {
 };
 
 /**
- * What the platform sends when an experience is published or changed. An
- * update carries the whole experience as it now is. Delivery is at least once,
- * so the same `id` can arrive more than once.
+ * What the platform sends about an experience: when it is published, when
+ * it changes, and when a fan reports it. Every event carries the whole
+ * experience as it is at that moment, reports included, not a diff.
+ * Delivery is at least once, so the same `id` can arrive more than once.
  */
 export type ExperienceEvent = {
   /** Unique per event, stable across redeliveries. */
   id: string;
-  type: "experience.published" | "experience.updated";
+  type: "experience.published" | "experience.updated" | "experience.reported";
   /** ISO 8601. */
   occurredAt: string;
   experience: FanExperience;

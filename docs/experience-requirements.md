@@ -64,6 +64,8 @@ The rule covers the title, the description and every action's title and descript
 
 Naming a payment app in passing is still naming it. We would rather a person looked at ten innocent mentions than missed one that was not.
 
+**Match whole words.** `Wise` is a payment company and also the end of `otherwise`; `crypto` is not in `cryptic`. The over-matching we accept is a whole word used innocently, not a fragment of a longer one, because under this rule a finding can lead to a takedown.
+
 ## E4 Pricing accuracy
 
 What the copy says a fan pays has to be what the fan is charged. Three things go wrong:
