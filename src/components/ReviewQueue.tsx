@@ -2,9 +2,16 @@ import Link from "next/link";
 
 import type { Review } from "@/lib/moderation/rules";
 
+function findingsLabel(count: number): string {
+  if (count === 0) return "No findings";
+  return count === 1 ? "1 finding" : `${count} findings`;
+}
+
 /**
- * The moderator's queue. It renders every listing in submission order and
- * labels any listing with no findings "Not checked".
+ * The moderator's queue. It renders every listing in submission order. Every
+ * row here went through the rules, so a listing with no findings says "No
+ * findings". Once reviews come from the store, some listings will not be
+ * reviewed yet. Show those differently from listings that passed.
  *
  * TODO (yours): see the README's "What done looks like". Sorting across pages
  * comes from the store (`getQueuePage` in `src/lib/moderation/store.ts`), not
@@ -39,7 +46,7 @@ export function ReviewQueue({ rows }: { rows: Review[] }) {
               <td className="py-2 pr-4">{listing.developer.handle ? `@${listing.developer.handle}` : "-"}</td>
               <td className="py-2 pr-4">{listing.pricingType}</td>
               <td className="py-2 pr-4">{listing.previewImageUrls.length}</td>
-              <td className="py-2 pr-4">{issues.length === 0 ? "Not checked" : `${issues.length} findings`}</td>
+              <td className="py-2 pr-4">{findingsLabel(issues.length)}</td>
             </tr>
           ))}
         </tbody>
