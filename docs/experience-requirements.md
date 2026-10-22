@@ -1,6 +1,6 @@
 # Fan Experience Requirements: moderation edition
 
-What a fan experience must meet to stay live. For [`DESIGN.md`](../DESIGN.md), read the first two sections and skim the rule headings.
+What a fan experience must meet to stay live.
 
 ## How experiences differ from listings
 

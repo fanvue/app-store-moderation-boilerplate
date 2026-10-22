@@ -30,16 +30,14 @@ There are 2,015 listings in the queue. The page you just opened fetches and revi
 **Part one: listings**
 
 1. Read [`docs/listing-requirements.md`](docs/listing-requirements.md). Six rules can be checked from the listing data alone. A person decides the rest.
-2. In [`ASSUMPTIONS.md`](ASSUMPTIONS.md), choose a severity for each of the six rules and give a reason. We will ask about two of them.
-3. Implement rules in [`src/lib/moderation/rules.ts`](src/lib/moderation/rules.ts). Rule 2.3 is already done as a worked example.
-4. Move the review out of the page. Write the review job in [`review-job.ts`](src/lib/moderation/review-job.ts) and the store in [`store.ts`](src/lib/moderation/store.ts). Then make [`app/page.tsx`](app/page.tsx) read one page of stored reviews. This is the core of part one. The constraints are in [How this runs in production](docs/production.md).
-5. Optional: add moderator decisions in [`decisions.ts`](src/lib/moderation/decisions.ts).
+2. Implement rules in [`src/lib/moderation/rules.ts`](src/lib/moderation/rules.ts). Rule 2.3 is already done as a worked example.
+3. Move the review out of the page. Write the review job in [`review-job.ts`](src/lib/moderation/review-job.ts) and the store in [`store.ts`](src/lib/moderation/store.ts). Then make [`app/page.tsx`](app/page.tsx) read one page of stored reviews. This is the core of part one. The constraints are in [How this runs in production](docs/production.md).
+4. Optional: add moderator decisions in [`decisions.ts`](src/lib/moderation/decisions.ts).
 
 **Part two: experiences**
 
 1. Read [`docs/experience-requirements.md`](docs/experience-requirements.md). It has six more rules. It also asks what a finding does to a live experience.
-2. Write your design in [`DESIGN.md`](DESIGN.md). This is the deliverable for part two.
-3. Optional: make [the events route](app/api/moderation/events/route.ts) accept the events that `npm run replay-events` sends ([the cases it contains](docs/production.md#experiences)). Optional: implement one rule in [`experiences/rules.ts`](src/lib/moderation/experiences/rules.ts).
+2. Optional: make [the events route](app/api/moderation/events/route.ts) accept the events that `npm run replay-events` sends ([the cases it contains](docs/production.md#experiences)). Optional: implement one rule in [`experiences/rules.ts`](src/lib/moderation/experiences/rules.ts).
 
 You choose where to start. You will not finish everything. We care more about what you choose to do, and why, than how much you finish.
 
@@ -85,7 +83,6 @@ The specs say what must be flagged, and under which rule. They do not say how to
 - **Every finding is an `Issue`** (see [`rules.ts`](src/lib/moderation/rules.ts)): a rule number, a severity, a code, a message, and optionally the field at fault.
 - **Rule numbers are section headings.** `2.3 Listing quality` is rule `2.3`, so a finding about it sets `rule: "2.3"`. Experience rules are numbered like `E3`.
 - **Severity is your call.** `reject`: the listing cannot go live as it is. `fix`: the developer can correct it without anyone's judgement. `warn`: a person should look. Pick one per rule and be ready to say why.
-- **Write down what the docs do not say** in [`ASSUMPTIONS.md`](ASSUMPTIONS.md).
 - **Deterministic only.** No network, no LLM and no external API. The rules may use only the listing or experience data.
 - **Images are placeholders.** Every image URL in the fixtures points at a placeholder host, so the repo works offline. Image content is never a signal here.
 - **Use your AI tool as much as you like.** Read the diff before you keep it. [`AGENTS.md`](AGENTS.md) tells the tool how to behave in this repo. You may change or delete it, and we will ask why.
@@ -118,7 +115,5 @@ The session ends with a conversation about these questions. You can think about 
 | [`src/components/ListingDetail.tsx`](src/components/ListingDetail.tsx), [`FindingsList.tsx`](src/components/FindingsList.tsx) | One listing and its findings, rendered by the listing page                                          |
 | [`app/api/moderation/`](app/api/moderation)                                                                                   | The decisions route and the events route that `npm run replay-events` posts to                      |
 | [`src/lib/moderation/experiences/rules.ts`](src/lib/moderation/experiences/rules.ts)                                          | The experience rules. `reviewExperiences` is called by the experience spec                          |
-| [`ASSUMPTIONS.md`](ASSUMPTIONS.md)                                                                                            | Your notes on what the docs leave open                                                              |
-| [`DESIGN.md`](DESIGN.md)                                                                                                      | The part two design, with its headings                                                              |
 
 Everything else (the fixtures, the mock API, the database plumbing, the types, the two spec files) is there to be read, not changed.
