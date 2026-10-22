@@ -32,6 +32,8 @@ After approval, an update adds an action, changes an action's title or descripti
 
 After approval, an update changes the cover (`imageUrl`). Nothing has scanned the new cover.
 
+Cover edits go back to review, so a reviewer will still look at the new cover. What this rule adds is a flag in the queue, because no automatic check looks at it. It flags the change even while `imageUrl` is still in `pendingReviewFields`. A cover changed before the first approval is not a finding, because the first review sees it.
+
 ### E3 Live content Fanvue cannot see
 
 - After approval, an update changes the type to `LIVE_STREAM` or `LIVE_AUDIO`.
