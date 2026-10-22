@@ -33,7 +33,7 @@ export type ExperienceAction = {
   /** Shown to the fan in the payment dialog. */
   title: string;
   description: string | null;
-  /** USD cents, 300..50000. */
+  /** USD cents. E4 in `docs/experience-requirements.md` requires 300 to 50000. */
   priceCents: number;
   status: "active" | "withdrawn";
 };
@@ -77,7 +77,7 @@ export type FanExperience = {
   externalUrl: string | null;
   /** Never listed on the profile; reachable by share link only. Always true for HIDDEN. */
   hidden: boolean;
-  /** USD cents, 300..50000. `null` unless `accessMode` is PAID. */
+  /** USD cents; E4 requires 300 to 50000. `null` unless `accessMode` is PAID. */
   priceCents: number | null;
   /** With `priceCents`, bills the fan monthly instead of once. */
   priceRecurring: boolean;

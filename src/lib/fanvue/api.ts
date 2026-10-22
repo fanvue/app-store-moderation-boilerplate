@@ -94,8 +94,8 @@ export async function getApp(uuid: string): Promise<AppListing | null> {
  * The public API has no cross-creator list: `GET /experiences?appUuid=` is
  * scoped to one app and the creator whose token is calling. A review tool
  * reads an internal feed instead, and this stands in for a backfill of it. In
- * production the feed is event-driven: a publish or an update arrives as it
- * happens, which is what `app/api/moderation/events` receives.
+ * production the feed is event-driven: a publish, an update or a report arrives
+ * as it happens, which is what `app/api/moderation/events` receives.
  */
 export async function getAllExperiences(): Promise<FanExperience[]> {
   await roundTrip();

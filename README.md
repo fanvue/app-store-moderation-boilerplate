@@ -75,14 +75,14 @@ Two thousand listings, one moderator, ten minutes. The queue is the product.
 
 ## Part two: experiences
 
-1. **Read [`docs/experience-requirements.md`](docs/experience-requirements.md).** Six rules, same shape as the listing rules, with a different vocabulary for what a finding leads to. For the design you only need its first two sections; the rules are for coding one.
+1. **Read [`docs/experience-requirements.md`](docs/experience-requirements.md).** Six rules, same shape as the listing rules, with a different vocabulary for what a finding leads to. For the design, read its first two sections and skim the rule headings; the rule details are for coding one.
 2. **Write [`DESIGN.md`](DESIGN.md). This is the deliverable.** It has the headings: where the review runs, what it may do with nobody watching, what happens to fans who paid, how reports and findings share a queue, and what the record shows afterwards.
 3. **If there is time, code.** Make [`app/api/moderation/events/route.ts`](app/api/moderation/events/route.ts) accept the events `npm run replay-events` sends, and implement one rule in [`experiences/rules.ts`](src/lib/moderation/experiences/rules.ts). The sequence is in [`fixtures/experience-events.ts`](fixtures/experience-events.ts). Each experience is first published as it was on the day, with no reports, and later changes and reports arrive as their own events. These cases are there on purpose:
    - **Private Q&A** is published clean, then updated to add the line that breaks [E3](docs/experience-requirements.md#e3-no-off-platform-payment). The first review finds nothing; the second must.
    - **The second Tip Jar Royale** arrives four minutes after the first, same app and profile, new id. [E5](docs/experience-requirements.md#e5-no-duplicates-on-a-profile) cannot be decided from either event alone.
-   - **Spin the Wheel and Trivia Tuesday** each get an update that changes nothing a rule looks at. It should not produce a second finding or notification.
+   - **Spin the Wheel and Trivia Tuesday** each get an update that changes nothing a rule looks at. It should not count as a change: nothing new to store, notify or re-queue.
    - **`evt-0009`**, the second Tip Jar Royale's publish, is delivered twice.
-   - **Late Night Stream** crosses the [E6](docs/experience-requirements.md#e6-report-escalation) bar from reports that arrive five weeks after it went live. A review that only runs on publish never sees them.
+   - **Late Night Stream** crosses the [E6](docs/experience-requirements.md#e6-report-escalation) bar from reports that arrive about six weeks after it went live. A review that only runs on publish never sees them.
 
 ## What we will ask
 

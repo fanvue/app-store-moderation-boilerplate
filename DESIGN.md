@@ -4,11 +4,11 @@ Part two of the exercise. The rules and the three actions are in [`docs/experien
 
 ## Where the review runs
 
-Experiences arrive one at a time, by event: published, updated, reported. Each one re-triggers review. The listing queue, by contrast, reviews a batch from a job.
+Experiences arrive one at a time, by event: published, updated, reported. Each one may change what the review finds. The listing queue, by contrast, reviews a batch from a job.
 
 - Does [`reviewExperiences`](src/lib/moderation/experiences/rules.ts) run inside the [events route](app/api/moderation/events/route.ts), in something the route enqueues to, on a schedule, or somewhere else?
 - What does [E5](docs/experience-requirements.md#e5-no-duplicates-on-a-profile) need that a single event does not carry?
-- [`getAllExperiences()`](src/lib/fanvue/api.ts) in the mock API is a one-off backfill of what was live before the events started flowing. Does the design need it? What happens to findings from the backfill when the first event for that experience arrives?
+- [`getAllExperiences()`](src/lib/fanvue/api.ts) in the mock API stands in for a one-off backfill, and returns every experience as it is now: the end state of the replay. Does the design need it? What happens when an event arrives that is older than what the backfill saw?
 
 ## What happens without a person
 

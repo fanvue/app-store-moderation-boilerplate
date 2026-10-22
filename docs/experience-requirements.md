@@ -2,7 +2,7 @@
 
 **Revision 1, October 2026.** What a fan experience has to meet to stay live on a creator's profile. Rules are numbered so a takedown notice can cite the section.
 
-For [`DESIGN.md`](../DESIGN.md) you need the first two sections, [How experiences differ](#how-experiences-differ-from-listings) and [What a finding may do](#what-a-finding-may-do). [The rules](#the-rules) matter when you code one.
+For [`DESIGN.md`](../DESIGN.md), read the first two sections, [How experiences differ](#how-experiences-differ-from-listings) and [What a finding may do](#what-a-finding-may-do), and skim the rule headings. The rule details matter when you code one.
 
 ## How experiences differ from listings
 
@@ -12,12 +12,14 @@ An app with a creator's `write:experience` grant publishes straight onto that cr
 - **Fans have paid.** A paid experience can have fans holding live monthly access ([`activeSubscribers`](../src/lib/fanvue/experiences.ts)). The platform blocks an unpublish until that paid impact is acknowledged, so a takedown has to decide first what happens to those fans.
 - **Fans report.** A report is a second stream of signal, with a different trust level from a rule. The queue has to carry both.
 
+Fans can buy actions inside an experience whatever its access mode. A `HIDDEN` experience is never listed on the profile and is reachable by share link only.
+
 ## What a finding may do
 
 For each rule, decide which of these a finding leads to, and why:
 
 - **Take down now.** Unpublish without waiting for a person. If fans hold live recurring access, someone has to acknowledge it and decide whether they are refunded.
-- **Hide pending review.** Remove it from the profile and chat cards, keep it reachable for fans who already paid, and put it in front of a person.
+- **Hide pending review.** A moderation hold, not the app's own `hidden` flag. Remove it from the creator's profile and anywhere it is promoted, keep it reachable for fans who already paid, and put it in front of a person.
 - **Notify the developer.** Tell the app what is wrong and give it a window to fix it.
 
 An experience finding is still an `Issue` with a severity of `reject`, `fix` or `warn`, because one queue carries listings and experiences and the spec checks it. Whether those words still mean anything here, and how each maps onto the three actions, goes in [`DESIGN.md`](../DESIGN.md).
@@ -39,14 +41,14 @@ A host matches a listed domain when it is that domain or a subdomain of it.
 
 ### E2 Finished copy
 
-A finding when the title or description contains a draft marker: `lorem`, `ipsum`, `TODO`, `TBD`, `FIXME`, `coming soon`, `placeholder`, `sample text`.
+A finding when the title or description contains a draft marker, ignoring case: `lorem`, `ipsum`, `TODO`, `TBD`, `FIXME`, `coming soon`, `placeholder`, `sample text`.
 
 ### E3 No off-platform payment
 
 A finding when the title, the description, or any action's title or description steers a fan to pay somewhere else:
 
 - naming a payment app or rail: `Venmo`, `CashApp`, `PayPal`, `Zelle`, `Revolut`, `Wise`, `crypto`, `BTC`, `USDT`
-- an instruction to pay elsewhere: `cheaper on my site`, `DM me to pay`, `send it directly`, `pay me outside`
+- an instruction to pay elsewhere, ignoring case: `cheaper on my site`, `DM me to pay`, `send it directly`, `pay me outside`
 
 This is the most serious thing a rule can find in an experience's own copy, because it takes the fan outside every protection the platform gives them. A mention in passing still counts. Match whole words only: `Wise` is not in `otherwise`, and `crypto` is not in `cryptic`.
 
@@ -54,8 +56,8 @@ This is the most serious thing a rule can find in an experience's own copy, beca
 
 What the copy says a fan pays has to be what the fan is charged.
 
-1. **Range.** The access price and every action are USD cents between 300 and 50000.
-2. **A quoted price must match.** A price in the title or description, such as `$7 a month`, `just $5`, `5 USD` or `$12/mo`, must equal the access price or an action's price. Only `PAID` experiences have an access price; on the others `priceCents` is `null`.
+1. **Range.** The access price, when there is one, and every action are USD cents from 300 to 50000 inclusive. The platform checks this at publish; prices can be re-set later from the creator's side, so the tool checks again.
+2. **A quoted price must match.** A price in the experience's title or description, such as `$7 a month`, `just $5`, `5 USD` or `$12/mo`, must equal the access price or an action's price. Only `PAID` experiences have an access price; on the others `priceCents` is `null`.
 3. **The billing period must match.** Only the access price can recur (`priceRecurring`), and only monthly. Actions always charge once.
    - `a month`, `monthly`, `/mo` or `per month` must match a monthly charge.
    - `one-off` or `once` must match a one-time charge.
