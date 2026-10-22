@@ -18,7 +18,18 @@ The rules below catch what review misses.
 
 ## How changes reach the tool
 
-For this exercise, assume Fanvue sends an event each time an experience is published, changes or is reported. Each event carries the whole experience at that moment. [How this runs in production](production.md#experiences) has the details.
+For this exercise, assume Fanvue sends an event each time an experience is published, changes or is reported. Each event arrives at least once, in order per experience, and carries the whole experience at that moment. [`getAllExperiences()`](../src/lib/fanvue/api.ts) is a one-off backfill that returns the final state of the replay below.
+
+`npm run replay-events` posts the events in [`fixtures/experience-events.ts`](../fixtures/experience-events.ts) to your dev server. Each experience is published. Most are then approved and changed or reported. The replay contains these cases:
+
+- Photography 101 lowers its monthly price while 38 fans are subscribed.
+- Film Club raises its monthly price while 14 fans are subscribed ([E5](#e5-price-raised-on-paying-fans)). Zine Club raises its price with nobody subscribed.
+- Private Q&A adds a paid action after approval ([E1](#e1-unreviewed-change-to-what-fans-buy)). That update is delivered twice.
+- Mystery Box changes what its action sells, then a fan reports it as illegal ([E1](#e1-unreviewed-change-to-what-fans-buy), [E4](#e4-report-escalation)).
+- Backstage Pass changes its cover after approval ([E2](#e2-changed-cover-not-scanned)). Lesson Pack changes its cover before it is approved.
+- After Hours becomes a live stream after approval. Gym Live is a live stream served from an external site ([E3](#e3-live-content-fanvue-cannot-see)).
+- Late Night Stream is reported by three fans in two days ([E4](#e4-report-escalation)). Trivia Tuesday has four reports from three fans, but never from three different fans within 7 days. One of its reports is delivered twice.
+- Spin the Wheel gets an update that changes nothing a rule reads. That is not a change: nothing new to store, notify or re-queue.
 
 ## The rules
 
