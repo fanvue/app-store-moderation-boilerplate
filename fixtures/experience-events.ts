@@ -69,7 +69,14 @@ const history = (published: FanExperience, steps: Step[]): Draft[] => {
   return drafts;
 };
 
-const approve = (at: string): Step => ({ at, change: { reviewStatus: "approved" } });
+/**
+ * A reviewer approves the experience. Fans can only pay once it is approved, so
+ * a published experience has no paying fans and `paidImpact` arrives here.
+ */
+const approve = (at: string, paidImpact?: FanExperience["paidImpact"]): Step => ({
+  at,
+  change: { reviewStatus: "approved", ...(paidImpact && { paidImpact }) },
+});
 
 const lenswork = { uuid: "7c1e4b2a-0d3f-4e8b-9a6c-2f5d8e1b3c47", name: "Lenswork" };
 
@@ -87,10 +94,12 @@ const drafts: Draft[] = [
       accessMode: "PAID",
       priceCents: 700,
       priceRecurring: true,
-      paidImpact: { activeSubscriptionCount: 38, oneTimePurchaseCount: 0 },
       publishedAt: "2026-09-14T10:02:00Z",
     }),
-    [approve("2026-09-14T15:30:00Z"), { at: "2026-10-02T09:00:00Z", change: { priceCents: 600 } }],
+    [
+      approve("2026-09-14T15:30:00Z", { activeSubscriptionCount: 38, oneTimePurchaseCount: 0 }),
+      { at: "2026-10-02T09:00:00Z", change: { priceCents: 600 } },
+    ],
   ),
 
   // Monthly price raised while fans are subscribed: E5.
@@ -106,10 +115,12 @@ const drafts: Draft[] = [
       accessMode: "PAID",
       priceCents: 500,
       priceRecurring: true,
-      paidImpact: { activeSubscriptionCount: 14, oneTimePurchaseCount: 0 },
       publishedAt: "2026-09-03T18:00:00Z",
     }),
-    [approve("2026-09-04T09:10:00Z"), { at: "2026-10-05T20:15:00Z", change: { priceCents: 1200 } }],
+    [
+      approve("2026-09-04T09:10:00Z", { activeSubscriptionCount: 14, oneTimePurchaseCount: 0 }),
+      { at: "2026-10-05T20:15:00Z", change: { priceCents: 1200 } },
+    ],
   ),
 
   // Monthly price raised with no subscribers yet: fine.
@@ -140,11 +151,10 @@ const drafts: Draft[] = [
       description: "Ask me anything, answered on video within 48 hours.",
       accessMode: "PAID",
       priceCents: 1000,
-      paidImpact: { activeSubscriptionCount: 0, oneTimePurchaseCount: 9 },
       publishedAt: "2026-09-10T14:20:00Z",
     }),
     [
-      approve("2026-09-10T17:45:00Z"),
+      approve("2026-09-10T17:45:00Z", { activeSubscriptionCount: 0, oneTimePurchaseCount: 9 }),
       {
         at: "2026-10-12T22:05:00Z",
         change: {
@@ -216,11 +226,10 @@ const drafts: Draft[] = [
       accessMode: "PAID",
       priceCents: 1500,
       priceRecurring: true,
-      paidImpact: { activeSubscriptionCount: 12, oneTimePurchaseCount: 0 },
       publishedAt: "2026-09-05T11:00:00Z",
     }),
     [
-      approve("2026-09-05T16:20:00Z"),
+      approve("2026-09-05T16:20:00Z", { activeSubscriptionCount: 12, oneTimePurchaseCount: 0 }),
       {
         at: "2026-10-10T21:30:00Z",
         change: {
@@ -234,7 +243,7 @@ const drafts: Draft[] = [
   // Cover changed before the first approval: the first review sees it, so fine.
   ...history(
     experience({
-      uuid: "e5e6f708-192a-43b4-c5d6-e7f8091a2b3c",
+      uuid: "e5e6f708-192a-43b4-85d6-e7f8091a2b3c",
       externalExperienceId: "lesson-pack-1",
       app: lenswork,
       creator: { handle: "ines" },
@@ -291,11 +300,10 @@ const drafts: Draft[] = [
       accessMode: "PAID",
       priceCents: 2500,
       priceRecurring: true,
-      paidImpact: { activeSubscriptionCount: 61, oneTimePurchaseCount: 0 },
       publishedAt: "2026-09-01T23:00:00Z",
     }),
     [
-      approve("2026-09-02T10:00:00Z"),
+      approve("2026-09-02T10:00:00Z", { activeSubscriptionCount: 61, oneTimePurchaseCount: 0 }),
       {
         at: "2026-10-11T01:12:00Z",
         report: {

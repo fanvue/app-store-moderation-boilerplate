@@ -1,6 +1,7 @@
 /**
- * Fan experience types. There is one experience per app, creator and
+ * Fan experience types. There is one experience per creator and
  * `externalExperienceId`. Publishing the same id again updates it in place.
+ * Each experience also has its own `uuid`.
  */
 
 export type ExperienceAccessMode = "FREE" | "SUBSCRIPTION" | "PAID" | "HIDDEN";
