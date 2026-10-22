@@ -53,7 +53,7 @@ npm run test:spec     # both specs. They fail today
 npm run test:spec:listings     # just the listing spec
 npm run test:spec:experiences  # just the experience spec
 npm run test:watch    # your own tests, as you write them
-npm run metrics       # how many findings each rule makes over the whole queue
+npm run metrics       # how many listings each rule flags, out of all 2,015
 npm run review        # the review job, once you have written it
 npm run replay-events # posts the experience events to your dev server
 npm run db:query -- "select * from review_runs"   # look inside the database
@@ -61,7 +61,7 @@ npm run db:query -- "select * from review_runs"   # look inside the database
 
 The specs say what must be flagged, and under which rule. They do not say how to detect it, how serious it is, or what a moderator should see. **Do not edit them.** If you think one is wrong, say so and we will talk about it.
 
-`npm run metrics` shows how many listings each rule flags, and how many the test data was built to break. If a rule flags far more, it is flagging listings it should not. The generated listings have no real duplicates, so every [4.2](docs/listing-requirements.md#42-originality) match among them is a false positive.
+`npm run metrics` runs your rules over all 2,015 listings, not just the 15 in the spec. Use it to spot a rule that flags too much. Each rule's count appears next to the expected count. Rule [4.2](docs/listing-requirements.md#42-originality) has no expected count: any 4.2 match among the generated listings is a mistake.
 
 **The queue is the product.** Two thousand listings, one moderator, ten minutes. The queue is done when:
 
