@@ -1,5 +1,5 @@
 import type { ExperienceEvent } from "@/lib/fanvue/experiences";
-import { reviewExperiences } from "@/lib/moderation/experiences/rules";
+import { reviewEvents } from "@/lib/moderation/experiences/rules";
 
 export const dynamic = "force-dynamic";
 
@@ -16,6 +16,6 @@ export const dynamic = "force-dynamic";
 export async function POST(request: Request) {
   const event = (await request.json()) as ExperienceEvent;
   void event;
-  void reviewExperiences;
+  void reviewEvents;
   return Response.json({ message: "not implemented" }, { status: 501 });
 }

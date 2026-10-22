@@ -3,37 +3,36 @@
  *
  *   npm run test:spec:experiences
  *
- * Each row is a hand-written experience in `fixtures/named-experiences.ts`,
- * keyed by creator handle and the app's own id, and the rules that must flag
- * it. An empty list means no findings.
+ * Replays the event history in `fixtures/experience-events.ts`. Each row is an
+ * experience, keyed by creator handle and the app's own id, and the rules that
+ * must flag it. An empty list means no findings.
  */
 import { describe, expect, it } from "vitest";
 
-import { namedExperiences } from "@fixtures/experiences";
+import { experienceEvents } from "@fixtures/experience-events";
 
-import { reviewExperiences } from "./rules";
+import { experienceKey, reviewEvents } from "./rules";
 
 const EXPECTED: Record<string, string[]> = {
-  "mira/course-photography-101": [],
-  "jax/wheel-v2": [],
-  "noor/trivia-weekly": [], // one SPAM report is below the E6 bar
-  "theo/backstage-pass": ["E1"],
-  "ines/lesson-pack-1": ["E2"],
-  "lena/private-qa": ["E3"],
-  "sam/film-club": ["E4"],
-  "mira/tip-jar-royale": ["E5"],
-  "mira/tip-jar-royale-2": ["E5"],
-  "rocco/late-night": ["E6"],
-  "vee/mystery-box": ["E6"],
+  "mira/course-photography-101": [], // price lowered for paying fans
+  "sam/film-club": ["E5"],
+  "kit/zine-club": [], // price raised, but nobody has paid yet
+  "lena/private-qa": ["E1"],
+  "vee/mystery-box": ["E1", "E4"],
+  "theo/backstage-pass": ["E2"],
+  "ines/lesson-pack-1": [], // cover changed before the first approval
+  "dex/after-hours": ["E3"],
+  "nico/gym-live": ["E3"],
+  "rocco/late-night": ["E4"],
+  "noor/trivia-weekly": [], // one fan twice, and the rest more than 7 days apart
+  "jax/wheel-v2": [], // an update that changes nothing a rule reads
 };
 
-const reviews = reviewExperiences(namedExperiences);
+const reviews = reviewEvents(experienceEvents);
 
 const reviewFor = (key: string) => {
-  const review = reviews.find(
-    ({ experience }) => `${experience.creator.handle}/${experience.externalExperienceId}` === key,
-  );
-  if (!review) throw new Error(`no experience ${key} in fixtures/named-experiences.ts`);
+  const review = reviews.find(({ experience }) => experienceKey(experience) === key);
+  if (!review) throw new Error(`no review for ${key}`);
   return review;
 };
 
@@ -53,5 +52,11 @@ describe("experience moderation spec", () => {
         expect(issue.code.trim().length, `code on ${experience.title}`).toBeGreaterThan(0);
       }
     }
+  });
+
+  it("delivering every event twice changes nothing", () => {
+    const twice = experienceEvents.flatMap((event) => [event, structuredClone(event)]);
+
+    expect(reviewEvents(twice)).toEqual(reviews);
   });
 });

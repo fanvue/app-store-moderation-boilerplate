@@ -24,12 +24,16 @@ The mock API behaves like the live one in these ways.
 
 ## Experiences
 
-Experiences arrive as events: published, updated and reported. Each arrives at least once, in order per experience. Every event carries the whole experience at that moment, so a review that only runs on publish never sees a report. [`getAllExperiences()`](../src/lib/fanvue/api.ts) is a one-off backfill that returns the final state of the replay below.
+Fanvue does not send these events today. For this exercise, assume it does.
 
-`npm run replay-events` posts the events in [`fixtures/experience-events.ts`](../fixtures/experience-events.ts) to your dev server. Each experience's first event is its original publish, without reports. The replay contains these cases:
+Events arrive for each publish, change and report. Each arrives at least once, in order per experience. Every event carries the whole experience at that moment. [`getAllExperiences()`](../src/lib/fanvue/api.ts) is a one-off backfill that returns the final state of the replay below.
 
-- Private Q&A is published clean, then updated into an [E3](experience-requirements.md#e3-no-off-platform-payment) violation.
-- A second Tip Jar Royale, with the same app and profile but a new id, arrives four minutes after the first. [E5](experience-requirements.md#e5-no-duplicates-on-a-profile) cannot be decided from either event alone.
-- Spin the Wheel and Trivia Tuesday each get an update that changes nothing a rule reads. That is not a change: nothing new to store, notify or re-queue.
-- `evt-0009` is delivered twice.
-- Late Night Stream reaches the [E6](experience-requirements.md#e6-report-escalation) threshold about six weeks after it went live.
+`npm run replay-events` posts the events in [`fixtures/experience-events.ts`](../fixtures/experience-events.ts) to your dev server. Each experience is published, then approved, then changed or reported. The replay contains these cases:
+
+- Film Club raises its monthly price while 14 fans are subscribed ([E5](experience-requirements.md#e5-price-raised-on-paying-fans)). Zine Club raises its price with nobody subscribed.
+- Private Q&A adds a paid action after approval ([E1](experience-requirements.md#e1-unreviewed-change-to-what-fans-buy)). That update is delivered twice.
+- Mystery Box changes what its action sells, then a fan reports it as illegal ([E1](experience-requirements.md#e1-unreviewed-change-to-what-fans-buy), [E4](experience-requirements.md#e4-report-escalation)).
+- Backstage Pass changes its cover after approval ([E2](experience-requirements.md#e2-changed-cover-not-scanned)). Lesson Pack changes its cover before it is first approved.
+- After Hours becomes a live stream after approval. Gym Live is a live stream served from an external site ([E3](experience-requirements.md#e3-live-content-fanvue-cannot-see)).
+- Late Night Stream is reported by three fans in two days ([E4](experience-requirements.md#e4-report-escalation)). Trivia Tuesday has four reports: one fan twice, and the rest more than 7 days apart. One of its reports is delivered twice.
+- Spin the Wheel gets an update that changes nothing a rule reads. That is not a change: nothing new to store, notify or re-queue.
