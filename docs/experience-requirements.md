@@ -2,14 +2,14 @@
 
 **Revision 1, October 2026.** What a fan experience has to meet to stay live on a creator's profile. Rules are numbered so a takedown notice can cite the section.
 
-For `DESIGN.md` you need the first two sections. The rules matter when you code one.
+For [`DESIGN.md`](../DESIGN.md) you need the first two sections, [How experiences differ](#how-experiences-differ-from-listings) and [What a finding may do](#what-a-finding-may-do). [The rules](#the-rules) matter when you code one.
 
 ## How experiences differ from listings
 
 An app with a creator's `write:experience` grant publishes straight onto that creator's profile. There is no review step.
 
 - **It is already live.** Every finding is about something fans can open right now. The question is not whether to approve it, but how long it may stay up and what to do about it.
-- **Fans have paid.** A paid experience can have fans holding live monthly access (`activeSubscribers`). The platform blocks an unpublish until that paid impact is acknowledged, so a takedown has to decide first what happens to those fans.
+- **Fans have paid.** A paid experience can have fans holding live monthly access ([`activeSubscribers`](../src/lib/fanvue/experiences.ts)). The platform blocks an unpublish until that paid impact is acknowledged, so a takedown has to decide first what happens to those fans.
 - **Fans report.** A report is a second stream of signal, with a different trust level from a rule. The queue has to carry both.
 
 ## What a finding may do
@@ -20,11 +20,11 @@ For each rule, decide which of these a finding leads to, and why:
 - **Hide pending review.** Remove it from the profile and chat cards, keep it reachable for fans who already paid, and put it in front of a person.
 - **Notify the developer.** Tell the app what is wrong and give it a window to fix it.
 
-An experience finding is still an `Issue` with a severity of `reject`, `fix` or `warn`, because one queue carries listings and experiences and the spec checks it. Whether those words still mean anything here, and how each maps onto the three actions, goes in `DESIGN.md`.
+An experience finding is still an `Issue` with a severity of `reject`, `fix` or `warn`, because one queue carries listings and experiences and the spec checks it. Whether those words still mean anything here, and how each maps onto the three actions, goes in [`DESIGN.md`](../DESIGN.md).
 
 ## The rules
 
-Everything here is decidable from the experience data.
+Everything here is decidable from the [experience data](../src/lib/fanvue/experiences.ts).
 
 ### E1 Valid external URL
 
@@ -74,7 +74,7 @@ Reports carry one of six reasons: `ABUSE`, `HACKED`, `ILLEGAL`, `OFFENSIVE`, `SP
 
 A finding when there are three or more reports, whatever the reasons, or any one report with the reason `ILLEGAL`. Below that bar a report is context for a reviewer, not a finding.
 
-E6 is about what people said, not the experience's data. It should outrank everything else in the queue.
+E6 is about what people said, not the experience's data. It should outrank everything else in the queue. How is a [`DESIGN.md`](../DESIGN.md#reports-and-findings-in-one-queue) question.
 
 ## What we do not automate
 

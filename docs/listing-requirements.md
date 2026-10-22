@@ -25,7 +25,7 @@ The problems we see most often, and the rule that governs each one.
 | A description that is a near-copy of another listing             | [4.2](#42-originality)                         |
 | An app URL we cannot accept                                      | [6.2](#62-valid-owned-url)                     |
 
-Everything in that table is decidable from the listing data alone. [What we do not automate](#what-we-do-not-automate) covers the rest.
+Everything in that table is decidable from the [listing data](../src/lib/fanvue/types.ts) alone. [What we do not automate](#what-we-do-not-automate) covers the rest.
 
 ***
 
@@ -75,7 +75,7 @@ So originality is decided **across the store, not within one listing**: a listin
 
 Two listings that match each other are both flagged; a human decides which of them was first. How close two descriptions have to be before they count as the same listing is a judgement, and reviewers should be able to say what they settled on and why.
 
-**Same developer, same copy, is not this failure mode.** A developer who ships a Lite and a Pro edition of one product, or a suite of tools sharing a boilerplate paragraph, has not resubmitted someone else's listing. Compare across developers only: two listings under the same `developer.handle` never match each other under this rule. Whether that developer's listings are good enough individually is a question for 2.1 and 4.5.
+**Same developer, same copy, is not this failure mode.** A developer who ships a Lite and a Pro edition of one product, or a suite of tools sharing a boilerplate paragraph, has not resubmitted someone else's listing. Compare across developers only: two listings under the same `developer.handle` never match each other under this rule. Whether that developer's listings are good enough individually is a question for [2.1](#21-production-ready) and [4.5](#45-how-we-apply-this-bar).
 
 ### 4.5 How we apply this bar
 
