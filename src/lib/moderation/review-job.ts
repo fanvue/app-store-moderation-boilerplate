@@ -33,7 +33,10 @@ export async function fetchEveryListing(): Promise<{ listings: AppListing[]; api
 /**
  * The job: fetch every listing, review, store. `npm run review` runs it.
  *
- * TODO: implement. Everything it needs is already imported.
+ * TODO: implement. The functions it calls are already imported. Saving
+ * reviews also needs the requirements revision they were made under (see
+ * the top of docs/listing-requirements.md). Nothing in the code holds it
+ * yet. Where it lives is your call.
  */
 export async function runReviewJob(): Promise<void> {
   void reviewListings;
