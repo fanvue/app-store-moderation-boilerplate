@@ -92,7 +92,7 @@ export type FanExperience = {
  * carries the whole experience at that moment, reports included. Delivery is
  * at least once, so the same `id` can arrive more than once.
  *
- * Fanvue does not send these events today. The exercise assumes it does.
+ * The exercise assumes Fanvue sends these events.
  */
 export type ExperienceEvent = {
   /** Unique per event, and the same on every delivery. */
