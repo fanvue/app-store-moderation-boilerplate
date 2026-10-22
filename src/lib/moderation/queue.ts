@@ -22,7 +22,7 @@ export function worstSeverity(issues: Issue[]): Severity | null {
  * A helper, not the queue's ordering: worst first across pages has to come
  * from the store (`getQueuePage` in `store.ts`).
  *
- * TODO: implement if you need it. Pure: return a new array, do not mutate `rows`.
+ * TODO: implement if you need it.
  */
 export function sortQueue<T extends { issues: Issue[] }>(rows: T[]): T[] {
   return rows;

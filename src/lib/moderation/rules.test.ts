@@ -4,7 +4,7 @@ import type { AppListing } from "@/lib/fanvue/types";
 
 import { reviewListings } from "./rules";
 
-/** A listing that should pass every check. Copy it and break one thing per test. */
+/** A listing that passes every check, to start your tests from. */
 const cleanListing: AppListing = {
   uuid: "00000000-0000-4000-8000-00000000c1ea",
   name: "Post Planner",
@@ -58,7 +58,7 @@ describe("moderation rules", () => {
     expect(findingsFor(padded).map((issue) => issue.rule)).toEqual(["2.3"]);
   });
 
-  // Your tests, one or more per rule you add. `npm run test:watch` and see each one fail first.
+  // Your tests. `npm run test:watch` reruns them as you save.
   // `spec.test.ts` says which listings must end up flagged; these say why.
   it.todo("flags a listing that breaks the next rule you pick");
 });

@@ -4,7 +4,7 @@ import type { FanExperience } from "@/lib/fanvue/experiences";
 
 import { reviewExperiences } from "./rules";
 
-/** An experience that should pass every check. Copy it and break one thing per test. */
+/** An experience that passes every check, to start your tests from. */
 const cleanExperience: FanExperience = {
   uuid: "00000000-0000-4000-8000-00000000e1ea",
   externalExperienceId: "clean",
@@ -35,6 +35,6 @@ describe("experience moderation rules", () => {
     expect(findingsFor(cleanExperience)).toEqual([]);
   });
 
-  // Your tests, one or more per rule you add. `npm run test:watch` and see each one fail first.
+  // Your tests. `npm run test:watch` reruns them as you save.
   it.todo("flags an experience that breaks the rule you pick");
 });

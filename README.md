@@ -24,8 +24,8 @@ The Fanvue App Store lets third-party developers list apps for creators. Every l
 **Part one: listings**
 
 1. Read [`docs/listing-requirements.md`](docs/listing-requirements.md). Six rules are decidable from the listing data; the rest are for a person.
-2. Before you write a second rule, put a severity and a one-line reason for all six in [`ASSUMPTIONS.md`](ASSUMPTIONS.md). We will ask about two of them.
-3. Implement two more rules in [`src/lib/moderation/rules.ts`](src/lib/moderation/rules.ts). Rule 2.3 is done as a worked example.
+2. Choose a severity for each of the six rules, with a reason, in [`ASSUMPTIONS.md`](ASSUMPTIONS.md). We will ask about two of them.
+3. Implement rules in [`src/lib/moderation/rules.ts`](src/lib/moderation/rules.ts). Rule 2.3 is done as a worked example.
 4. Move the review out of the page. Write the job in [`review-job.ts`](src/lib/moderation/review-job.ts), the store in [`store.ts`](src/lib/moderation/store.ts), and make [`app/page.tsx`](app/page.tsx) read one page of stored reviews. This is the core of part one. [How this runs in production](docs/production.md) has the constraints.
 5. If you get there, moderator decisions, in [`decisions.ts`](src/lib/moderation/decisions.ts).
 
@@ -97,21 +97,21 @@ The session ends with a conversation. These are the questions, so you can think 
 
 ## Where to work
 
-| File                                                                                                                          | What to do there                                       |
-| ----------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------ |
-| [`src/lib/moderation/rules.ts`](src/lib/moderation/rules.ts)                                                                  | The listing rules. `reviewListings` is the entry point |
-| [`src/lib/moderation/rules.test.ts`](src/lib/moderation/rules.test.ts)                                                        | Your own tests, one or more per rule                   |
-| [`src/lib/moderation/review-job.ts`](src/lib/moderation/review-job.ts)                                                        | The job: fetch, review, store                          |
-| [`src/lib/moderation/store.ts`](src/lib/moderation/store.ts)                                                                  | What the queue reads. Interface given, tables yours    |
-| [`db/migrations/`](db/migrations)                                                                                             | Your schema, one `.sql` file per change                |
-| [`src/lib/moderation/decisions.ts`](src/lib/moderation/decisions.ts)                                                          | Moderator decisions                                    |
-| [`src/lib/moderation/queue.ts`](src/lib/moderation/queue.ts)                                                                  | `worstSeverity` and `sortQueue`, stubbed helpers       |
-| [`app/page.tsx`](app/page.tsx), [`app/listings/[uuid]/page.tsx`](app/listings/%5Buuid%5D/page.tsx)                            | The pages. Make them read the store                    |
-| [`src/components/ReviewQueue.tsx`](src/components/ReviewQueue.tsx)                                                            | The moderator's queue                                  |
-| [`src/components/FindingsList.tsx`](src/components/FindingsList.tsx), [`ListingDetail.tsx`](src/components/ListingDetail.tsx) | One listing, as a moderator inspects it                |
-| [`app/api/moderation/`](app/api/moderation)                                                                                   | The decisions and events routes                        |
-| [`src/lib/moderation/experiences/rules.ts`](src/lib/moderation/experiences/rules.ts)                                          | The experience rules                                   |
-| [`ASSUMPTIONS.md`](ASSUMPTIONS.md)                                                                                            | Anything you decided that the docs do not say          |
-| [`DESIGN.md`](DESIGN.md)                                                                                                      | Part two                                               |
+| File                                                                                                                          | What it is                                                                                          |
+| ----------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------- |
+| [`src/lib/moderation/rules.ts`](src/lib/moderation/rules.ts)                                                                  | The listing rules. `reviewListings` is called by the pages, the spec and `npm run metrics`          |
+| [`src/lib/moderation/rules.test.ts`](src/lib/moderation/rules.test.ts)                                                        | Unit tests for the listing rules, run by `npm run test:watch`                                       |
+| [`src/lib/moderation/review-job.ts`](src/lib/moderation/review-job.ts)                                                        | The review job, run by `npm run review`. Also holds `fetchEveryListing`, which the pages call today |
+| [`src/lib/moderation/store.ts`](src/lib/moderation/store.ts)                                                                  | The review store the job writes and the pages read. Interface only                                  |
+| [`db/migrations/`](db/migrations)                                                                                             | The database schema, applied when `npm run dev` starts and by `npm run db:migrate`                  |
+| [`src/lib/moderation/decisions.ts`](src/lib/moderation/decisions.ts)                                                          | Moderator decisions, called by the decisions route                                                  |
+| [`src/lib/moderation/queue.ts`](src/lib/moderation/queue.ts)                                                                  | Severity helpers. `SEVERITY_ORDER` is used by `npm run metrics`                                     |
+| [`app/page.tsx`](app/page.tsx), [`app/listings/[uuid]/page.tsx`](app/listings/%5Buuid%5D/page.tsx)                            | The queue at `/` and one listing at `/listings/<uuid>`                                              |
+| [`src/components/ReviewQueue.tsx`](src/components/ReviewQueue.tsx)                                                            | The queue table, rendered by `app/page.tsx`                                                         |
+| [`src/components/ListingDetail.tsx`](src/components/ListingDetail.tsx), [`FindingsList.tsx`](src/components/FindingsList.tsx) | One listing and its findings, rendered by the listing page                                          |
+| [`app/api/moderation/`](app/api/moderation)                                                                                   | The decisions route and the events route that `npm run replay-events` posts to                      |
+| [`src/lib/moderation/experiences/rules.ts`](src/lib/moderation/experiences/rules.ts)                                          | The experience rules. `reviewExperiences` is called by the experience spec                          |
+| [`ASSUMPTIONS.md`](ASSUMPTIONS.md)                                                                                            | Your notes on what the docs leave open                                                              |
+| [`DESIGN.md`](DESIGN.md)                                                                                                      | The part two design, with its headings                                                              |
 
 Everything else — the fixtures, the mock API, the database plumbing, the types, the two spec files — is there to be read, not changed.
