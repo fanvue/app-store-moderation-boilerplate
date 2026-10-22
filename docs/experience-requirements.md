@@ -10,7 +10,7 @@ For this exercise, assume review works like this:
 - After approval, edits to the title, description, cover, delivery mode or external URL go back to review. Fans keep seeing the approved version until then. These fields are listed in `pendingReviewFields`.
 - Other changes go live straight away, with no review: prices, access mode, actions and the experience type.
 - Fanvue keeps its own copy of every cover image, but nothing scans it.
-- `LIVE_STREAM` and `LIVE_AUDIO` are labels. The stream comes from the app's own page, so Fanvue never sees it.
+- `LIVE_STREAM` and `LIVE_AUDIO` are labels. They do not change how an experience is delivered. An `EMBEDDED` experience runs in a frame on Fanvue's page. An `EXTERNAL` one opens the app's own site in a new tab, outside Fanvue.
 - Fans can report an experience. A report has a reason and stays `OPEN` until a moderator reviews it. The same fan can report more than once.
 - A moderator removes an experience by suspending it. Fans can no longer open it, and renewals pause. Nothing is deleted or refunded.
 
@@ -35,7 +35,9 @@ After approval, an update changes the cover (`imageUrl`). Nothing has scanned th
 ### E3 Live content Fanvue cannot see
 
 - After approval, an update changes the type to `LIVE_STREAM` or `LIVE_AUDIO`.
-- A `LIVE_STREAM` or `LIVE_AUDIO` experience is `EXTERNAL`, so it runs outside Fanvue.
+- A `LIVE_STREAM` or `LIVE_AUDIO` experience has `deliveryMode` set to `EXTERNAL`, so it runs outside Fanvue.
+
+A live experience that is `EMBEDDED` and was approved as live is not a finding. It runs in a frame on Fanvue's page.
 
 ### E4 Report escalation
 
