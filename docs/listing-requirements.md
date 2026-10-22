@@ -16,7 +16,7 @@ A listing must not name or promote a competing creator platform. In this revisio
 
 The rule covers all copy a user can read before opening the app. That is the app name, tagline, description, description title, description body and listing highlights.
 
-**Disguised mentions count.** A mention is disguised when it uses digits in place of letters (`0nlyFans`, `Fans1y`), separators between the words (`only.fans`, `only-fans`, `Only Fans` used as a name), or unusual casing.
+**Disguised mentions count.** A mention is disguised when it uses digits in place of letters (`0nlyFans`, `Fans1y`), separators between the words or inside a name (`only.fans`, `only-fans`, `fans-ly`, `Only Fans` used as a name), or unusual casing.
 
 **Ordinary English is not a mention.** The words `only` and `fans` appear together in legitimate copy, such as `rewards for the only fans who tip` or `the only fans you need to message`. That is grammar, not a platform. We would rather miss a disguised name than reject a legitimate listing for its sentence structure. So a check for the separated spelling must tell the platform name from the ordinary phrase. A reviewer should be able to see what was matched.
 
