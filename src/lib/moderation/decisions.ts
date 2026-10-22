@@ -2,8 +2,8 @@ import type { Issue } from "./rules";
 
 /**
  * What a moderator decided about one listing, and what they were looking at.
- * Findings are recomputed every run; a decision is the record. The README's
- * "What done looks like" says what it must survive.
+ * Findings are recomputed on every run. A decision is the lasting record. The
+ * README's "What done looks like" says what it must survive.
  */
 export type ModeratorDecision = {
   listingUuid: string;
@@ -16,7 +16,7 @@ export type ModeratorDecision = {
   findings: Issue[];
   /** The revision of the requirements doc the findings were produced under. */
   ruleRevision: string;
-  /** What the developer reads. Not the moderator's message. */
+  /** What the developer reads. Separate from the moderator's own notes. */
   note: string | null;
 };
 
@@ -24,7 +24,7 @@ export type ModeratorDecision = {
  * Stores a decision in Postgres.
  *
  * TODO: implement, with a migration in `db/migrations/`. Change the signature
- * as you need: the route has to answer `409` with the earlier decision.
+ * as you need. The route has to answer `409` with the earlier decision.
  */
 export async function recordDecision(decision: ModeratorDecision): Promise<void> {
   void decision;

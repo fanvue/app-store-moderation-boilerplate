@@ -15,4 +15,4 @@ For [3.3 Pricing accuracy](listing-requirements.md#33-pricing-accuracy) you need
 | ----------------- | ---------------------------------------------------------------------------------------------- |
 | **Pending setup** | The plan is configured but not yet live. It activates automatically when the app is approved. |
 | **Active**        | Live on the listing and purchasable.                                                           |
-| **Withdrawn**     | Taken down; not purchasable.                                                                   |
+| **Withdrawn**     | Taken down. Not purchasable.                                                                   |

@@ -3,7 +3,7 @@ import { Pool } from "pg";
 /**
  * The moderation tool's own Postgres, served by PGlite on port 5544.
  *
- * Persist the review store, decisions and anything else here. The Fanvue API
+ * Keep the review store, decisions and anything else here. The Fanvue API
  * under `src/lib/fanvue/` is a different system and stays an API.
  */
 

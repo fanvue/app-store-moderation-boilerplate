@@ -1,12 +1,12 @@
 import type { Issue, Severity } from "./rules";
 
-/** Worst to mildest. Use it for ordering and for picking a listing's status. */
+/** Most serious first. Use it for ordering and for picking a listing's status. */
 export const SEVERITY_ORDER: readonly Severity[] = ["reject", "fix", "warn"];
 
 /**
- * The worst severity among a listing's findings, or `null` when there are none.
- * `null` means the rules ran and found nothing; a listing the job has not
- * reached has no stored review at all.
+ * The most serious severity among a listing's findings, or `null` when there
+ * are none. `null` means the rules ran and found nothing. A listing the job has
+ * not reached has no stored review at all.
  *
  * TODO: implement.
  */
@@ -16,10 +16,10 @@ export function worstSeverity(issues: Issue[]): Severity | null {
 }
 
 /**
- * Sorts rows by worst severity in memory: reject, then fix, then warn, then
- * rows with no findings. Rows in the same band keep their original order.
+ * Sorts rows in memory, most serious first: reject, then fix, then warn, then
+ * rows with no findings. Rows with the same severity keep their original order.
  *
- * A helper only: sorting across pages has to come from the store
+ * This is only a helper. Sorting across pages has to come from the store
  * (`getQueuePage` in `store.ts`).
  *
  * TODO: implement if you need it.

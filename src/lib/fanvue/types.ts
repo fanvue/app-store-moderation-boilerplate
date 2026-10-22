@@ -31,7 +31,7 @@ export type RatingDistributionEntry = {
   rating: number;
   /** Share of genuine ratings at this star, 0..1. */
   proportion: number;
-  /** Genuine count at this star, or null below the floor. */
+  /** Number of genuine ratings at this star, or null when there are too few to show. */
   count: number | null;
 };
 

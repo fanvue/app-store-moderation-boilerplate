@@ -4,7 +4,7 @@
  *   npm run metrics
  *
  * The generated listings break rules on fixed intervals (see
- * `fixtures/generated-listings.ts`), so "expected" is ground truth for them.
+ * `fixtures/generated-listings.ts`), so "expected" is the true count for them.
  * The README explains how to read 4.2, which has no expected count.
  */
 import { generatedListings, GENERATED_LISTING_COUNT, listings } from "@fixtures/listings";

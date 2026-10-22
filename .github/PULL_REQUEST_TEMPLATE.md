@@ -4,4 +4,4 @@
 
 ## Read first
 
-Anything in `ASSUMPTIONS.md` or `DESIGN.md` you want the interviewer to see before the rest.
+List anything in `ASSUMPTIONS.md` or `DESIGN.md` that the interviewer should read first.

@@ -3,8 +3,8 @@
  *
  *   npm run db:migrate
  *
- * `npm run dev` does this on startup too; this is for when you add a
- * migration while the server is up, or want to migrate from a job.
+ * `npm run dev` does this on startup too. Use this when you add a migration
+ * while the server is up, or want to migrate from a job.
  */
 import { getDb } from "@/lib/db/client";
 import { migrateWithRetry } from "@/lib/db/migrate";

@@ -4,9 +4,9 @@ import type { Review } from "@/lib/moderation/rules";
 
 /**
  * The moderator's queue. It renders every listing in submission order and
- * calls anything with no findings "Not checked".
+ * labels any listing with no findings "Not checked".
  *
- * TODO (yours): the README's "What done looks like". Sorting across pages
+ * TODO (yours): see the README's "What done looks like". Sorting across pages
  * comes from the store (`getQueuePage` in `src/lib/moderation/store.ts`), not
  * from sorting this page.
  */

@@ -8,7 +8,7 @@ export type Severity = "reject" | "fix" | "warn";
  * - `code`: stable machine-readable id for the check (e.g. `"too_few_screenshots"`).
  * - `rule`: section number from `docs/listing-requirements.md` (e.g. `"2.3"`)
  *   or `docs/experience-requirements.md` (e.g. `"E3"`).
- * - `severity`: what should happen next. Your call per rule, and we will ask why.
+ * - `severity`: what should happen next. You choose it per rule, and we will ask why.
  * - `message`: what a moderator reads.
  * - `field`: optional path into the listing, e.g. `appUrl` or `pricingPlans[0].price`.
  *
@@ -34,8 +34,8 @@ export type Review = {
  * Reviews a set of listings and returns the findings for each, in the order
  * they came in.
  *
- * Takes the whole set because 4.2 compares listings to each other. How the
- * work inside is organised is up to you.
+ * Takes the whole set because 4.2 compares listings to each other. You decide
+ * how to organise the code inside.
  *
  * Pure: no I/O, and the same input always gives the same output.
  */

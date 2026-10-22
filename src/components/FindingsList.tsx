@@ -3,9 +3,9 @@ import type { Issue } from "@/lib/moderation/rules";
 /**
  * Findings for one listing, shown on the listing page.
  *
- * TODO (yours): make this useful to a moderator. Severity they can see at a
- * glance, the rule number, which field, what happens next, a link to the rule
- * in the doc. Tell "No findings" apart from "Not checked".
+ * TODO (yours): make this useful to a moderator. For example: severity visible
+ * at a glance, the rule number, the field, what happens next, and a link to the
+ * rule in the doc. Show "No findings" and "Not checked" differently.
  */
 export function FindingsList({ issues }: { issues: Issue[] }) {
   if (issues.length === 0) {

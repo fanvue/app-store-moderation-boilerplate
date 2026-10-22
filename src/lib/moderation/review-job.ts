@@ -6,7 +6,7 @@ import { createReviewStore } from "./store";
 
 /**
  * Fetches every listing the slow way: each list page, then one detail call per
- * listing. Fine for a job; too slow for a page load.
+ * listing. Fine for a job, but too slow for a page load.
  */
 export async function fetchEveryListing(): Promise<{ listings: AppListing[]; apiCalls: number; ms: number }> {
   const startedAt = performance.now();
@@ -31,9 +31,9 @@ export async function fetchEveryListing(): Promise<{ listings: AppListing[]; api
 }
 
 /**
- * The job: crawl, review, store. `npm run review` runs it.
+ * The job: fetch every listing, review, store. `npm run review` runs it.
  *
- * TODO: implement. The pieces are all imported.
+ * TODO: implement. Everything it needs is already imported.
  */
 export async function runReviewJob(): Promise<void> {
   void reviewListings;

@@ -4,8 +4,8 @@ import type { AppListing, PricingPlan } from "@/lib/fanvue/types";
  * The rest of the review queue: 2,000 synthetic submissions, so the queue is
  * roughly the size a real one would be.
  *
- * Generated deterministically from the index. A slice of them break rules, on the fixed intervals below, so status, sorting and
- * filters have something to work with. The listings the moderation spec is
+ * Generated deterministically from the index. Some of them break rules, at the
+ * fixed intervals below, so status, sorting and filters have something to work with. The listings the moderation spec is
  * written against are the hand-written ones in `named-listings.ts`.
  */
 

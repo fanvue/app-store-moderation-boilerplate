@@ -13,8 +13,8 @@ export type ExperienceReview = {
  * order they came in. `Issue.rule` is a section of
  * `docs/experience-requirements.md`, such as `"E3"`.
  *
- * Takes the whole set because E5 compares rows on the same profile. Pure: no
- * I/O, and the same input always gives the same output.
+ * Takes the whole set because E5 compares experiences on the same profile.
+ * Pure: no I/O, and the same input always gives the same output.
  */
 export function reviewExperiences(experiences: FanExperience[]): ExperienceReview[] {
   return experiences.map((experience) => ({ experience, issues: [] }));

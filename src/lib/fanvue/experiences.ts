@@ -1,6 +1,6 @@
 /**
- * Fan experience types. An experience is one row per app, creator and
- * `externalExperienceId`; publishing the same id again updates it in place.
+ * Fan experience types. There is one experience per app, creator and
+ * `externalExperienceId`. Publishing the same id again updates it in place.
  */
 
 export type ExperienceAccessMode = "FREE" | "SUBSCRIPTION" | "PAID" | "HIDDEN";
@@ -66,7 +66,7 @@ export type FanExperience = {
   hidden: boolean;
   /** USD cents. `null` unless `accessMode` is PAID. */
   priceCents: number | null;
-  /** With `priceCents`, bills the fan monthly instead of once. */
+  /** When true, `priceCents` is billed monthly instead of once. */
   priceRecurring: boolean;
   actions: ExperienceAction[];
   /** ISO 8601. */
@@ -79,7 +79,7 @@ export type FanExperience = {
 };
 
 /**
- * Sent when an experience is published, changes, or is reported. Every event
+ * Sent when an experience is published, updated or reported. Every event
  * carries the whole experience at that moment, reports included. Delivery is
  * at least once, so the same `id` can arrive more than once.
  */

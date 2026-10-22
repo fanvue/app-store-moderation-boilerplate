@@ -5,11 +5,11 @@ import type { FanExperience } from "./experiences";
 import type { AppListing, AppListingSummary, PaginatedAppListings } from "./types";
 
 /**
- * The mock Fanvue API, over the fixtures. Pages call these directly; the
- * routes under `app/api/v0/apps` wrap them.
+ * The mock Fanvue API, built on the fixtures. Pages call these functions
+ * directly. The routes under `app/api/v0/apps` wrap them.
  *
  * Every call waits `MOCK_API_LATENCY_MS` (default 3) and is counted by
- * `apiCallCount()`. `docs/production.md` lists the rest.
+ * `apiCallCount()`. `docs/production.md` describes the rest of its behaviour.
  */
 
 export const DEFAULT_PAGE_SIZE = 15;

@@ -59,6 +59,6 @@ describe("moderation rules", () => {
   });
 
   // Your tests. `npm run test:watch` reruns them as you save.
-  // `spec.test.ts` says which listings must end up flagged; these say why.
+  // `spec.test.ts` says which listings must be flagged. Your tests say why.
   it.todo("flags a listing that breaks the next rule you pick");
 });
