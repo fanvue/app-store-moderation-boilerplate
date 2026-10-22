@@ -64,7 +64,7 @@ Two test files check your rules.
 npm run test:spec     # both specs. They fail today
 npm run test:spec:listings     # just the listing spec
 npm run test:spec:experiences  # just the experience spec
-npm run test:watch    # your own tests, as you write them
+npm run test:watch    # your own tests, as you write them. Skips the two specs
 npm run see-all-rule-counts  # how many listings each rule flags, out of all 2,015
 npm run review        # the review job, once you have written it
 npm run replay-events # posts the experience events to your dev server

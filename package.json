@@ -16,7 +16,7 @@
     "build": "next build",
     "start": "next start",
     "test": "vitest run",
-    "test:watch": "vitest",
+    "test:watch": "vitest --exclude \"**/spec.test.*\"",
     "test:spec": "vitest run spec",
     "test:spec:listings": "vitest run src/lib/moderation/spec.test.ts",
     "test:spec:experiences": "vitest run src/lib/moderation/experiences/spec.test.ts",
