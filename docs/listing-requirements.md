@@ -1,8 +1,7 @@
 <!-- Internal moderation edition. Section numbers follow the public Listing Requirements page
      (https://api.fanvue.com/docs/app-store/listing-requirements), so there are gaps: only the sections
      the review tool is expected to cover are reproduced in full. Wording here is written for reviewers,
-     which is why it is more specific than the public page. If this file and the public page differ for a
-     developer-facing question, the public page wins. -->
+     which is why it is more specific than the public page. -->
 
 # App Store Listing Requirements — moderation edition
 
@@ -10,7 +9,7 @@ What an app needs to be approved for the Fanvue App Store, written for the peopl
 
 **Revision 3, October 2026.** Revision 4 is due next quarter and will change the competitor list in [1.6](#16-no-promotion-of-other-platforms) and the price ceiling in [3.3](#33-pricing-accuracy). Listings decided under this revision stay decided; the tool should be able to say which revision a finding was made under.
 
-## Common rejection reasons
+## Common problems
 
 The problems we see most often, and the rule that governs each one.
 
@@ -61,7 +60,7 @@ Empty listing highlights are the other common sign of a listing submitted half-w
 
 Pricing shown to a creator must be true, and it must be inside the range Fanvue supports. Three things go wrong:
 
-1. **A plan priced outside the supported range.** The range, and the plan lifecycle, are in [Pricing Plans](pricing-plans.md). The range is stated in US dollars and `price` is in minor units of `currencyCode`. A plan in any other currency cannot be checked against the range by this tool: flag it for a person rather than guessing an exchange rate or treating the number as dollars.
+1. **A plan priced outside the supported range.** The range, and the plan lifecycle, are in [Pricing Plans](pricing-plans.md). The range is stated in US dollars and `price` is in minor units of `currencyCode`. A plan in any other currency cannot be checked against the range by this tool. It is still a finding under this rule: do not guess an exchange rate or treat the number as dollars. How serious it is, is your call.
 2. **A price in the copy that no plan matches.** If the listing copy quotes a price, a plan must actually cost that. Copy quotes prices in whatever form the developer felt like: `$9.99 a month`, `9.99 USD`, `just $12/mo`, `from $5`.
 3. **A free tier that does not exist.** Copy advertising a free plan (`free plan`, `free tier`, `free forever`, `free to start`) needs a free plan on the listing.
 
@@ -71,7 +70,7 @@ Pricing shown to a creator must be true, and it must be inside the range Fanvue 
 
 We will not approve the same listing twice under two names. This is the failure mode: a developer exports a template, changes the app name and the developer handle, and submits the result as a new app. The giveaway is the description.
 
-So originality is decided **across the store, not within one listing**: a listing's description is compared against every other listing's. Compare on `description` and `descriptionBody`, ignoring case, punctuation and the app's own name — the name is the one thing they always change.
+So originality is decided **across the store, not within one listing**: a listing's description is compared against every other listing's. Compare `description` and `descriptionBody` together, ignoring case, punctuation and the app's own name — the name is the one thing they always change.
 
 Two listings that match each other are both flagged; a human decides which of them was first. How close two descriptions have to be before they count as the same listing is a judgement, and reviewers should be able to say what they settled on and why.
 
@@ -85,13 +84,13 @@ An isolated listing typo or a minor spacing nit on an otherwise solid app is **a
 
 ### 6.2 Valid, owned URL
 
-`appUrl` is where the app actually runs, and it must be a working address on a domain the developer owns. We reject a listing when the URL:
+`appUrl` is where the app actually runs, and it must be an address on a domain the developer owns. `appUrl` breaks this rule when it:
 
 * is missing
-* is not `https` — an app served over plain HTTP is not approvable
+* is not `https`
 * has no host, or has an IP address for a host
 * is on `fanvue.com` or any subdomain of it — the app must not be hosted on our domain
-* is on a domain-parking or site-builder placeholder host. The ones we see: `parkingcrew.net`, `sedoparking.com`, `afternic.com`, `godaddysites.com`, `wixsite.com`
+* is on a domain-parking or site-builder placeholder host, or a subdomain of one. The ones we see: `parkingcrew.net`, `sedoparking.com`, `afternic.com`, `godaddysites.com`, `wixsite.com`
 
 A domain that merely has our name inside it is fine. Plenty of legitimate tools are called something-fanvue-something, and third-party developers are allowed to say what their app is for.
 
@@ -102,6 +101,6 @@ A domain that merely has our name inside it is fine. Plenty of legitimate tools 
 These rules are in the public requirements and are decided by a person looking at the listing. Nothing in the listing data settles them, so the tool should not pretend to:
 
 * **1.1 Safe-for-work listings.** Everything a user can see before opening the app must be safe for work. Judged from the images.
-* **2.3 Accuracy and language.** Whether the description is honest about what the app does, and whether the copy is English.
+* **2.3, the rest of it: accuracy and language.** Whether the description is honest about what the app does, and whether the copy is English.
 * **4.1 Useful apps.** Whether the app solves a real problem for creators, rather than being a funnel, a link collection or a single-creator site.
 * **4.2 Originality, beyond near-duplicates.** Template exports and AI slop that do not share copy with anything already in the store.
