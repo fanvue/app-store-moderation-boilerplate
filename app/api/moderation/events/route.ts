@@ -9,7 +9,7 @@ export const dynamic = "force-dynamic";
  *
  * Answer `2xx` once the event is safe. For any other answer, the platform
  * retries. Delivery is at least once, so a redelivered event must not produce a
- * second finding, notification or takedown.
+ * second finding, notification or suspension.
  *
  * TODO: implement.
  */
