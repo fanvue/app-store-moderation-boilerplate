@@ -15,7 +15,15 @@ npm i
 npm run dev
 ```
 
-`npm run dev` starts the web app and a Postgres database, so there is nothing else to install. Open [http://localhost:3000](http://localhost:3000) and check you see a queue of listings. It takes 10 to 20 seconds to load. The footer explains why.
+`npm run dev` starts the web app and a Postgres database, so there is nothing else to install. Open [http://localhost:3000](http://localhost:3000) and check you see a queue of listings. It takes 15 to 25 seconds to load, and can take 40 seconds or more on Windows. Opening one listing is just as slow, because that page also fetches all 2,015 listings to show one. The footer explains why.
+
+If you want to work on the screens before your store exists, create a file called `.env.local` in the project folder with this line, then restart `npm run dev`:
+
+```
+MOCK_API_LATENCY_MS=0
+```
+
+This removes the wait on each mock API call in the web app. The pages still make the same number of calls. Delete the file to go back to the normal speed.
 
 Use any AI tool you like, and read what it changes before you keep it. [`AGENTS.md`](AGENTS.md) tells it how to work in this repo. You may change or delete that file.
 
