@@ -43,10 +43,10 @@ You choose where to start. You will not finish everything. We care more about wh
 
 ## What done looks like
 
-There are two spec files, one for each part. Each lists hand-written examples and the rules that each one must break.
+Two test files check your rules.
 
-- [`spec.test.ts`](src/lib/moderation/spec.test.ts) checks the listing rules (part one) against 15 listings.
-- [`experiences/spec.test.ts`](src/lib/moderation/experiences/spec.test.ts) checks the experience rules (part two) against 11 experiences.
+- [`spec.test.ts`](src/lib/moderation/spec.test.ts) checks the listing rules (part one). It has 15 example listings and the rules that should flag each one.
+- [`experiences/spec.test.ts`](src/lib/moderation/experiences/spec.test.ts) checks the experience rules (part two). It has 11 example experiences and the rules that should flag each one.
 
 ```bash
 npm run test:spec     # both specs. They fail today
