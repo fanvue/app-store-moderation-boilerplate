@@ -45,7 +45,7 @@ Where you start is up to you, and you will not finish all of it. We are more int
 
 ## What done looks like
 
-[`spec.test.ts`](src/lib/moderation/spec.test.ts) and [`experiences/spec.test.ts`](src/lib/moderation/experiences/spec.test.ts) are the acceptance criteria: fifteen hand-written listings, eleven hand-written experiences, and the rule sections each one must break.
+The acceptance criteria are two spec files, [`spec.test.ts`](src/lib/moderation/spec.test.ts) and [`experiences/spec.test.ts`](src/lib/moderation/experiences/spec.test.ts). They list 15 hand-written listings and 11 hand-written experiences, and the rules each one must break.
 
 ```bash
 npm run test:spec     # both specs. Red today
@@ -60,22 +60,25 @@ npm run db:query -- "select * from review_runs"   # look inside the database
 
 The specs say what must be flagged and under which rule. They say nothing about how to detect anything, how serious anything is, or what a moderator should see. **Do not edit them.** If you think one is wrong, say so and we will talk about it.
 
-`npm run metrics` puts each rule's count next to how many the fixture generator planted, so you see a rule flooding the queue before a moderator does. The generator plants no duplicates, so any [4.2](docs/listing-requirements.md#42-originality) pair among generated listings is a false positive.
+`npm run metrics` shows how many listings each rule flags, next to how many the test data was built to break. If a rule flags far more, it is flagging things it should not. The test data has no real duplicates, so every [4.2](docs/listing-requirements.md#42-originality) match among generated listings is a false positive.
 
 **The queue is the product.** Two thousand listings, one moderator, ten minutes. It is done when:
 
-- A page load reads the store and makes no API calls.
-- It is worst first across pages, and page, size, severity and rule are in the URL, so "only the rejects, worst first" is a link one moderator can send another.
-- A listing that passed every rule looks different from one the job has not reached and from one a person already decided. The queue says when the job last ran.
-- The rule that fired and the text it matched are visible, so a false positive takes seconds to dismiss.
-- Two listings flagged as each other's 4.2 duplicate show up as one thing to look at.
-- Two thousand rows still feel quick, without sending two thousand full listings to the browser.
+- Loading the page reads from your store and makes no API calls.
+- The most serious listings come first, across all pages.
+- The page number, page size and filters (severity, rule) are in the URL, so a moderator can share a link to a filtered view.
+- A moderator can tell apart a listing that passed every rule, one not reviewed yet, and one a person already decided.
+- The page shows when the review job last ran.
+- Each finding shows which rule fired and the text that triggered it.
+- Two listings flagged as duplicates of each other under 4.2 appear once, as a pair.
+- The page stays fast with 2,000 listings and does not load them all at once.
 
 **Decisions**, if you get there, are done when:
 
-- A decision is a row in Postgres. It records which findings were on screen and which revision of the doc produced them, so a revision 4 re-run does not silently reopen a revision 3 approval.
-- A decision on a listing someone else decided since you loaded it gets a `409` with the decision that got there first. What the second moderator sees is your call.
-- The note the developer reads is not the message the moderator reads. Think about what a 1.6 note gives away.
+- Decisions are saved in Postgres.
+- Each decision records the findings the moderator saw and the revision of the requirements doc. When revision 4 arrives, earlier approvals stay approved.
+- If two moderators decide the same listing, the second gets a `409` response with the first decision. You choose what the second moderator sees.
+- The note sent to the developer is separate from the moderator's own notes. Think about what a 1.6 rejection note should not reveal.
 
 ## Rules of the game
 
