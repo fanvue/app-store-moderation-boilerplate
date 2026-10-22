@@ -1,15 +1,11 @@
 /**
- * The acceptance criteria for the experience rules. Read it, run it, don't edit it.
+ * Acceptance criteria for the experience rules (part two). Do not edit.
  *
- *   npm run test:spec
+ *   npm run test:spec:experiences
  *
- * Each row below is one of the hand-written experiences in
- * `fixtures/named-experiences.ts`, keyed by creator handle and the app's own
- * id, and the rule sections that must fire for it. An experience with an empty
- * list must come back with no findings at all.
- *
- * As with the listing spec: it says nothing about how to detect anything, how
- * serious anything is, what the finding leads to, or what the message says.
+ * Each row is a hand-written experience in `fixtures/named-experiences.ts`,
+ * keyed by creator handle and the app's own id, and the rules that must flag
+ * it. An empty list means no findings.
  */
 import { describe, expect, it } from "vitest";
 
