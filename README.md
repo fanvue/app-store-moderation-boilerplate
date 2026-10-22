@@ -17,6 +17,8 @@ npm run dev
 
 `npm run dev` starts the web app and a Postgres database, so there is nothing else to install. Open [http://localhost:3000](http://localhost:3000) and check you see a queue of listings. It takes 10 to 20 seconds to load. The footer explains why.
 
+Use any AI tool you like, and read what it changes before you keep it. [`AGENTS.md`](AGENTS.md) tells it how to work in this repo. You may change or delete that file.
+
 ## The task
 
 **Apps** are web applications that creators install on Fanvue and give consent to. Developers list them in the Fanvue App Store.
@@ -30,8 +32,8 @@ There are 2,015 listings in the queue. The page you just opened fetches and revi
 **Part one: listings**
 
 1. Read [`docs/listing-requirements.md`](docs/listing-requirements.md). Six rules can be checked from the listing data alone. A person decides the rest.
-2. Implement rules in [`src/lib/moderation/rules.ts`](src/lib/moderation/rules.ts). Rule 2.3 is already done as a worked example.
-3. Move the review out of the page. Write the review job in [`review-job.ts`](src/lib/moderation/review-job.ts) and the store in [`store.ts`](src/lib/moderation/store.ts). Then make [`app/page.tsx`](app/page.tsx) read one page of stored reviews. This is the core of part one. The constraints are in [How this runs in production](docs/production.md).
+2. Implement rules in [`src/lib/moderation/rules.ts`](src/lib/moderation/rules.ts). Rule 2.3 is already done as an example. Rules must be deterministic: they use only the listing data, with no network, LLM or external API. Each finding needs a severity (`reject`, `fix` or `warn`). Choose one per rule and be ready to explain why.
+3. Move the review out of the page. Write the review job in [`review-job.ts`](src/lib/moderation/review-job.ts) and the store in [`store.ts`](src/lib/moderation/store.ts). Then make [`app/page.tsx`](app/page.tsx) read one page of stored reviews. This is the core of part one. The constraints are in [How this runs in production](docs/production.md). `@fanvue/ui` is installed if you want it.
 4. Optional: add moderator decisions in [`decisions.ts`](src/lib/moderation/decisions.ts).
 
 **Part two: experiences**
@@ -80,27 +82,6 @@ The specs say what must be flagged, and under which rule. They do not say how to
 - Each decision records the findings the moderator saw and the revision of the requirements doc. When revision 4 arrives, earlier approvals stay approved.
 - If two moderators decide the same listing, the second gets a `409` response with the first decision. You choose what the second moderator sees.
 - The note sent to the developer is separate from the moderator's own notes. Think about what a 1.6 rejection note should not reveal.
-
-## Rules of the game
-
-- **Every finding is an `Issue`** (see [`rules.ts`](src/lib/moderation/rules.ts)): a rule number, a severity, a code, a message, and optionally the field at fault.
-- **Rule numbers are section headings.** `2.3 Listing quality` is rule `2.3`, so a finding about it sets `rule: "2.3"`. Experience rules are numbered like `E3`.
-- **Severity is your call.** `reject`: the listing cannot go live as it is. `fix`: the developer can correct it without anyone's judgement. `warn`: a person should look. Pick one per rule and be ready to say why.
-- **Deterministic only.** No network, no LLM and no external API. The rules may use only the listing or experience data.
-- **Images are placeholders.** Every image URL in the fixtures points at a placeholder host, so the repo works offline. Image content is never a signal here.
-- **Use your AI tool as much as you like.** Read the diff before you keep it. [`AGENTS.md`](AGENTS.md) tells the tool how to behave in this repo. You may change or delete it, and we will ask why.
-- `@fanvue/ui` is installed if you want it.
-
-## What we will ask
-
-The session ends with a conversation about these questions. You can think about them in advance.
-
-1. What triggers the review job in production, and what does it re-review when one listing changes?
-2. Revision 4 drops a competitor from 1.6 and raises the 3.3 price ceiling. What re-runs, what does not, and what does a moderator see on a listing approved under revision 3?
-3. Which severities may act without a person checking first? For experiences, which rules may take an experience down on their own, and what does a fan who paid see?
-4. What does the developer read when they are rejected under 1.6 or 4.2, and what must that text not contain?
-5. Which rule will have the worst precision in production, and how would you find out?
-6. Three moderators share the queue. What breaks?
 
 ## Where to work
 
