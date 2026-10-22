@@ -43,7 +43,10 @@ You choose where to start. You will not finish everything. We care more about wh
 
 ## What done looks like
 
-The acceptance criteria are two spec files, [`spec.test.ts`](src/lib/moderation/spec.test.ts) and [`experiences/spec.test.ts`](src/lib/moderation/experiences/spec.test.ts). They list 15 hand-written listings and 11 hand-written experiences, and the rules that each one must break.
+There are two spec files, one for each part. Each lists hand-written examples and the rules that each one must break.
+
+- [`spec.test.ts`](src/lib/moderation/spec.test.ts) checks the listing rules (part one) against 15 listings.
+- [`experiences/spec.test.ts`](src/lib/moderation/experiences/spec.test.ts) checks the experience rules (part two) against 11 experiences.
 
 ```bash
 npm run test:spec     # both specs. They fail today
