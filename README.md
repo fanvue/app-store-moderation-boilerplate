@@ -99,5 +99,6 @@ The specs say what must be flagged, and under which rule. They do not say how to
 | [`src/components/ListingDetail.tsx`](src/components/ListingDetail.tsx), [`FindingsList.tsx`](src/components/FindingsList.tsx) | One listing and its findings, rendered by the listing page                                             |
 | [`app/api/moderation/`](app/api/moderation)                                                                                   | The decisions route and the events route that `npm run replay-events` posts to                         |
 | [`src/lib/moderation/experiences/rules.ts`](src/lib/moderation/experiences/rules.ts)                                          | The experience rules. `reviewEvents` is called by the experience spec                                  |
+| [`src/lib/moderation/experiences/rules.test.ts`](src/lib/moderation/experiences/rules.test.ts)                                | Unit tests for the experience rules, run by `npm run test:watch`                                       |
 
-Everything else (the fixtures, the mock API, the database plumbing, the types, the two spec files) is there to be read, not changed.
+You may add new files too, such as components, modules, migrations and tests. Everything else (the fixtures, the mock API, the database plumbing, the types, the two spec files) is there to be read, not changed.
