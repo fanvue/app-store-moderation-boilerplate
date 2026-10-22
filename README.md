@@ -65,7 +65,7 @@ The specs say what must be flagged, and under which rule. They do not say how to
 
 `npm run see-all-rule-counts` runs your rules over all 2,015 listings, not just the 15 in the spec. Use it to spot a rule that flags too much. Each rule's count appears next to the expected count. Rule [4.2](docs/listing-requirements.md#42-originality) has no expected count: any 4.2 match among the generated listings is a mistake.
 
-**The queue is the product.** Two thousand listings, one moderator, ten minutes. The queue is done when:
+**The queue is the product.** One moderator works through two thousand listings, so the worst ones must come first. The queue is done when:
 
 - Loading the page reads from your store and makes no API calls.
 - The most serious listings come first, across all pages.
