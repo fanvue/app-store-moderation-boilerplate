@@ -51,6 +51,16 @@ const TLDS = ["io", "app", "dev", "co", "tools", "studio"];
 /** 1.6 violations rotate through these: plain, digit-swapped and separated spellings. */
 const COMPETITOR_MENTIONS = [
   "OnlyFans", "0nlyFans", "only.fans", "Only Fans", "Fansly", "Fans1y", "fans-ly", "Patreon", "LoyalFans", "ManyVids",
+  "JustForFans", "Just.For.Fans",
+];
+
+/** 6.2 parking and site-builder placeholders, one per host the doc names. */
+const PLACEHOLDER_URLS = [
+  (slug: string) => `https://${slug}.parkingcrew.net`,
+  (slug: string) => `https://${slug}.sedoparking.com`,
+  (slug: string) => `https://www.afternic.com/forsale/${slug}.io`,
+  (slug: string) => `https://${slug}.godaddysites.com`,
+  (slug: string) => `https://${slug}.wixsite.com/home`,
 ];
 
 /** Mixes the index into an unrelated-looking number, so slot choices do not move in step. */
@@ -102,15 +112,16 @@ function generatedListing(index: number): AppListing {
     },
   ];
 
-  // 3.3: a plan priced above the supported range.
+  // 3.3: a plan priced outside the supported range, alternately above and below it.
   if (index % 37 === 0) {
+    const below = (index / 37) % 2 === 1;
     plans.push({
       uuid: `${hex(index + 1, 8)}-2a11-4b22-8c33-${hex(index + 1, 12)}`,
-      name: "Agency",
-      description: "Every account you manage, one bill.",
+      name: below ? "Starter" : "Agency",
+      description: below ? "One account, the basics." : "Every account you manage, one bill.",
       billingType: "recurring",
       interval: "monthly",
-      price: 62500,
+      price: below ? 299 : 62500,
       currencyCode: "USD",
       status: "active",
       highlights: [ordered[2]!, ordered[3]!],
@@ -129,14 +140,23 @@ function generatedListing(index: number): AppListing {
       ? `From $4.50 a month: ${ordered[2]} and ${ordered[3]}, for anyone whose ${secondOutcome}.`
       : `${capitalise(ordered[2]!)} and ${ordered[3]}, for anyone whose ${secondOutcome}.`;
 
-  // 2.1: draft copy left in the description.
-  const descriptionBody = `${index % 43 === 0 ? "TODO: tighten this copy before launch. " : ""}${name} ${sentence}, until ${outcome}.`;
+  // 2.1: draft copy left in the description, or (every other time) no highlights at all.
+  const draft = index % 43 === 0 && (index / 43) % 2 === 0;
+  const noHighlights = index % 43 === 0 && !draft;
+  const descriptionBody = `${draft ? "TODO: tighten this copy before launch. " : ""}${name} ${sentence}, until ${outcome}.`;
 
-  // 6.2: plain HTTP, a parking host, or no URL at all.
+  // 6.2: plain HTTP, an IP address, Fanvue's own domain, a parking or
+  // site-builder host, no URL at all, or a URL with no host.
   let appUrl: string | null = `https://${slug}.${pick(TLDS, index, 8)}`;
-  if (index % 23 === 0) appUrl = `http://${slug}.${pick(TLDS, index, 8)}`;
-  if (index % 29 === 0) appUrl = `https://${slug}.parkingcrew.net`;
-  if (index % 41 === 0) appUrl = null;
+  if (index % 23 === 0) {
+    appUrl = [
+      `http://${slug}.${pick(TLDS, index, 8)}`,
+      `https://203.0.113.${(index / 23) % 250}/${slug}`,
+      `https://fanvue.com/apps/${slug}`,
+    ][(index / 23) % 3]!;
+  }
+  if (index % 29 === 0) appUrl = PLACEHOLDER_URLS[(index / 29) % PLACEHOLDER_URLS.length]!(slug);
+  if (index % 41 === 0) appUrl = (index / 41) % 2 === 0 ? null : `/apps/${slug}`;
 
   // 2.3: the same screenshot listed twice.
   const previewImageUrls =
@@ -156,7 +176,7 @@ function generatedListing(index: number): AppListing {
     developer: { name: developerName, handle: developerName.toLowerCase().replace(/[^a-z0-9]/g, "-") },
     descriptionTitle: pick(TITLES, index, 9),
     descriptionBody,
-    highlights: [ordered[0]!, ordered[1]!, ordered[2]!],
+    highlights: noHighlights ? [] : [ordered[0]!, ordered[1]!, ordered[2]!],
     heroImageUrl: `https://placehold.co/1200x630/png?text=${slug}`,
     previewImageUrls,
     galleryImageUrls: [`https://placehold.co/1280x800/png?text=${slug}+gallery`],
