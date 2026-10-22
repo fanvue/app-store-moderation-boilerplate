@@ -47,7 +47,15 @@ Any report with the reason `ILLEGAL`, or reports from three or more different fa
 
 ### E5 Price raised on paying fans
 
-After approval, an update raises the price or turns on monthly billing while fans have live monthly access. That means `paidImpact.activeSubscriptionCount` was above 0 before the update.
+After approval, an update raises the experience's price (`priceCents`) while fans have live monthly access. That means `paidImpact.activeSubscriptionCount` was above 0 before the update.
+
+### Open questions you decide
+
+The docs do not settle these, and no named experience depends on them. Choose an answer and say why.
+
+- E4: does a report that a moderator has already marked `REVIEWED` still count towards the three fans?
+- E5: does raising an action's `priceCents` count as raising the price?
+- E5: an update switches a one-time price to monthly billing (`priceRecurring` turns on). Fans who paid once are counted in `oneTimePurchaseCount`, not `activeSubscriptionCount`. Should that switch be a finding?
 
 ## What a finding may do
 
