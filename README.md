@@ -19,7 +19,13 @@ npm run dev
 
 ## The task
 
-The Fanvue App Store lists apps: web applications a creator installs on Fanvue and gives consent to. Every listing has to meet the Listing Requirements before it goes live, and today a moderator checks each one by hand. There are 2,015 listings in the queue, and the page you just opened fetches and reviews every one of them on every request.
+**Apps** are web applications that creators install on Fanvue and give consent to. Developers list them in the Fanvue App Store.
+
+**Experiences** are embedded pages on Fanvue, like a game or a live stream, that an app publishes to a creator's profile. Fans can pay inside them.
+
+**Moderators** check both against Fanvue's requirements. Every app listing has to meet the Listing Requirements before it goes live, and today a moderator checks each one by hand. Experiences are live as soon as an app publishes them, and nobody checks them unless a fan complains.
+
+There are 2,015 listings in the queue. The page you just opened fetches and reviews every one of them on every request.
 
 **Part one: listings**
 
@@ -30,8 +36,6 @@ The Fanvue App Store lists apps: web applications a creator installs on Fanvue a
 5. If you get there, moderator decisions, in [`decisions.ts`](src/lib/moderation/decisions.ts).
 
 **Part two: experiences**
-
-An experience is an embedded page on Fanvue that an app publishes to a creator's profile, like a game or a live stream. It is live immediately, fans pay inside it, and nobody checks it unless a fan complains.
 
 1. Read [`docs/experience-requirements.md`](docs/experience-requirements.md). Six more rules, and a choice about what a finding does to something already live.
 2. Write the design in [`DESIGN.md`](DESIGN.md). This is the deliverable for part two.
