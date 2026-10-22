@@ -2,22 +2,12 @@
 
 A 90-minute pairing session. You build the tool a Fanvue moderator uses to check App Store listings, then design how the same tool handles fan experiences. The interviewer watches and asks questions as you go.
 
-## In two minutes
+## In short
 
-- **Part one, listings (about 60 minutes).** Write two rules, then move the review out of the page into a job and a store, so the moderator's queue reads stored results a page at a time. The job and the store are the core.
-- **Part two, experiences (about 10 minutes).** Write a design in [`DESIGN.md`](DESIGN.md). Code is optional, and a design with no code beats code with no design.
+- **Part one, listings.** Write two rules, then move the review out of the page into a job and a store, so the moderator's queue reads stored results a page at a time. The job and the store are the core.
+- **Part two, experiences.** Write a design in [`DESIGN.md`](DESIGN.md). Code is optional, and a design with no code beats code with no design.
 - **You will not finish.** That is expected. We care more about what you choose to do and why than about how much you get through.
 - **Read now:** this file down to [Part two](#part-two-experiences), and [`docs/listing-requirements.md`](docs/listing-requirements.md). **Read at part two:** [`docs/experience-requirements.md`](docs/experience-requirements.md). **Look up as needed:** everything under [Reference](#reference).
-
-| Minutes | What happens |
-| --- | --- |
-| 0 to 10 | Setup, open the queue, read the footer, read the listing doc, [run the spec](#commands-and-acceptance) |
-| 10 to 20 | Severities and reasons in [`ASSUMPTIONS.md`](ASSUMPTIONS.md) |
-| 20 to 35 | Two listing rules, tests first |
-| 35 to 60 | The job, the store and the paginated queue |
-| 60 to 70 | Decisions or the events route, if you get there |
-| 70 to 80 | Part two: read the experience doc, write [`DESIGN.md`](DESIGN.md) |
-| 80 to 90 | [The questions](#what-we-will-ask) |
 
 ## Getting started
 
@@ -90,7 +80,7 @@ Two thousand listings, one moderator, ten minutes. The queue is the product.
 
 ## What we will ask
 
-The last ten minutes are talking. These are the questions, so you can think about them in advance:
+The session ends with a conversation. These are the questions, so you can think about them in advance:
 
 1. What triggers the review job in production, and what does it re-review when one listing changes?
 2. Revision 4 drops a competitor from [1.6](docs/listing-requirements.md#16-no-promotion-of-other-platforms) and raises the [3.3](docs/listing-requirements.md#33-pricing-accuracy) ceiling. What re-runs, what does not, and what does a moderator see on a listing approved under revision 3?
