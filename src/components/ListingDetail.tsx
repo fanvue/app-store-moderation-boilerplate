@@ -15,6 +15,7 @@ import { FindingsList } from "./FindingsList";
 export function ListingDetail({ listing, issues }: { listing: AppListing; issues: Issue[] }) {
   return (
     <article className="flex flex-col gap-6 text-sm">
+      {/* TODO: keep the moderator's queue filter when going back. */}
       <Link href="/" className="underline">
         Back to queue
       </Link>

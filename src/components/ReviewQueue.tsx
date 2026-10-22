@@ -11,7 +11,8 @@ import type { Review } from "@/lib/moderation/rules";
  * - Status per app. A listing with no findings today is one nothing has
  *   checked; once your rules run it might also be one that passed everything.
  *   Decide how a moderator tells those apart.
- * - Order. Worst first — `src/lib/moderation/queue.ts` has the stubs.
+ * - Order. Worst first across pages, from the store (`getQueuePage` in
+ *   `src/lib/moderation/store.ts`), not by sorting this page.
  * - Whatever else someone clearing a backlog of two thousand needs: counts by
  *   severity, which rule fired, filters, and a table this long that still
  *   feels quick.
@@ -22,6 +23,7 @@ export function ReviewQueue({ rows }: { rows: Review[] }) {
   return (
     <section className="flex flex-col gap-4">
       <h1 className="text-2xl font-semibold">Review queue</h1>
+      {/* TODO: once the queue is paged, rows.length is one page; the total comes from the store. */}
       <p>{rows.length} listings awaiting review. Open one to see the full listing.</p>
 
       <table className="w-full border-collapse text-left text-sm">
@@ -36,7 +38,6 @@ export function ReviewQueue({ rows }: { rows: Review[] }) {
           </tr>
         </thead>
         <tbody>
-          {/* TODO: sort rows before rendering */}
           {rows.map(({ listing, issues }) => (
             <tr key={listing.uuid} className="border-b">
               <td className="py-2 pr-4">

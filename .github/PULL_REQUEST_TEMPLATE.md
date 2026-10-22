@@ -1,1 +1,9 @@
-This repository does not accept pull requests. Interview candidates: please close this PR and share your own private repository or a zip instead, as described in README.md.
+<!-- Interview candidates: open this PR in your own fork, as the README describes. -->
+
+## What I did
+
+## What I would do next
+
+## Read first
+
+Anything in `ASSUMPTIONS.md` or `DESIGN.md` you want the interviewer to see before the rest.

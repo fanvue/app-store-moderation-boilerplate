@@ -5,9 +5,10 @@ export const SEVERITY_ORDER: readonly Severity[] = ["reject", "fix", "warn"];
 
 /**
  * The worst severity among a listing's findings, or `null` when there are none.
+ * `null` means the rules ran and found nothing; a listing the job has not
+ * reached has no stored review at all.
  *
- * TODO: implement, and decide what `null` means on the queue: a listing every
- * rule passed, or one nothing has checked yet.
+ * TODO: implement.
  */
 export function worstSeverity(issues: Issue[]): Severity | null {
   void issues;
@@ -15,10 +16,13 @@ export function worstSeverity(issues: Issue[]): Severity | null {
 }
 
 /**
- * Orders queue rows worst first: reject, then fix, then warn, then rows with
- * no findings. Rows in the same band keep their original order.
+ * Orders rows worst first in memory: reject, then fix, then warn, then rows
+ * with no findings. Rows in the same band keep their original order.
  *
- * TODO: implement. Pure: return a new array, do not mutate `rows`.
+ * A helper, not the queue's ordering: worst first across pages has to come
+ * from the store (`getQueuePage` in `store.ts`).
+ *
+ * TODO: implement if you need it. Pure: return a new array, do not mutate `rows`.
  */
 export function sortQueue<T extends { issues: Issue[] }>(rows: T[]): T[] {
   return rows;

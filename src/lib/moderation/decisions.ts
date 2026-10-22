@@ -24,7 +24,8 @@ export type ModeratorDecision = {
  * Stores a decision in Postgres. Conflicting decisions are detected here and
  * the route answers `409`.
  *
- * TODO: implement, with a migration in `db/migrations/`.
+ * TODO: implement, with a migration in `db/migrations/`. Change the signature
+ * as you need: the route has to answer `409` with the earlier decision.
  */
 export async function recordDecision(decision: ModeratorDecision): Promise<void> {
   void decision;

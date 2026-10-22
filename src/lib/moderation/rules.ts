@@ -11,6 +11,10 @@ export type Severity = "reject" | "fix" | "warn";
  * - `severity`: what should happen next. Your call per rule, and we will ask why.
  * - `message`: what a moderator reads.
  * - `field`: optional path into the listing, e.g. `appUrl` or `pricingPlans[0].price`.
+ *
+ * The specs read only `rule`, `severity`, `code` and `message`. Add fields if a
+ * finding needs to carry more, such as the text matched or the other listing
+ * in a 4.2 pair.
  */
 export type Issue = {
   code: string;

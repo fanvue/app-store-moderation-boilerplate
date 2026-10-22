@@ -110,7 +110,7 @@ npm run metrics       # findings per rule over the whole queue, against the gene
 npm run review        # the review job, once you have written it. Needs the database up
 npm run replay-events # posts the experience events to your dev server, one of them twice
 npm run db            # Postgres on its own, for running the job without the web server
-npm run db:migrate    # apply a migration you added while the server was running
+npm run db:migrate    # apply migrations without the web server, or one you added while it was running
 npm run db:reset      # delete the database. Stop npm run dev first
 ```
 
@@ -134,7 +134,7 @@ The fixtures are here so the repo works offline. The mock API behaves like the r
 
 ## Rules of the game
 
-- **Every finding is an `Issue`** (see [`rules.ts`](src/lib/moderation/rules.ts)): a rule number, a severity, a message, and optionally the field at fault.
+- **Every finding is an `Issue`** (see [`rules.ts`](src/lib/moderation/rules.ts)): a rule number, a severity, a `code`, a message, and optionally the field at fault. Add fields if a finding needs to carry more, such as the matched text.
 - **Rule numbers are section headings.** `2.3 Listing quality` is rule `2.3`. Experience rules are numbered `E3`.
 - **Severity is your call.** Pick one per rule and be ready to say why, or argue for a different scheme.
   - `reject`: the listing cannot go live as it is.
@@ -156,7 +156,7 @@ The fixtures are here so the repo works offline. The mock API behaves like the r
 | [`src/lib/moderation/review-job.ts`](src/lib/moderation/review-job.ts) | The job: crawl, review, store. `npm run review` runs it |
 | [`src/lib/moderation/store.ts`](src/lib/moderation/store.ts) | The index the queue reads. Interface given, tables yours |
 | [`db/migrations/`](db/migrations) | Your schema, one `.sql` file per change. `0001` is the worked example |
-| [`src/lib/moderation/queue.ts`](src/lib/moderation/queue.ts) | `worstSeverity` and `sortQueue`, stubbed for you |
+| [`src/lib/moderation/queue.ts`](src/lib/moderation/queue.ts) | `worstSeverity` and `sortQueue`, stubbed helpers. The queue's order across pages comes from the store |
 | [`src/lib/moderation/decisions.ts`](src/lib/moderation/decisions.ts) | Moderator decisions, stubbed for you |
 | [`src/lib/moderation/experiences/rules.ts`](src/lib/moderation/experiences/rules.ts), [`rules.test.ts`](src/lib/moderation/experiences/rules.test.ts) | The experience rules, if you get to code in part two |
 | [`app/page.tsx`](app/page.tsx), [`app/listings/[uuid]/page.tsx`](app/listings/%5Buuid%5D/page.tsx) | The pages. Make them read the store |

@@ -4,6 +4,11 @@ import type { Review, Severity } from "./rules";
  * The index the queue reads: reviews the job wrote, served worst first a page
  * at a time. `GET /apps` cannot do this, so the tables are yours, in
  * `db/migrations/`.
+ *
+ * The types below are a starting point. Change them if your design needs to:
+ * a queue row need not carry a full listing, and the queue also has to show
+ * which listings a person already decided. The requirements doc is on
+ * revision 3.
  */
 
 export type QueueFilter = {
