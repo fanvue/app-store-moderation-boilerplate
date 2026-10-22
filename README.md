@@ -62,7 +62,7 @@ The specs say what must be flagged and under which rule. They say nothing about 
 
 `npm run metrics` shows how many listings each rule flags, next to how many the test data was built to break. If a rule flags far more, it is flagging things it should not. The test data has no real duplicates, so every [4.2](docs/listing-requirements.md#42-originality) match among generated listings is a false positive.
 
-**The queue is the product.** Two thousand listings, one moderator, ten minutes. It is done when:
+**The queue is the product.** Two thousand listings, one moderator, ten minutes. The queue is done when:
 
 - Loading the page reads from your store and makes no API calls.
 - The most serious listings come first, across all pages.
@@ -73,7 +73,7 @@ The specs say what must be flagged and under which rule. They say nothing about 
 - Two listings flagged as duplicates of each other under 4.2 appear once, as a pair.
 - The page stays fast with 2,000 listings and does not load them all at once.
 
-**Decisions**, if you get there, are done when:
+**Moderator decisions** are optional. They are done when:
 
 - Decisions are saved in Postgres.
 - Each decision records the findings the moderator saw and the revision of the requirements doc. When revision 4 arrives, earlier approvals stay approved.
