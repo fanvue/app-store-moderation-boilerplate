@@ -37,8 +37,7 @@ There are 2,015 listings in the queue. The page you just opened fetches and revi
 **Part two: experiences**
 
 1. Read [`docs/experience-requirements.md`](docs/experience-requirements.md). It has six more rules. It also asks what a finding does to a live experience.
-2. Think through the [design questions](docs/experience-requirements.md#design-questions) at the end of that doc. We will discuss them together.
-3. Optional: make [the events route](app/api/moderation/events/route.ts) accept the events that `npm run replay-events` sends ([the cases it contains](docs/production.md#experiences)). Optional: implement one rule in [`experiences/rules.ts`](src/lib/moderation/experiences/rules.ts).
+2. Optional: make [the events route](app/api/moderation/events/route.ts) accept the events that `npm run replay-events` sends ([the cases it contains](docs/production.md#experiences)). Optional: implement one rule in [`experiences/rules.ts`](src/lib/moderation/experiences/rules.ts).
 
 You choose where to start. You will not finish everything. We care more about what you choose to do, and why, than how much you finish.
 
