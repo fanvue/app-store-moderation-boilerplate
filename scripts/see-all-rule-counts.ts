@@ -1,7 +1,7 @@
 /**
  * Runs the rules over the whole queue and prints what a moderator would face.
  *
- *   npm run metrics
+ *   npm run see-all-rule-counts
  *
  * The generated listings break rules on fixed intervals (see
  * `fixtures/generated-listings.ts`), so "expected" is the true count for them.
