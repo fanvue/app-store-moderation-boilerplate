@@ -11,7 +11,7 @@ export const dynamic = "force-dynamic";
  * real one it needs no bearer token and ignores `X-Fanvue-API-Version`.
  * Validation failures answer `400 { errors: string[] }` (the spec's `ValidationError`).
  */
-export function GET(request: NextRequest) {
+export async function GET(request: NextRequest) {
   const params = request.nextUrl.searchParams;
   const errors: string[] = [];
 
@@ -27,7 +27,7 @@ export function GET(request: NextRequest) {
     return Response.json({ errors }, { status: 400 });
   }
 
-  return Response.json(listApps({ page, size, search: params.get("search") }));
+  return Response.json(await listApps({ page, size, search: params.get("search") }));
 }
 
 function parseIntParam(raw: string | null, fallback: number): number | null {

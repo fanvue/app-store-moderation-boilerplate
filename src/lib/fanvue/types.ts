@@ -1,13 +1,6 @@
 /**
- * Fanvue App Store listing types.
- *
- * Hand-derived from the public OpenAPI spec, operation `GET /apps/{appUuid}`
- * (`getAppStoreListing`), response `200`:
- * https://api.fanvue.com/docs/openapi.json
- *
- * The relevant excerpt of that spec (operation `GET /apps/{appUuid}`,
- * response `200`) is vendored in `docs/openapi.apps.json`. If the two ever
- * disagree, the live spec wins.
+ * Fanvue App Store listing types, from `GET /apps/{appUuid}` in the public
+ * OpenAPI spec. The excerpt is in `docs/openapi.apps.json`.
  */
 
 export type PricingType = "free" | "monthly";
@@ -23,10 +16,7 @@ export type PricingPlan = {
   name: string;
   description: string | null;
   billingType: BillingType;
-  /**
-   * `null` for free and one-time plans. The public spec's enum omits `null`
-   * but declares the field nullable; the data has nulls.
-   */
+  /** `null` for free and one-time plans. */
   interval: BillingInterval | null;
   /** Price in minor currency units (e.g. cents). 0 for free plans. */
   price: number;
@@ -41,7 +31,7 @@ export type RatingDistributionEntry = {
   rating: number;
   /** Share of genuine ratings at this star, 0..1. */
   proportion: number;
-  /** Genuine count at this star, or null below the floor. */
+  /** Number of genuine ratings at this star, or null when there are too few to show. */
   count: number | null;
 };
 

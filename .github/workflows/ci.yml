@@ -3,6 +3,7 @@ name: CI
 on:
   push:
     branches: [main]
+  pull_request:
 
 jobs:
   check:
@@ -20,5 +21,6 @@ jobs:
       - run: npm run lint
       - run: npm run test:smoke
       - name: The spec must be red on the boilerplate
+        if: github.repository == 'fanvue/app-store-moderation-boilerplate'
         run: if npm run test:spec; then echo 'the spec passed on the unmodified boilerplate' && exit 1; fi
       - run: npm run build

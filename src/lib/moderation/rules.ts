@@ -3,13 +3,18 @@ import type { AppListing } from "@/lib/fanvue/types";
 export type Severity = "reject" | "fix" | "warn";
 
 /**
- * One moderation finding on a listing.
+ * One moderation finding on a listing or an experience.
  *
  * - `code`: stable machine-readable id for the check (e.g. `"too_few_screenshots"`).
- * - `rule`: section number from `docs/listing-requirements.md` (e.g. `"2.3"`).
- * - `severity`: what should happen next. Your call per rule, and we will ask why.
+ * - `rule`: section number from `docs/listing-requirements.md` (e.g. `"2.3"`)
+ *   or `docs/experience-requirements.md` (e.g. `"E3"`).
+ * - `severity`: what should happen next. You choose it per rule, and we will ask why.
  * - `message`: what a moderator reads.
  * - `field`: optional path into the listing, e.g. `appUrl` or `pricingPlans[0].price`.
+ *
+ * The specs read only `rule`, `severity`, `code` and `message`. Add fields if a
+ * finding needs to carry more, such as the text matched or the other listing
+ * in a 4.2 pair.
  */
 export type Issue = {
   code: string;
@@ -29,9 +34,8 @@ export type Review = {
  * Reviews a set of listings and returns the findings for each, in the order
  * they came in.
  *
- * This is the entry point the spec test calls and the pages render, and it
- * takes the whole set rather than one listing. How the work inside is
- * organised is up to you.
+ * Takes the whole set because 4.2 compares listings to each other. You decide
+ * how to organise the code inside.
  *
  * Pure: no I/O, and the same input always gives the same output.
  */
@@ -50,8 +54,7 @@ function checkListing(listing: AppListing): Issue[] {
  * not two."
  *
  * `fix` because a developer can add a screenshot without anyone making a
- * judgement call. Argue for something else if you disagree — bring the
- * accept-with-fixes bar in 4.5 with you.
+ * judgement call. Argue for something else if you disagree.
  */
 function checkScreenshotCount(listing: AppListing): Issue[] {
   const distinct = new Set(listing.previewImageUrls).size;

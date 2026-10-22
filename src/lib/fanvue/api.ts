@@ -1,16 +1,36 @@
+import { experiences } from "@fixtures/experiences";
 import { listings } from "@fixtures/listings";
 
+import type { FanExperience } from "./experiences";
 import type { AppListing, AppListingSummary, PaginatedAppListings } from "./types";
 
 /**
- * The data boundary for the app: pure, synchronous functions over the fixtures
- * that behave like the live Fanvue endpoints they are named after
- * (see `docs/openapi.apps.json`). Pages call these directly; the route handlers
- * under `app/api/v0/apps` are thin HTTP wrappers around them.
+ * The mock Fanvue API, built on the fixtures. Pages call these functions
+ * directly. The routes under `app/api/v0/apps` wrap them.
+ *
+ * Every call waits `MOCK_API_LATENCY_MS` (default 3) and is counted by
+ * `apiCallCount()`. `docs/production.md` describes the rest of its behaviour.
  */
 
 export const DEFAULT_PAGE_SIZE = 15;
 export const MAX_PAGE_SIZE = 50;
+
+/** What the live API allows per minute. Stated, not enforced, by the mock. */
+export const LIVE_RATE_LIMIT_PER_MINUTE = 200;
+
+const LATENCY_MS = Number(process.env.MOCK_API_LATENCY_MS ?? 3);
+
+let calls = 0;
+
+/** Total mock API calls since the process started, across all requests. */
+export function apiCallCount(): number {
+  return calls;
+}
+
+async function roundTrip(): Promise<void> {
+  calls += 1;
+  if (LATENCY_MS > 0) await new Promise((resolve) => setTimeout(resolve, LATENCY_MS));
+}
 
 export type ListAppsParams = {
   /** 1-based page number. Default 1. */
@@ -22,14 +42,17 @@ export type ListAppsParams = {
 };
 
 /**
- * Mirrors `GET /apps`.
- *
- * The spec describes `search` as "matched against the app's listing metadata";
- * our interpretation is a case-insensitive substring match over `name`,
- * `tagline`, `description` and `developer.name`. `pagination.size` is the
- * number of records returned on this page, as in the spec.
+ * Mirrors `GET /apps`. Summaries only: the fields the rules need come from
+ * {@link getApp}, one call per listing. `pagination.size` is the number of
+ * records returned on this page.
  */
-export function listApps({ page = 1, size = DEFAULT_PAGE_SIZE, search }: ListAppsParams = {}): PaginatedAppListings {
+export async function listApps({
+  page = 1,
+  size = DEFAULT_PAGE_SIZE,
+  search,
+}: ListAppsParams = {}): Promise<PaginatedAppListings> {
+  await roundTrip();
+
   const needle = search?.trim().toLowerCase() ?? "";
   const matched = needle
     ? listings.filter((listing) =>
@@ -48,31 +71,22 @@ export function listApps({ page = 1, size = DEFAULT_PAGE_SIZE, search }: ListApp
   };
 }
 
-/** Mirrors `GET /apps/{appUuid}`. Returns `null` when the uuid is unknown. */
-export function getApp(uuid: string): AppListing | null {
+/** Mirrors `GET /apps/{appUuid}`. Resolves `null` when the uuid is unknown. */
+export async function getApp(uuid: string): Promise<AppListing | null> {
+  await roundTrip();
+
   const wanted = uuid.toLowerCase();
   return listings.find((listing) => listing.uuid.toLowerCase() === wanted) ?? null;
 }
 
 /**
- * Every full listing, in queue order. The real list endpoint only returns
- * summaries, which lack most of the fields the rules need; a real review queue
- * would fetch each app's detail (or precompute findings in a server-side job).
+ * Every live experience, newest first: a one-off backfill. In production,
+ * experiences arrive as events at `app/api/moderation/events`.
  */
-export function getAllApps(): AppListing[] {
-  const all: AppListing[] = [];
-  let page = 1;
-  let hasMore = true;
-  while (hasMore) {
-    const result = listApps({ page, size: MAX_PAGE_SIZE });
-    for (const summary of result.data) {
-      const listing = getApp(summary.uuid);
-      if (listing) all.push(listing);
-    }
-    hasMore = result.pagination.hasMore;
-    page += 1;
-  }
-  return all;
+export async function getAllExperiences(): Promise<FanExperience[]> {
+  await roundTrip();
+
+  return [...experiences].sort((a, b) => b.publishedAt.localeCompare(a.publishedAt));
 }
 
 /** Projects a full listing down to exactly the fields `GET /apps` returns per item. */

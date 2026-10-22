@@ -16,7 +16,7 @@ export async function GET(_request: Request, context: { params: Promise<{ uuid: 
 
   if (!UUID_PATTERN.test(uuid)) return Response.json({ message: "Invalid UUID format" }, { status: 400 });
 
-  const listing = getApp(uuid);
+  const listing = await getApp(uuid);
 
   if (!listing) return Response.json({ message: "App not found" }, { status: 404 });
 

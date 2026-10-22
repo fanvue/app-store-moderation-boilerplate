@@ -17,4 +17,4 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           PR_URL: ${{ github.event.pull_request.html_url }}
         run: |
-          gh pr close "$PR_URL" --comment "This repository does not accept pull requests. Interview candidates: please close this PR and share your own private repository or a zip instead, as described in README.md."
+          gh pr close "$PR_URL" --comment "This repository does not accept pull requests. Interview candidates: create your own private copy with Use this template, add simonstaton as a collaborator, and open your pull request there, as README.md describes."
