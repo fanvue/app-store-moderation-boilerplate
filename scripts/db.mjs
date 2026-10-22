@@ -1,7 +1,8 @@
 // `npm run db`: Postgres (PGlite) on port 5544, files under data/pg.
 //
 // If the port is taken, this says so and exits instead of starting a second
-// server on the same data directory.
+// server on the same data directory. If the system will not let us use the
+// port (Windows can reserve it), this says what to do instead of crashing.
 import { spawn } from "node:child_process";
 import { mkdirSync } from "node:fs";
 import net from "node:net";
@@ -11,7 +12,19 @@ const port = 5544;
 
 const free = await new Promise((resolve, reject) => {
   const probe = net.createServer();
-  probe.once("error", (error) => (error.code === "EADDRINUSE" ? resolve(false) : reject(error)));
+  probe.once("error", (error) => {
+    if (error.code === "EADDRINUSE") return resolve(false);
+    if (error.code === "EACCES") {
+      console.error(
+        `Port ${port} is not allowed on this machine. Windows sometimes reserves a range of ports that includes it.\n` +
+          "Restarting Windows usually frees it. If not, run these in a terminal opened as administrator, then try again:\n" +
+          "  net stop winnat\n" +
+          "  net start winnat",
+      );
+      process.exit(1);
+    }
+    reject(error);
+  });
   probe.listen(port, "127.0.0.1", () => probe.close(() => resolve(true)));
 });
 
