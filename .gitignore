@@ -21,3 +21,6 @@ coverage/
 
 # the local Postgres (PGlite) files. `npm run db:reset` deletes them.
 /data/
+
+# Claude Code agent worktrees
+.claude/worktrees/
