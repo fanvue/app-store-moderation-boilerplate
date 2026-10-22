@@ -48,14 +48,7 @@ function checkListing(listing: AppListing): Issue[] {
   return [...checkScreenshotCount(listing)];
 }
 
-/**
- * Rule 2.3, and the worked example for the rest: "At least two screenshots of
- * the product... Two entries pointing at the same image are one screenshot,
- * not two."
- *
- * `fix` because a developer can add a screenshot without anyone making a
- * judgement call. Argue for something else if you disagree.
- */
+/** We've implemented this rule for you as an example. Rule 2.3: a listing needs at least two unique screenshots. */
 function checkScreenshotCount(listing: AppListing): Issue[] {
   const distinct = new Set(listing.previewImageUrls).size;
   if (distinct >= 2) return [];

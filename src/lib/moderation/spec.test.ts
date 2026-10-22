@@ -1,15 +1,10 @@
 /**
- * The acceptance criteria for the moderation rules. Read it, run it, don't edit it.
+ * Acceptance criteria for the listing rules (part one). Do not edit.
  *
- *   npm run test:spec
+ *   npm run test:spec:listings
  *
- * Each row below is one of the hand-written listings in `fixtures/named-listings.ts`
- * and the rule sections that must fire for it. A listing with an empty list must
- * come back with no findings at all.
- *
- * What it deliberately does not tell you: how to detect any of it, how serious
- * any of it is, or what the message should say. Severity is your call and we
- * will ask you to defend it.
+ * Each row is a hand-written listing in `fixtures/named-listings.ts` and the
+ * rules that must flag it. An empty list means no findings.
  */
 import { describe, expect, it } from "vitest";
 
