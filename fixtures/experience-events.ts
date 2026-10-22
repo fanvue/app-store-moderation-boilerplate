@@ -4,28 +4,12 @@ import { namedExperiences } from "./named-experiences";
 
 /**
  * The event sequence `npm run replay-events` posts to
- * `app/api/moderation/events`, in the order it happened. It ends with every
- * experience in the state `named-experiences.ts` shows, which is the state
- * the experience spec is written against.
+ * `app/api/moderation/events`, in the order it happened. Each experience is
+ * published as it was on the day, with no reports; later changes and reports
+ * arrive as their own events. It ends with every experience in the state
+ * `named-experiences.ts` shows, which the experience spec is written against.
  *
- * Each experience is published as it was on the day: no reports, and
- * `updatedAt` equal to `publishedAt`. Later changes arrive as
- * `experience.updated`, and each fan report as `experience.reported`, both
- * carrying the whole experience as it then is. So a review that only runs on
- * publish never sees Late Night Stream cross the E6 bar; the reports arrive
- * five weeks after it went live.
- *
- * Four things in the sequence are there on purpose:
- *
- * - Private Q&A is published clean, then updated to add the line that breaks
- *   E3. The first review of it finds nothing; the second must.
- * - The second Tip Jar Royale arrives four minutes after the first, from the
- *   same app on the same profile, under a new id. E5 cannot be decided from
- *   either event alone.
- * - Spin the Wheel and Trivia Tuesday each get an update that changes
- *   nothing a rule looks at. A no-op update should not produce a second
- *   finding or a second notification.
- * - `evt-0009`, the second Tip Jar Royale's publish, is delivered twice.
+ * The four deliberate cases are listed in the README, part two.
  */
 
 const byKey = new Map(

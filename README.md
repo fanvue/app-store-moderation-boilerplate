@@ -75,13 +75,14 @@ Two thousand listings, one moderator, ten minutes. The queue is the product.
 
 ## Part two: experiences
 
-1. **Read [`docs/experience-requirements.md`](docs/experience-requirements.md).** Six rules, same shape as the listing rules, with a different vocabulary for what a finding leads to. Its reading guide says which sections the design needs.
+1. **Read [`docs/experience-requirements.md`](docs/experience-requirements.md).** Six rules, same shape as the listing rules, with a different vocabulary for what a finding leads to. For the design you only need its first two sections; the rules are for coding one.
 2. **Write [`DESIGN.md`](DESIGN.md). This is the deliverable.** It has the headings: where the review runs, what it may do with nobody watching, what happens to fans who paid, how reports and findings share a queue, and what the record shows afterwards.
-3. **If there is time, code.** Make [`app/api/moderation/events/route.ts`](app/api/moderation/events/route.ts) accept the events `npm run replay-events` sends, and implement one rule in [`experiences/rules.ts`](src/lib/moderation/experiences/rules.ts). The sequence, described at the top of [`fixtures/experience-events.ts`](fixtures/experience-events.ts), contains four deliberate cases:
-   - one event is delivered twice
-   - one experience is published clean, then updated into a violation
-   - two updates change nothing a rule looks at
-   - the reports that put an experience over the E6 bar arrive weeks after it was published
+3. **If there is time, code.** Make [`app/api/moderation/events/route.ts`](app/api/moderation/events/route.ts) accept the events `npm run replay-events` sends, and implement one rule in [`experiences/rules.ts`](src/lib/moderation/experiences/rules.ts). The sequence is in [`fixtures/experience-events.ts`](fixtures/experience-events.ts). Every experience is published clean, with no reports, and later changes and reports arrive as their own events. These cases are there on purpose:
+   - **Private Q&A** is published clean, then updated to add the line that breaks E3. The first review finds nothing; the second must.
+   - **The second Tip Jar Royale** arrives four minutes after the first, same app and profile, new id. E5 cannot be decided from either event alone.
+   - **Spin the Wheel and Trivia Tuesday** each get an update that changes nothing a rule looks at. It should not produce a second finding or notification.
+   - **`evt-0009`**, the second Tip Jar Royale's publish, is delivered twice.
+   - **Late Night Stream** crosses the E6 bar from reports that arrive five weeks after it went live. A review that only runs on publish never sees them.
 
 ## What we will ask
 
@@ -115,7 +116,7 @@ npm run db:reset      # delete the database. Stop npm run dev first
 
 - **Two spec files are the acceptance criteria:** [`spec.test.ts`](src/lib/moderation/spec.test.ts) for listings and [`experiences/spec.test.ts`](src/lib/moderation/experiences/spec.test.ts) for experiences. Each lists hand-written fixtures and the rule sections each one must break.
 - **The specs say which fixtures break which rule, nothing more.** Not how to detect it, how serious it is, or what a moderator should see. **Do not edit them.** If you think one is wrong, say so and we will talk about it.
-- **`npm run metrics` catches a flooding rule.** It runs your rules over all 2,015 listings and prints how many fired per rule next to how many the fixture generator planted.
+- **`npm run metrics` catches a flooding rule.** It runs your rules over all 2,015 listings and prints how many fired per rule next to how many the fixture generator planted. A count far above expected is flooding; far below is missing things. The generator plants no duplicates, so 4.2 has no expected count, and any 4.2 pair among generated listings is a false positive.
 
 ## How this runs in production
 

@@ -4,12 +4,8 @@
  *   npm run metrics
  *
  * The generated listings break rules on fixed intervals (see
- * `fixtures/generated-listings.ts`), so the "expected" column is ground truth
- * for them. A rule that fires far above its expected count is flooding the
- * queue; one far below is missing things. 4.2 has no expected count because
- * the generator does not plant duplicates: every 4.2 pair it finds among the
- * generated listings is a false positive. From the named ones, the Copilot
- * pair should show up and nothing else; the Ledger pair share a developer.
+ * `fixtures/generated-listings.ts`), so "expected" is ground truth for them.
+ * The README explains how to read 4.2, which has no expected count.
  */
 import { generatedListings, GENERATED_LISTING_COUNT, listings } from "@fixtures/listings";
 
