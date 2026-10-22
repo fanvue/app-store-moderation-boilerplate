@@ -25,7 +25,7 @@ Use any AI tool you like, and read what it changes before you keep it. [`AGENTS.
 
 **Experiences** are embedded pages that an app publishes to a creator's profile on Fanvue, such as a game or a live stream. Fans can pay inside them.
 
-**Moderators** check both against Fanvue's requirements. Every app listing must meet the Listing Requirements before it goes live. Today a moderator checks each listing by hand. A reviewer approves each experience before fans see it, but some later changes go live with no review.
+**Moderators** check both against Fanvue's requirements. Every app listing must meet the Listing Requirements before it goes live. Today a moderator checks each listing by hand. In this exercise, a reviewer approves each experience before fans see it, but some later changes go live with no review.
 
 There are 2,015 listings in the queue. The page you just opened fetches and reviews all of them every time it loads.
 
@@ -38,7 +38,7 @@ There are 2,015 listings in the queue. The page you just opened fetches and revi
 
 **Part two: experiences**
 
-1. Read [`docs/experience-requirements.md`](docs/experience-requirements.md). It explains how experiences are reviewed today, and has five rules that catch what review misses.
+1. Read [`docs/experience-requirements.md`](docs/experience-requirements.md). It sets out how experiences are reviewed in this exercise, and has five rules that catch what review misses.
 2. Optional: make [the events route](app/api/moderation/events/route.ts) accept the events that `npm run replay-events` sends ([the cases it contains](docs/production.md#experiences)). Optional: implement one rule in [`experiences/rules.ts`](src/lib/moderation/experiences/rules.ts).
 
 You choose where to start. You will not finish everything. We care more about what you choose to do, and why, than how much you finish.

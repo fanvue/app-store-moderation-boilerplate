@@ -24,7 +24,7 @@ The mock API behaves like the live one in these ways.
 
 ## Experiences
 
-Fanvue does not send these events today. For this exercise, assume it does.
+For this exercise, assume Fanvue sends these events.
 
 Events arrive for each publish, change and report. Each arrives at least once, in order per experience. Every event carries the whole experience at that moment. [`getAllExperiences()`](../src/lib/fanvue/api.ts) is a one-off backfill that returns the final state of the replay below.
 

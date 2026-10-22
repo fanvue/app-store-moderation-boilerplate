@@ -2,7 +2,9 @@
 
 What a fan experience must meet to stay live.
 
-## How review works today
+## How review works in this exercise
+
+For this exercise, assume review works like this:
 
 - An app publishes an experience to a creator's profile. A Fanvue reviewer approves it before fans can see it.
 - After approval, edits to the title, description, cover, delivery mode or external URL go back to review. Fans keep seeing the approved version until then. These fields are listed in `pendingReviewFields`.
@@ -16,7 +18,7 @@ The rules below catch what review misses.
 
 ## How changes reach the tool
 
-Fanvue does not send events for experiences today. For this exercise, assume it sends one each time an experience is published, changes or is reported. Each event carries the whole experience at that moment. [How this runs in production](production.md#experiences) has the details.
+For this exercise, assume Fanvue sends an event each time an experience is published, changes or is reported. Each event carries the whole experience at that moment. [How this runs in production](production.md#experiences) has the details.
 
 ## The rules
 
