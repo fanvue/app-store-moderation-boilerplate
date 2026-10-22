@@ -5,14 +5,8 @@ import { reviewListings } from "./rules";
 import { createReviewStore } from "./store";
 
 /**
- * Fetches every listing the way a first attempt would: page through the list
- * endpoint, then one detail call per listing. 41 list calls and 2,015 detail
- * calls for today's queue.
- *
- * The boilerplate pages call this on every request so the cost is on screen
- * rather than hidden. Against the live API, at 200 calls a minute, this loop
- * takes about ten minutes, which is why it belongs in {@link runReviewJob}
- * and not in a page.
+ * Fetches every listing the slow way: each list page, then one detail call per
+ * listing. Fine for a job; too slow for a page load.
  */
 export async function fetchEveryListing(): Promise<{ listings: AppListing[]; apiCalls: number; ms: number }> {
   const startedAt = performance.now();
@@ -37,13 +31,10 @@ export async function fetchEveryListing(): Promise<{ listings: AppListing[]; api
 }
 
 /**
- * The job: crawl, review, store. `npm run review` runs it from the command
- * line; whether anything else should trigger it (a webhook saying a listing
- * changed, a schedule, a button) is yours to decide.
+ * The job: crawl, review, store. `npm run review` runs it.
  *
  * `reviewListings` takes the whole set because 4.2 compares listings to each
- * other, so one edited listing can change another listing's findings. Say in
- * `ASSUMPTIONS.md` what the job re-reviews when one listing changes.
+ * other, so one edited listing can change another listing's findings.
  *
  * TODO: implement. The pieces are all imported.
  */

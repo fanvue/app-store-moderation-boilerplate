@@ -7,13 +7,12 @@ import { reviewListings } from "@/lib/moderation/rules";
 export const dynamic = "force-dynamic";
 
 /**
- * The queue, the way a first attempt would build it: fetch everything, review
- * everything, render everything. It works. The footer says what it cost.
+ * The queue, built the slow way: fetch everything, review everything, render
+ * everything. The footer says what it cost.
  *
- * TODO (yours): read a page of reviews from `src/lib/moderation/store.ts`
- * instead, with page, size, severity and rule taken from `searchParams`, so a
- * moderator's page load makes no API calls and "only the rejects, worst first"
- * is a link they can send to someone.
+ * TODO (yours): read a page from `src/lib/moderation/store.ts`, with page,
+ * size, severity and rule from `searchParams`. See the README's "bar for the
+ * queue".
  */
 export default async function ReviewQueuePage() {
   const { listings, apiCalls, ms } = await fetchEveryListing();

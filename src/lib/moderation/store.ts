@@ -1,19 +1,9 @@
 import type { Review, Severity } from "./rules";
 
 /**
- * Where reviews live between the job that produces them and the pages that
- * read them.
- *
- * The queue cannot be paginated from the live API: `GET /apps` returns
- * summaries in submission order and knows nothing about severity or rules.
- * Worst-first across pages, filtered by rule, needs an index of findings that
- * is yours. This is that index.
- *
- * Postgres is running (see `src/lib/db/client.ts`); design the tables in
- * `db/migrations/`. A module-scope `Map` would also satisfy this interface,
- * and would be invisible to `npm run review`, which is a different process
- * from `npm run dev`, and empty after every restart. Write the schema and why
- * in `ASSUMPTIONS.md`.
+ * The index the queue reads: reviews the job wrote, served worst first a page
+ * at a time. `GET /apps` cannot do this, so the tables are yours, in
+ * `db/migrations/`.
  */
 
 export type QueueFilter = {
@@ -47,9 +37,7 @@ export type ReviewStore = {
   getQueuePage(filter: QueueFilter): Promise<QueuePage>;
 };
 
-/**
- * TODO: implement. `getDb()` in `src/lib/db/client.ts` is the pool.
- */
+/** TODO: implement. `getDb()` in `src/lib/db/client.ts` is the pool. */
 export function createReviewStore(): ReviewStore {
   const notImplemented = () => Promise.reject(new Error("the review store is not implemented yet"));
   return {

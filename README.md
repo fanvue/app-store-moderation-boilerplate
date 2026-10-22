@@ -1,124 +1,13 @@
 # Fanvue product engineer session: App Store moderation
 
-A pairing session. You build the tool a Fanvue moderator uses to check App Store listings against the [Listing Requirements](docs/listing-requirements.md), then design how the same tool handles fan experiences, which go live before anyone looks at them. The interviewer watches and asks questions as you go.
+A 90-minute pairing session. You build the tool a Fanvue moderator uses to check App Store listings, then design how the same tool handles fan experiences. The interviewer watches and asks questions as you go.
 
-## Getting Started
+## In two minutes
 
-Fork [https://github.com/fanvue/app-store-moderation-boilerplate](https://github.com/fanvue/app-store-moderation-boilerplate) and add `simonstaton` as a contributor, do all your working in a pull-request.
-
-```bash
-git clone https://github.com/yourname/app-store-moderation-boilerplate.git
-cd app-store-moderation-boilerplate
-npm i
-npm run dev
-```
-
-`npm run dev` starts two things: a real Postgres on port 5544, served by [PGlite](https://pglite.dev) with its files under `data/pg`, and the web app on port 3000. Nothing to install beyond `npm i`; it works the same on Windows, macOS and Linux. PGlite is one Postgres backend behind the socket: statements from every connection run one at a time, and an open transaction makes the others wait. Open [http://localhost:3000](http://localhost:3000) and check you see a queue of listings, then read the footer.
-
-Migrations in [`db/migrations/`](db/migrations) are applied when the server starts. `npm run db:reset` deletes the database so the next start is from nothing; stop `npm run dev` first.
-
-## The task
-
-The Fanvue App Store lets third-party developers list apps for creators. Every listing has to meet the Listing Requirements before it goes live, and today a moderator checks each one by hand. There are 2,015 listings in the queue.
-
-Apps can also publish **fan experiences** onto a creator's profile: a quiz, a stream, a game, a wheel. Those go live the moment the API accepts them, fans pay inside them, and nobody checks them unless a fan complains.
-
-The session is in two parts. You will not finish all of either, and that is expected. We are more interested in what you choose to do and why than in how much you get through.
-
-Open the queue and look at the footer first. The page you are looking at fetches every listing, reviews every listing and renders every listing, on every request. It says what that cost. Part one is about making that not be true.
-
-### Part one: listings
-
-1. Read [`docs/listing-requirements.md`](docs/listing-requirements.md). Six rules are decidable from the listing data; the rest are for a person. The doc states three awkward cases openly: ordinary English that looks like a competitor name, a developer's own suite sharing copy, and a plan in a currency the range cannot be checked in. Others it leaves to you, such as a withdrawn plan at a price nobody can buy.
-2. **Before you write a second rule**, put a severity and a one-line reason for all six in [`ASSUMPTIONS.md`](ASSUMPTIONS.md), citing section 4.5 where it applies. We will probe two of them. Changing your mind later is fine; the first draft is what we want to see.
-3. Implement two more rules in [`src/lib/moderation/rules.ts`](src/lib/moderation/rules.ts). Rule 2.3 is done as a worked example. More rules are a bonus, not the point; two real ones are enough to make the rest of part one mean something.
-4. **Move the review out of the page.** The queue is reviewed on every request today. Build the job in [`review-job.ts`](src/lib/moderation/review-job.ts) and the store in [`store.ts`](src/lib/moderation/store.ts), then make [`app/page.tsx`](app/page.tsx) read a page of stored reviews with the filter in the URL. The bar for the queue is below. This is the core of part one.
-5. If there is time: moderator decisions, stubbed in [`decisions.ts`](src/lib/moderation/decisions.ts) and [`app/api/moderation/decisions/route.ts`](app/api/moderation/decisions/route.ts). The bar for those is below too.
-
-### Part two: experiences
-
-1. Read [`docs/experience-requirements.md`](docs/experience-requirements.md). Six rules again, same shape as the listing rules, and a different vocabulary for what a finding leads to.
-2. Write the design in [`DESIGN.md`](DESIGN.md). It has the headings. Where the review runs, what it may do with nobody watching, what happens to fans who paid, how reports and findings share a queue, and what the record shows afterwards.
-3. If there is time, make [`app/api/moderation/events/route.ts`](app/api/moderation/events/route.ts) accept the event sequence that `npm run replay-events` sends, and implement one rule in [`src/lib/moderation/experiences/rules.ts`](src/lib/moderation/experiences/rules.ts). The sequence is described at the top of [`fixtures/experience-events.ts`](fixtures/experience-events.ts): one event is delivered twice, one experience is published clean and then updated into a violation, two updates change nothing, and the reports that put an experience over the E6 bar arrive weeks after it was published.
-
-The design is the deliverable for part two. A rule with no design is worth less than a design with no rule.
-
-## What done looks like
-
-Two spec files are the acceptance criteria: [`spec.test.ts`](src/lib/moderation/spec.test.ts) for listings and [`experiences/spec.test.ts`](src/lib/moderation/experiences/spec.test.ts) for experiences. Each is a list of hand-written fixtures and the rule sections each one must break.
-
-```bash
-npm run test:spec     # the acceptance criteria. Red today
-npm run test:watch    # your own tests, as you write them
-npm run metrics       # findings per rule over the whole queue, against the generator's ground truth
-npm run review        # the review job, once you have written it. Needs the database up
-npm run replay-events # posts the experience events to your dev server, one of them twice
-npm run db            # Postgres on its own, for running the job without the web server
-npm run db:migrate    # apply a migration you added while the server was running
-npm run db:reset      # delete the database
-```
-
-The specs say which fixtures are in trouble and under which rule. They say nothing about how to detect anything, how serious anything is, or what a moderator should see. **Do not edit them.** If you think one is wrong, say so and we will talk about it.
-
-`npm run metrics` runs your rules over all 2,015 listings and prints how many fired per rule next to how many the fixture generator planted. It is there so you can see a rule flooding the queue before a moderator does.
-
-## How this runs in production
-
-The fixtures are here so the repo works offline. The mock API behaves like the real one in the ways that matter, and the README states every one of them:
-
-- `GET /apps` returns at most 50 summaries a page. The fields the rules need come from `GET /apps/{uuid}`, one call per listing. Fetching everything is 41 list calls and 2,015 detail calls.
-- Every mock call takes about three milliseconds, as a stand-in for a round trip, and every call is counted. The queue footer shows both.
-- The live API allows 200 calls a minute. The mock does not enforce that, but at that rate fetching everything takes about ten minutes. Nothing that runs on a page load can do it, and nothing that runs on a page load should.
-- `GET /apps` is in submission order and cannot filter by severity or rule. Worst-first across pages has to come from an index you keep.
-- Editing a listing or a pricing plan starts a new submission, and a webhook says so. Listings are reviewed again after every edit. Rule 4.2 compares listings to each other, so one edit can change another listing's findings.
-- Experiences arrive as events: published, updated and reported, at least once each, in order per experience. Every event carries the whole experience as it then is. A review that only runs on publish never sees a report. `getAllExperiences()` in the mock API stands in for a one-off backfill of what is already live; it is not how new experiences arrive.
-- Your storage is Postgres. `src/lib/db/client.ts` is the pool, `db/migrations/` is the schema, and `0001_review_runs.sql` is the worked example. `npm run review` and `npm run dev` are different processes, so anything the job writes that the page should read goes through the database, not memory.
-- The requirements doc is on revision 3, and revision 4 changes a word list and a price ceiling next quarter. Decisions made under revision 3 stay made.
-
-Say in `ASSUMPTIONS.md` what triggers the job, what the schema is and why, and what the job re-reviews when one listing changes.
-
-## The bar for the queue
-
-Two thousand listings, one moderator, ten minutes. The queue is the product.
-
-- A moderator's page load makes no API calls. It reads the store.
-- Worst first, across pages. Page, size, severity and rule live in the URL, so "only the rejects, worst first" is a link a moderator can send to another moderator.
-- A listing that passed every rule looks different from one the job has not reached and from one a person already decided. The queue says when the job last ran.
-- A moderator can tell at a glance which rule fired and where. The matched text for a 1.6 or E3 finding is visible, so a false positive is dismissed in seconds.
-- Two listings flagged as each other's duplicate under 4.2 show up as one thing to look at, not two.
-- Two thousand rows still feels quick, and the page does not ship two thousand full listings to do it.
-
-## The bar for decisions
-
-If you reach [`decisions.ts`](src/lib/moderation/decisions.ts):
-
-- A decision is a row in Postgres, so it survives `npm run dev` restarting and `npm run review` can see it.
-- It records which findings were on screen and which revision of the doc produced them, so a revision 4 re-run does not silently reopen a revision 3 approval.
-- Two moderators share the queue. A decision posted against a listing someone else decided since this moderator loaded it answers `409` with the decision that got there first. What the second moderator sees is your call; write it down.
-- The note the developer reads is not the message the moderator reads. Think about what a 1.6 note gives away.
-
-## What we will ask
-
-The last part of the session is talking. These are the questions, so you can think about them in advance:
-
-1. What triggers the review job in production, and what does it re-review when one listing changes?
-2. Revision 4 drops a competitor from 1.6 and raises the 3.3 ceiling. What re-runs, what does not, and what does a moderator see on a listing approved under revision 3?
-3. Which severities may act with no person in the loop? For experiences, which rules may take something down on their own, and what does the fan who paid see?
-4. What does the developer read when they are rejected under 1.6 or 4.2, and what must that text not contain?
-5. Which rule will have the worst precision in production, and how would you find out?
-6. Three moderators share the queue. What breaks?
-
-## Rules of the game
-
-- **Every finding is an `Issue`** (see [`rules.ts`](src/lib/moderation/rules.ts)): a rule number, a severity, a message, and optionally the field at fault. Listing rules are numbered `2.3`; experience rules are numbered `E3`.
-- **Rule numbers are section headings.** `2.3 Listing quality` is rule `2.3`, so a finding about it sets `rule: "2.3"`.
-- **Severity is your call.** `reject`: the listing cannot go live as it is. `fix`: the developer can correct it without anyone's judgement. `warn`: a human should look. Pick one per rule and be ready to say why. Argue for a different scheme if you prefer one. Experience findings use the same three, and what each one leads to on something already live is part of `DESIGN.md`.
-- **Deterministic only.** No network, no LLM, no external API. The listing or experience data is all you get.
-- **Images are placeholders.** Every image URL in the fixtures points at a placeholder host because this repo works offline. Image content is never a signal here.
-- **Use your AI tool as much as you like.** Read the diff before you keep it. [`AGENTS.md`](AGENTS.md) tells the tool how to behave in this repo; you may change or delete it, and we will ask why.
-- `@fanvue/ui` is installed if you want it.
-
-## How the 90 minutes go
+- **Part one, listings (about 60 minutes).** Write two rules, then move the review out of the page into a job and a store, so the moderator's queue reads stored results a page at a time. The job and the store are the core.
+- **Part two, experiences (about 10 minutes).** Write a design in [`DESIGN.md`](DESIGN.md). Code is optional, and a design with no code beats code with no design.
+- **You will not finish.** That is expected. We care more about what you choose to do and why than about how much you get through.
+- **Read now:** this file down to [Part two](#part-two-experiences), and [`docs/listing-requirements.md`](docs/listing-requirements.md). **Read at part two:** [`docs/experience-requirements.md`](docs/experience-requirements.md). **Look up as needed:** everything under [Reference](#reference).
 
 | Minutes | What happens |
 | --- | --- |
@@ -128,7 +17,134 @@ The last part of the session is talking. These are the questions, so you can thi
 | 35 to 60 | The job, the store and the paginated queue |
 | 60 to 70 | Decisions or the events route, if you get there |
 | 70 to 80 | Part two: read the experience doc, write `DESIGN.md` |
-| 80 to 90 | The questions above |
+| 80 to 90 | [The questions](#what-we-will-ask) |
+
+## Getting started
+
+Fork [https://github.com/fanvue/app-store-moderation-boilerplate](https://github.com/fanvue/app-store-moderation-boilerplate), add `simonstaton` as a contributor, and do all your work in a pull request.
+
+```bash
+git clone https://github.com/yourname/app-store-moderation-boilerplate.git
+cd app-store-moderation-boilerplate
+npm i
+npm run dev
+```
+
+`npm run dev` starts a real Postgres on port 5544 and the web app on port 3000. Nothing to install beyond `npm i`, on Windows, macOS or Linux. Migrations in [`db/migrations/`](db/migrations) are applied when the server starts.
+
+Open [http://localhost:3000](http://localhost:3000). You should see a queue of listings. Read the footer.
+
+## The situation
+
+The Fanvue App Store lets third-party developers list apps for creators. Every listing has to meet the Listing Requirements before it goes live, and today a moderator checks each one by hand. There are 2,015 listings in the queue.
+
+The page you just opened fetches every listing, reviews every listing and renders every listing, on every request. The footer says what that costs. Part one is about making that not be true.
+
+Apps can also publish **fan experiences** onto a creator's profile: a quiz, a stream, a game, a wheel. They go live the moment the API accepts them, fans pay inside them, and nobody checks them unless a fan complains. That is part two.
+
+## Part one: listings
+
+1. **Read [`docs/listing-requirements.md`](docs/listing-requirements.md).** Six rules are decidable from the listing data; the rest are for a person. The doc states three awkward cases openly:
+   - ordinary English that looks like a competitor name
+   - a developer's own suite sharing copy
+   - a plan in a currency the range cannot be checked in
+
+   Others it leaves to you, such as a withdrawn plan at a price nobody can buy.
+2. **Pick severities before you write a second rule.** In [`ASSUMPTIONS.md`](ASSUMPTIONS.md), give all six rules a severity and a one-line reason, citing section 4.5 where it applies. We will probe two of them. Changing your mind later is fine; the first draft is what we want to see.
+3. **Implement two more rules** in [`src/lib/moderation/rules.ts`](src/lib/moderation/rules.ts). Rule 2.3 is done as a worked example. More rules are a bonus; two real ones are enough to make the rest of part one mean something.
+4. **Move the review out of the page. This is the core.** Build the job in [`review-job.ts`](src/lib/moderation/review-job.ts) and the store in [`store.ts`](src/lib/moderation/store.ts). Then make [`app/page.tsx`](app/page.tsx) read a page of stored reviews, with the filter in the URL. Meet [the bar for the queue](#the-bar-for-the-queue). Write down in `ASSUMPTIONS.md` what triggers the job, what the schema is and why, and what the job re-reviews when one listing changes. [How this runs in production](#how-this-runs-in-production) has the constraints.
+5. **If there is time, moderator decisions.** They are stubbed in [`decisions.ts`](src/lib/moderation/decisions.ts) and [`app/api/moderation/decisions/route.ts`](app/api/moderation/decisions/route.ts). Meet [the bar for decisions](#the-bar-for-decisions).
+
+### The bar for the queue
+
+Two thousand listings, one moderator, ten minutes. The queue is the product.
+
+- **No API calls on page load.** A moderator's page load reads the store.
+- **Worst first, across pages.** Page, size, severity and rule live in the URL, so "only the rejects, worst first" is a link one moderator can send another.
+- **Three states look different:** passed every rule, not yet reached by the job, and already decided by a person. The queue says when the job last ran.
+- **Which rule fired, and where, at a glance.** The matched text for a 1.6 or E3 finding is visible, so a false positive is dismissed in seconds.
+- **One item per duplicate pair.** Two listings flagged as each other's duplicate under 4.2 show up as one thing to look at.
+- **Quick at two thousand rows,** without shipping two thousand full listings to the page.
+
+### The bar for decisions
+
+- **A decision is a row in Postgres,** so it survives `npm run dev` restarting and `npm run review` can see it.
+- **It records which findings were on screen and which doc revision produced them,** so a revision 4 re-run does not silently reopen a revision 3 approval.
+- **Two moderators share the queue.** A decision posted against a listing someone else decided since this moderator loaded it answers `409` with the decision that got there first. What the second moderator sees is your call; write it down.
+- **The developer's note is not the moderator's message.** Think about what a 1.6 note gives away.
+
+## Part two: experiences
+
+1. **Read [`docs/experience-requirements.md`](docs/experience-requirements.md).** Six rules, same shape as the listing rules, with a different vocabulary for what a finding leads to. Its reading guide says which sections the design needs.
+2. **Write [`DESIGN.md`](DESIGN.md). This is the deliverable.** It has the headings: where the review runs, what it may do with nobody watching, what happens to fans who paid, how reports and findings share a queue, and what the record shows afterwards.
+3. **If there is time, code.** Make [`app/api/moderation/events/route.ts`](app/api/moderation/events/route.ts) accept the events `npm run replay-events` sends, and implement one rule in [`experiences/rules.ts`](src/lib/moderation/experiences/rules.ts). The sequence, described at the top of [`fixtures/experience-events.ts`](fixtures/experience-events.ts), contains four deliberate cases:
+   - one event is delivered twice
+   - one experience is published clean, then updated into a violation
+   - two updates change nothing a rule looks at
+   - the reports that put an experience over the E6 bar arrive weeks after it was published
+
+## What we will ask
+
+The last ten minutes are talking. These are the questions, so you can think about them in advance:
+
+1. What triggers the review job in production, and what does it re-review when one listing changes?
+2. Revision 4 drops a competitor from 1.6 and raises the 3.3 ceiling. What re-runs, what does not, and what does a moderator see on a listing approved under revision 3?
+3. Which severities may act with no person in the loop? For experiences, which rules may take something down on their own, and what does the fan who paid see?
+4. What does the developer read when they are rejected under 1.6 or 4.2, and what must that text not contain?
+5. Which rule will have the worst precision in production, and how would you find out?
+6. Three moderators share the queue. What breaks?
+
+---
+
+# Reference
+
+Look things up here as you need them.
+
+## Commands and acceptance
+
+```bash
+npm run test:spec     # the acceptance criteria. Red today
+npm run test:watch    # your own tests, as you write them
+npm run metrics       # findings per rule over the whole queue, against the generator's ground truth
+npm run review        # the review job, once you have written it. Needs the database up
+npm run replay-events # posts the experience events to your dev server, one of them twice
+npm run db            # Postgres on its own, for running the job without the web server
+npm run db:migrate    # apply a migration you added while the server was running
+npm run db:reset      # delete the database. Stop npm run dev first
+```
+
+- **Two spec files are the acceptance criteria:** [`spec.test.ts`](src/lib/moderation/spec.test.ts) for listings and [`experiences/spec.test.ts`](src/lib/moderation/experiences/spec.test.ts) for experiences. Each lists hand-written fixtures and the rule sections each one must break.
+- **The specs say which fixtures break which rule, nothing more.** Not how to detect it, how serious it is, or what a moderator should see. **Do not edit them.** If you think one is wrong, say so and we will talk about it.
+- **`npm run metrics` catches a flooding rule.** It runs your rules over all 2,015 listings and prints how many fired per rule next to how many the fixture generator planted.
+
+## How this runs in production
+
+The fixtures are here so the repo works offline. The mock API behaves like the real one in every way that matters, and each of those ways is listed here.
+
+- **Listing API.** `GET /apps` returns at most 50 summaries a page. The fields the rules need come from `GET /apps/{uuid}`, one call per listing. Fetching everything is 41 list calls and 2,015 detail calls.
+- **Latency.** Every mock call takes about three milliseconds, standing in for a round trip, and every call is counted. The queue footer shows both.
+- **Rate limit.** The live API allows 200 calls a minute. The mock does not enforce it, but at that rate fetching everything takes about ten minutes. Nothing that runs on a page load can do that, and nothing should.
+- **No server-side ordering.** `GET /apps` is in submission order and cannot filter by severity or rule. Worst-first across pages has to come from an index you keep.
+- **Edits.** Editing a listing or a pricing plan starts a new submission, and a webhook says so. Listings are reviewed again after every edit. Rule 4.2 compares listings to each other, so one edit can change another listing's findings.
+- **Experiences arrive as events:** published, updated and reported, at least once each, in order per experience. Every event carries the whole experience as it then is. A review that only runs on publish never sees a report. `getAllExperiences()` in the mock API stands in for a one-off backfill of what is already live; it is not how new experiences arrive.
+- **Storage is Postgres.** `src/lib/db/client.ts` is the pool, `db/migrations/` is the schema, and `0001_review_runs.sql` is the worked example. `npm run review` and `npm run dev` are different processes, so anything the job writes for the page to read goes through the database, not memory.
+- **The database is one backend.** It is [PGlite](https://pglite.dev) behind a Postgres socket, with its files under `data/pg`. Statements from every connection run one at a time, and an open transaction makes the others wait.
+- **Doc revisions.** The requirements doc is on revision 3. Revision 4 changes a word list and a price ceiling next quarter. Decisions made under revision 3 stay made.
+
+## Rules of the game
+
+- **Every finding is an `Issue`** (see [`rules.ts`](src/lib/moderation/rules.ts)): a rule number, a severity, a message, and optionally the field at fault.
+- **Rule numbers are section headings.** `2.3 Listing quality` is rule `2.3`. Experience rules are numbered `E3`.
+- **Severity is your call.** Pick one per rule and be ready to say why, or argue for a different scheme.
+  - `reject`: the listing cannot go live as it is.
+  - `fix`: the developer can correct it without anyone's judgement.
+  - `warn`: a human should look.
+
+  Experience findings use the same three. What each leads to on something already live is part of `DESIGN.md`.
+- **Deterministic only.** No network, no LLM, no external API. The listing or experience data is all you get.
+- **Images are placeholders.** Every image URL points at a placeholder host so the repo works offline. Image content is never a signal.
+- **Use your AI tool as much as you like.** Read the diff before you keep it. [`AGENTS.md`](AGENTS.md) tells the tool how to behave here; you may change or delete it, and we will ask why.
+- `@fanvue/ui` is installed if you want it.
 
 ## Where to work
 
@@ -150,4 +166,4 @@ The last part of the session is talking. These are the questions, so you can thi
 | [`ASSUMPTIONS.md`](ASSUMPTIONS.md) | Anything you decided that the docs do not say |
 | [`DESIGN.md`](DESIGN.md) | Part two |
 
-Everything else — the fixtures, the mock API under `src/lib/fanvue/` and `app/api/v0/`, the database plumbing under `src/lib/db/`, the types, the two spec files — is there to be read, not changed.
+Everything else is there to be read, not changed: the fixtures, the mock API under `src/lib/fanvue/` and `app/api/v0/`, the database plumbing under `src/lib/db/`, the types, and the two spec files.

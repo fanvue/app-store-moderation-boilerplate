@@ -5,22 +5,12 @@ import type { FanExperience } from "./experiences";
 import type { AppListing, AppListingSummary, PaginatedAppListings } from "./types";
 
 /**
- * The data boundary for the app: asynchronous functions over the fixtures
- * that behave like the live Fanvue endpoints they are named after
- * (see `docs/openapi.apps.json`). Pages call these directly; the route handlers
- * under `app/api/v0/apps` are thin HTTP wrappers around them.
+ * The mock Fanvue API: async functions over the fixtures that behave like the
+ * live endpoints they are named after. Pages call these directly; the routes
+ * under `app/api/v0/apps` wrap them.
  *
- * Two things about the live API are reproduced here on purpose, and the
- * README says so:
- *
- * - Every call costs time. `MOCK_API_LATENCY_MS` (default 3) is a stand-in
- *   for a round trip, so reviewing the whole store on a page load is visibly
- *   slow rather than secretly free.
- * - Every call is counted. `apiCallCount()` lets a page say how many calls it
- *   made. The live API allows 200 a minute; the mock does not enforce that,
- *   but the count tells you whether a design would survive it.
- *
- * There is no "give me everything" call, because the live API has none.
+ * Every call waits `MOCK_API_LATENCY_MS` (default 3) and is counted by
+ * `apiCallCount()`. The README's "How this runs in production" lists the rest.
  */
 
 export const DEFAULT_PAGE_SIZE = 15;

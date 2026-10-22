@@ -1,11 +1,6 @@
 /**
- * Runs the review job from the command line.
- *
- *   npm run review
- *
- * This is a separate process from `npm run dev`. If your store lives in the
- * Next process's memory, this cannot fill it; that is not a bug in the
- * script, it is the first design decision.
+ * Runs the review job: `npm run review`. A separate process from `npm run dev`,
+ * so it can only reach what the web server reads through the database.
  */
 import { getDb } from "@/lib/db/client";
 import { runReviewJob } from "@/lib/moderation/review-job";

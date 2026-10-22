@@ -9,6 +9,8 @@ What a fan experience has to meet to stay live on a creator's profile, written f
 
 **Revision 1, October 2026.**
 
+> **Reading for `DESIGN.md`?** You need [Why this exists](#why-this-exists), the table under it, and [What a finding may do](#what-a-finding-may-do). The rule sections E1 to E6 matter when you code a rule or answer a question about one.
+
 ## Why this exists
 
 A listing is reviewed before anyone sees it. An experience is not. An app with a creator's `write:experience` grant publishes straight onto that creator's profile, fans can open it and pay inside it the same minute, and until now nobody looked at it unless a fan complained. This document is the bar, and the tool you are building is the first thing that applies it.
@@ -72,7 +74,12 @@ What the copy says a fan pays has to be what the fan is charged. Three things go
 
 1. **A price outside the supported range.** Access and every action are priced in USD cents between 300 and 50000. The platform checks this at publish; the tool checks it again because prices can be re-set from the creator's side.
 2. **A price in the copy that nothing matches.** If the title or description quotes a price, either the access price or one of the actions must actually cost that. Copy quotes prices however the developer liked: `$7 a month`, `just $5`, `5 USD`, `$12/mo`.
-3. **A quoted price with the wrong billing period.** The only recurring period is monthly, and only the access price can recur (`priceRecurring`); actions always charge once. A price quoted with `a month`, `monthly`, `/mo` or `per month` has to match something that bills monthly, and a price quoted as `one-off` or `once` has to match something that does not. A price quoted with no period can match either. Words with no price attached, such as `weekly draw` or `every Tuesday`, describe the schedule, not the bill.
+3. **A quoted price with the wrong billing period.**
+   * Only the access price can recur (`priceRecurring`), and the only recurring period is monthly. Actions always charge once.
+   * A price quoted with `a month`, `monthly`, `/mo` or `per month` has to match something that bills monthly.
+   * A price quoted as `one-off` or `once` has to match something that does not.
+   * A price quoted with no period can match either.
+   * Words with no price attached, such as `weekly draw` or `every Tuesday`, describe the schedule, not the bill.
 
 Only a `PAID` experience has an access price. On `FREE`, `SUBSCRIPTION` and `HIDDEN` experiences `priceCents` is `null`, so a price in their copy has to match an action or it is case 2.
 
