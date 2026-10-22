@@ -37,7 +37,7 @@ After approval, an update changes the cover (`imageUrl`). Nothing has scanned th
 
 ### E4 Report escalation
 
-Any report with the reason `ILLEGAL`, or reports from three or more different fans within 7 days. Reports from the same fan count once.
+Any report with the reason `ILLEGAL`, or reports from three or more different fans that fall within any 7-day period. Measure the period by each report's `reportedAt`. Reports from the same fan count once.
 
 ### E5 Price raised on paying fans
 
