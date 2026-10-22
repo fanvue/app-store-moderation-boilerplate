@@ -22,8 +22,9 @@ export default async function ReviewQueuePage() {
     <>
       <ReviewQueue rows={rows} />
       <p className="mt-6 text-xs text-neutral-500">
-        This page made {apiCalls.toLocaleString()} API calls in {ms.toLocaleString()} ms to review{" "}
-        {rows.length.toLocaleString()} listings. The live API allows {LIVE_RATE_LIMIT_PER_MINUTE} calls a minute.
+        This page made {apiCalls.toLocaleString()} API calls, spending {ms.toLocaleString()} ms on them before rendering
+        anything, to review {rows.length.toLocaleString()} listings. The live API allows {LIVE_RATE_LIMIT_PER_MINUTE}{" "}
+        calls a minute.
       </p>
     </>
   );

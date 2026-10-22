@@ -18,15 +18,17 @@ export default async function ListingDetailPage({ params }: { params: Promise<{ 
   const { uuid } = await params;
 
   const { listings, apiCalls, ms } = await fetchEveryListing();
-  const review = reviewListings(listings).find((candidate) => candidate.listing.uuid.toLowerCase() === uuid.toLowerCase());
+  const review = reviewListings(listings).find(
+    (candidate) => candidate.listing.uuid.toLowerCase() === uuid.toLowerCase(),
+  );
   if (!review) notFound();
 
   return (
     <>
       <ListingDetail listing={review.listing} issues={review.issues} />
       <p className="mt-6 text-xs text-neutral-500">
-        This page made {apiCalls.toLocaleString()} API calls in {ms.toLocaleString()} ms to review one listing. The live
-        API allows {LIVE_RATE_LIMIT_PER_MINUTE} calls a minute.
+        This page made {apiCalls.toLocaleString()} API calls, spending {ms.toLocaleString()} ms on them before rendering
+        anything, to review one listing. The live API allows {LIVE_RATE_LIMIT_PER_MINUTE} calls a minute.
       </p>
     </>
   );

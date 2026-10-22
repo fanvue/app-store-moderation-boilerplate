@@ -8,8 +8,9 @@
     "node": ">=24"
   },
   "scripts": {
-    "dev": "concurrently -k -n db,web -c blue,green \"npm:db\" \"next dev --turbopack\"",
-    "db": "node -e \"require('node:fs').mkdirSync('data', { recursive: true })\" && pglite-server --db ./data/pg --port 5544 --max-connections 8",
+    "dev": "concurrently --kill-others-on-fail -n db,web -c blue,green \"npm:db\" \"next dev --turbopack\"",
+    "db": "node scripts/db.mjs",
+    "db:query": "tsx --tsconfig tsconfig.json scripts/db-query.ts",
     "db:migrate": "tsx --tsconfig tsconfig.json scripts/db-migrate.ts",
     "db:reset": "node -e \"require('node:fs').rmSync('data', { recursive: true, force: true }); console.log('data/ removed; the next npm run dev starts from an empty database')\"",
     "build": "next build",
@@ -17,6 +18,8 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:spec": "vitest run spec",
+    "test:spec:listings": "vitest run src/lib/moderation/spec.test.ts",
+    "test:spec:experiences": "vitest run src/lib/moderation/experiences/spec.test.ts",
     "test:smoke": "vitest run --exclude \"**/spec.test.*\"",
     "metrics": "tsx --tsconfig tsconfig.json scripts/queue-metrics.ts",
     "review": "tsx --tsconfig tsconfig.json scripts/review.ts",

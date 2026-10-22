@@ -21,7 +21,11 @@ A 90-minute pairing session. You build the tool a Fanvue moderator uses to check
 
 ## Getting started
 
-Fork [https://github.com/fanvue/app-store-moderation-boilerplate](https://github.com/fanvue/app-store-moderation-boilerplate), add `simonstaton` as a contributor, and do all your work in a pull request.
+1. On [the repository](https://github.com/fanvue/app-store-moderation-boilerplate), choose **Use this template → Create a new repository**, and make it **private**. Please don't fork it: forks are public, and pull requests to this repository are closed automatically.
+2. Add `simonstaton` as a collaborator on your copy (**Settings → Collaborators**).
+3. Clone it, work on a branch, and open a pull request in your own repository.
+
+You need Node 24; `nvm use` picks it up from `.nvmrc`.
 
 ```bash
 git clone https://github.com/yourname/app-store-moderation-boilerplate.git
@@ -32,7 +36,7 @@ npm run dev
 
 `npm run dev` starts a real Postgres on port 5544 and the web app on port 3000. Nothing to install beyond `npm i`, on Windows, macOS or Linux. Migrations in [`db/migrations/`](db/migrations) are applied when the server starts.
 
-Open [http://localhost:3000](http://localhost:3000). You should see a queue of listings. Read the footer.
+Open [http://localhost:3000](http://localhost:3000). You should see a queue of listings. Read the footer. Each load of the queue or of a listing takes 10 to 20 seconds; that is the problem part one fixes.
 
 ## The situation
 
@@ -104,13 +108,16 @@ Look things up here as you need them.
 ## Commands and acceptance
 
 ```bash
-npm run test:spec     # the acceptance criteria. Red today
+npm run test:spec     # both acceptance specs, listings and experiences. Red today
+npm run test:spec:listings     # just the listing spec
+npm run test:spec:experiences  # just the experience spec
 npm run test:watch    # your own tests, as you write them
 npm run metrics       # findings per rule over the whole queue, against the generator's ground truth
 npm run review        # the review job, once you have written it. Needs the database up
 npm run replay-events # posts the experience events to your dev server, one of them twice
 npm run db            # Postgres on its own, for running the job without the web server
 npm run db:migrate    # apply migrations without the web server, or one you added while it was running
+npm run db:query -- "select * from review_runs"   # run one SQL statement and print the rows
 npm run db:reset      # delete the database. Stop npm run dev first
 ```
 
