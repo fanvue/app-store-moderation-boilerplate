@@ -9,7 +9,7 @@ import type { AppListing, AppListingSummary, PaginatedAppListings } from "./type
  * directly. The routes under `app/api/v0/apps` wrap them.
  *
  * Every call waits `MOCK_API_LATENCY_MS` (default 3) and is counted by
- * `apiCallCount()`. `docs/production.md` describes the rest of its behaviour.
+ * `apiCallCount()`. The README describes the rest of its behaviour.
  */
 
 export const DEFAULT_PAGE_SIZE = 15;

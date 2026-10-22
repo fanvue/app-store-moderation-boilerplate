@@ -134,11 +134,7 @@ function generatedListing(index: number): AppListing {
       ? `${capitalise(ordered[1]!)} for creators moving over from ${pick(COMPETITOR_MENTIONS, index, 7)}`
       : `${capitalise(ordered[1]!)} without the spreadsheet`;
 
-  // 3.3: the copy quotes a price no plan charges.
-  const description =
-    index % 47 === 0
-      ? `From $4.50 a month: ${ordered[2]} and ${ordered[3]}, for anyone whose ${secondOutcome}.`
-      : `${capitalise(ordered[2]!)} and ${ordered[3]}, for anyone whose ${secondOutcome}.`;
+  const description = `${capitalise(ordered[2]!)} and ${ordered[3]}, for anyone whose ${secondOutcome}.`;
 
   // 2.1: draft copy left in the description, or (every other time) no highlights at all.
   const draft = index % 43 === 0 && (index / 43) % 2 === 0;

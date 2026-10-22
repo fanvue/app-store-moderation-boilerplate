@@ -36,11 +36,18 @@ Empty listing highlights also break this rule.
 
 ### 3.3 Pricing accuracy
 
-Pricing shown to a creator must be true and inside the range Fanvue supports. Three things break this rule:
+Pricing shown to a creator must be true and inside the range Fanvue supports. Two things break this rule:
 
-1. **A plan priced outside the supported range.** The range and the plan lifecycle are in [Pricing Plans](pricing-plans.md). The range is in US dollars. `price` is in minor units of `currencyCode`. This tool cannot check a plan in any other currency against the range. That plan is still a finding under this rule. Do not guess an exchange rate or treat the number as dollars.
-2. **A price in the copy that no plan matches.** If the listing copy quotes a price, a plan must cost that amount. Copy quotes prices in many forms, such as `$9.99 a month`, `9.99 USD`, `just $12/mo`, `from $5`.
-3. **A free tier that does not exist.** If the copy advertises a free plan (`free plan`, `free tier`, `free forever`, `free to start`), the listing must have a free plan.
+1. **A plan priced outside the supported range.** A paid plan costs between **\$3.99** and **\$500.00**. The range is in US dollars. `price` is in minor units of `currencyCode`. This tool cannot check a plan in any other currency against the range. That plan is still a finding under this rule. Do not guess an exchange rate or treat the number as dollars.
+2. **A free tier that does not exist.** If the copy advertises a free plan (`free plan`, `free tier`, `free forever`, `free to start`), the listing must have a free plan.
+
+A plan's `status` says whether a creator can buy it:
+
+| Status            | Meaning                                                                                        |
+| ----------------- | ---------------------------------------------------------------------------------------------- |
+| **Pending setup** | The plan is configured but not yet live. It activates automatically when the app is approved. |
+| **Active**        | Live on the listing and purchasable.                                                           |
+| **Withdrawn**     | Taken down. Not purchasable.                                                                   |
 
 ## 4. Design & quality
 

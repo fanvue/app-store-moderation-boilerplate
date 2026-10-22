@@ -4,7 +4,7 @@ import type { ExperienceEvent, ExperienceReport, FanExperience } from "@/lib/fan
  * The event history `npm run replay-events` posts to `app/api/moderation/events`,
  * and that `src/lib/moderation/experiences/spec.test.ts` replays. Each
  * experience is published. Most are then approved by a reviewer and changed
- * or reported. The cases are listed in `docs/production.md`.
+ * or reported. The cases are listed in `docs/experience-requirements.md`.
  */
 
 type Step = {
