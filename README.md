@@ -8,6 +8,8 @@ On [the repository](https://github.com/fanvue/app-store-moderation-boilerplate),
 
 You need Node 24 (`nvm use` reads `.nvmrc`).
 
+**On Windows:** nvm for Windows does not read `.nvmrc`, so run `nvm install 24` then `nvm use 24` (fnm and Volta also work). If PowerShell says running scripts is disabled when you run `npm`, use Command Prompt or Git Bash instead, or run `Set-ExecutionPolicy -Scope CurrentUser RemoteSigned` once.
+
 ```bash
 git clone https://github.com/yourname/app-store-moderation-boilerplate.git
 cd app-store-moderation-boilerplate
