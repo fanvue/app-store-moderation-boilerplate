@@ -8,15 +8,13 @@ export type ExperienceAccessMode = "FREE" | "SUBSCRIPTION" | "PAID" | "HIDDEN";
 export type ExperienceDeliveryMode = "EMBEDDED" | "EXTERNAL";
 
 export type ExperienceType =
-  | "LIVE_STREAM"
-  | "LIVE_AUDIO"
-  | "VIDEO"
-  | "AUDIO"
-  | "GAME"
-  | "CHALLENGE"
-  | "QUIZ"
-  | "EVENT"
-  | "OTHER";
+  "LIVE_STREAM" | "LIVE_AUDIO" | "VIDEO" | "AUDIO" | "GAME" | "CHALLENGE" | "QUIZ" | "EVENT" | "OTHER";
+
+/** Fans only see an `approved` experience. */
+export type ExperienceReviewStatus = "pending_review" | "approved" | "rejected";
+
+/** Fields whose edits go back to review. Fans keep seeing the approved version meanwhile. */
+export type ReviewedField = "title" | "description" | "imageUrl" | "deliveryMode" | "externalUrl";
 
 /** Something a fan buys inside the experience: a spin, a reveal, a critique. */
 export type ExperienceAction = {
@@ -26,18 +24,18 @@ export type ExperienceAction = {
   description: string | null;
   /** USD cents. */
   priceCents: number;
-  status: "active" | "withdrawn";
 };
 
 export type ExperienceReportReason = "ABUSE" | "HACKED" | "ILLEGAL" | "OFFENSIVE" | "SPAM" | "STOLEN";
 
-/** A fan's report against an experience. Each report is from a different fan. */
+/** A fan's report against an experience. The same fan can report more than once. */
 export type ExperienceReport = {
   reporterUuid: string;
   reason: ExperienceReportReason;
   feedback: string | null;
   /** ISO 8601. */
   reportedAt: string;
+  status: "OPEN" | "REVIEWED";
 };
 
 export type FanExperience = {
@@ -55,36 +53,49 @@ export type FanExperience = {
   title: string;
   /** Up to 500 characters. Shown on the detail page. */
   description: string;
-  /** Cover image, re-hosted by Fanvue. Placeholder host in the fixtures. */
+  /** Cover image. Fanvue stores its own copy, so a new cover means a new URL. */
   imageUrl: string | null;
+  /** A label on the chat card. `LIVE_STREAM` does not change how the experience is delivered. */
   experienceType: ExperienceType;
   accessMode: ExperienceAccessMode;
+  /** EMBEDDED runs in a frame on Fanvue. EXTERNAL opens `externalUrl` in a new tab. */
   deliveryMode: ExperienceDeliveryMode;
-  /** Where an EXTERNAL experience opens. `null` for EMBEDDED. */
   externalUrl: string | null;
-  /** Never listed on the profile; reachable by share link only. Always true for HIDDEN. */
+  /** Not listed on the profile. Fans reach it by share link only. Always true for HIDDEN. */
   hidden: boolean;
   /** USD cents. `null` unless `accessMode` is PAID. */
   priceCents: number | null;
   /** When true, `priceCents` is billed monthly instead of once. */
   priceRecurring: boolean;
   actions: ExperienceAction[];
+  reviewStatus: ExperienceReviewStatus;
+  /** Edited fields waiting for review. The values above are the edited ones. */
+  pendingReviewFields: ReviewedField[];
+  /** ISO 8601, or `null`. Set when Fanvue suspends the experience. */
+  suspendedAt: string | null;
   /** ISO 8601. */
   publishedAt: string;
   /** ISO 8601. */
   updatedAt: string;
-  /** Fans with live recurring access. */
-  activeSubscribers: number;
+  /** Fans who have paid for access. */
+  paidImpact: {
+    /** Fans with live monthly access. */
+    activeSubscriptionCount: number;
+    /** Fans who paid once. */
+    oneTimePurchaseCount: number;
+  };
   reports: ExperienceReport[];
 };
 
 /**
- * Sent when an experience is published, updated or reported. Every event
+ * Sent when an experience is published, changes, or is reported. Every event
  * carries the whole experience at that moment, reports included. Delivery is
  * at least once, so the same `id` can arrive more than once.
+ *
+ * Fanvue does not send these events today. The exercise assumes it does.
  */
 export type ExperienceEvent = {
-  /** Unique per event, stable across redeliveries. */
+  /** Unique per event, and the same on every delivery. */
   id: string;
   type: "experience.published" | "experience.updated" | "experience.reported";
   /** ISO 8601. */

@@ -80,8 +80,8 @@ export async function getApp(uuid: string): Promise<AppListing | null> {
 }
 
 /**
- * Every live experience, newest first: a one-off backfill. In production,
- * experiences arrive as events at `app/api/moderation/events`.
+ * Every experience as it is now, newest first: a one-off backfill. New changes
+ * arrive as events at `app/api/moderation/events`.
  */
 export async function getAllExperiences(): Promise<FanExperience[]> {
   await roundTrip();

@@ -23,7 +23,7 @@ npm run dev
 
 **Experiences** are embedded pages that an app publishes to a creator's profile on Fanvue, such as a game or a live stream. Fans can pay inside them.
 
-**Moderators** check both against Fanvue's requirements. Every app listing must meet the Listing Requirements before it goes live. Today a moderator checks each listing by hand. Experiences go live as soon as an app publishes them. Nobody checks them unless a fan complains.
+**Moderators** check both against Fanvue's requirements. Every app listing must meet the Listing Requirements before it goes live. Today a moderator checks each listing by hand. A reviewer approves each experience before fans see it, but some later changes go live with no review.
 
 There are 2,015 listings in the queue. The page you just opened fetches and reviews all of them every time it loads.
 
@@ -36,7 +36,7 @@ There are 2,015 listings in the queue. The page you just opened fetches and revi
 
 **Part two: experiences**
 
-1. Read [`docs/experience-requirements.md`](docs/experience-requirements.md). It has six more rules. It also asks what a finding does to a live experience.
+1. Read [`docs/experience-requirements.md`](docs/experience-requirements.md). It explains how experiences are reviewed today, and has five rules that catch what review misses.
 2. Optional: make [the events route](app/api/moderation/events/route.ts) accept the events that `npm run replay-events` sends ([the cases it contains](docs/production.md#experiences)). Optional: implement one rule in [`experiences/rules.ts`](src/lib/moderation/experiences/rules.ts).
 
 You choose where to start. You will not finish everything. We care more about what you choose to do, and why, than how much you finish.
@@ -46,7 +46,7 @@ You choose where to start. You will not finish everything. We care more about wh
 Two test files check your rules.
 
 - [`spec.test.ts`](src/lib/moderation/spec.test.ts) checks the listing rules (part one). It has 15 example listings and the rules that should flag each one.
-- [`experiences/spec.test.ts`](src/lib/moderation/experiences/spec.test.ts) checks the experience rules (part two). It has 11 example experiences and the rules that should flag each one.
+- [`experiences/spec.test.ts`](src/lib/moderation/experiences/spec.test.ts) checks the experience rules (part two). It replays the history of 12 example experiences and lists the rules that should flag each one.
 
 ```bash
 npm run test:spec     # both specs. They fail today
@@ -117,6 +117,6 @@ The session ends with a conversation about these questions. You can think about 
 | [`src/components/ReviewQueue.tsx`](src/components/ReviewQueue.tsx)                                                            | The queue table, rendered by `app/page.tsx`                                                            |
 | [`src/components/ListingDetail.tsx`](src/components/ListingDetail.tsx), [`FindingsList.tsx`](src/components/FindingsList.tsx) | One listing and its findings, rendered by the listing page                                             |
 | [`app/api/moderation/`](app/api/moderation)                                                                                   | The decisions route and the events route that `npm run replay-events` posts to                         |
-| [`src/lib/moderation/experiences/rules.ts`](src/lib/moderation/experiences/rules.ts)                                          | The experience rules. `reviewExperiences` is called by the experience spec                             |
+| [`src/lib/moderation/experiences/rules.ts`](src/lib/moderation/experiences/rules.ts)                                          | The experience rules. `reviewEvents` is called by the experience spec                                  |
 
 Everything else (the fixtures, the mock API, the database plumbing, the types, the two spec files) is there to be read, not changed.

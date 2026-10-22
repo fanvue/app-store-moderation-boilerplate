@@ -2,67 +2,59 @@
 
 What a fan experience must meet to stay live.
 
-## How experiences differ from listings
+## How review works today
 
-An experience is an embedded page on Fanvue that an app publishes to a creator's profile, like a game or a live stream. It is live immediately, and nobody reviews it first.
+- An app publishes an experience to a creator's profile. A Fanvue reviewer approves it before fans can see it.
+- After approval, edits to the title, description, cover, delivery mode or external URL go back to review. Fans keep seeing the approved version until then. These fields are listed in `pendingReviewFields`.
+- Other changes go live straight away, with no review: prices, access mode, actions and the experience type.
+- Fanvue keeps its own copy of every cover image, but nothing scans it.
+- `LIVE_STREAM` and `LIVE_AUDIO` are labels. The stream comes from the app's own page, so Fanvue never sees it.
+- Fans can report an experience. A report has a reason and stays `OPEN` until a moderator reviews it. The same fan can report more than once.
+- A moderator removes an experience by suspending it. Fans can no longer open it, and renewals pause. Nothing is deleted or refunded.
 
-- **It is already live.** The question is how long it may stay up, not whether to approve it.
-- **Fans have paid.** A paid experience can have fans with live monthly access (`activeSubscribers`). Fanvue will not unpublish it until someone acknowledges those fans, so a takedown must first decide what happens to them.
-- **Fans report.** A report is a second kind of signal, trusted differently from a rule. The queue holds both.
+The rules below catch what review misses.
 
-Fans can buy actions inside any experience. A `HIDDEN` experience is not listed on the profile. Fans can reach it only by share link.
+## How changes reach the tool
+
+Fanvue does not send events for experiences today. For this exercise, assume it sends one each time an experience is published, changes or is reported. Each event carries the whole experience at that moment. [How this runs in production](production.md#experiences) has the details.
+
+## The rules
+
+The rules read only the [event history](../src/lib/fanvue/experiences.ts). "After approval" means the experience was approved before the change.
+
+### E1 Unreviewed change to what fans buy
+
+After approval, an update adds an action, changes an action's title or description, or changes the access mode.
+
+### E2 Changed cover not scanned
+
+After approval, an update changes the cover (`imageUrl`). Nothing has scanned the new cover.
+
+### E3 Live content Fanvue cannot see
+
+- After approval, an update changes the type to `LIVE_STREAM` or `LIVE_AUDIO`.
+- A `LIVE_STREAM` or `LIVE_AUDIO` experience is `EXTERNAL`, so it runs outside Fanvue.
+
+### E4 Report escalation
+
+Any report with the reason `ILLEGAL`, or reports from three or more different fans within 7 days. Reports from the same fan count once.
+
+### E5 Price raised on paying fans
+
+After approval, an update raises the price or turns on monthly billing while fans have live monthly access. That means `paidImpact.activeSubscriptionCount` was above 0 before the update.
 
 ## What a finding may do
 
 For each rule, decide which of these a finding leads to:
 
-- **Take down now:** unpublish without waiting for a person.
-- **Hide pending review:** a moderation hold, not the app's `hidden` flag. Remove it from the profile, keep it open for fans who already paid, and send it to a person.
+- **Suspend now:** fans can no longer open it, without waiting for a person.
+- **Send to review:** a moderator looks at it in the review queue.
 - **Notify the developer:** say what is wrong and give the developer time to fix it.
 
 A finding is still an `Issue` with a severity of `reject`, `fix` or `warn`, because one queue holds listings and experiences.
 
-## The rules
-
-These rules need only the [experience data](../src/lib/fanvue/experiences.ts).
-
-### E1 Valid external URL
-
-An `EXTERNAL` experience's `externalUrl` breaks this rule when it is missing, is not `https`, has no host or an IP address for a host, or is on one of these domains or a subdomain of one:
-
-- `fanvue.com`
-- link shorteners: `bit.ly`, `t.co`, `tinyurl.com`, `linktr.ee`, `rb.gy`
-- dev tunnels: `ngrok.io`, `ngrok-free.app`, `trycloudflare.com`, `loca.lt`
-
-### E2 Finished copy
-
-The title or description contains a draft marker, ignoring case: `lorem`, `ipsum`, `TODO`, `TBD`, `FIXME`, `coming soon`, `placeholder`, `sample text`.
-
-### E3 No off-platform payment
-
-The title, the description, or any action's title or description tells a fan to pay somewhere else. That means naming a payment app or method (`Venmo`, `CashApp`, `PayPal`, `Zelle`, `Revolut`, `Wise`, `crypto`, `BTC`, `USDT`) or an instruction such as `cheaper on my site`, `DM me to pay`, `send it directly` or `pay me outside`.
-
-Match whole words and ignore case. `Wise` does not match inside `otherwise`. A mention in passing still counts.
-
-### E4 Pricing accuracy
-
-What the copy says a fan pays must be what the fan is charged.
-
-1. The access price, if there is one, and every action's price are from 300 to 50000 USD cents inclusive.
-2. A price quoted in the experience's title or description, such as `$7 a month`, `just $5`, `5 USD` or `$12/mo`, equals the access price or an action's price. Only `PAID` experiences have an access price. For other experiences, `priceCents` is `null`.
-3. The billing period matches. Only the access price can recur (`priceRecurring`), and only monthly. Actions charge once. `a month`, `monthly`, `/mo` or `per month` must match a monthly charge. `one-off` or `once` must match a one-time charge. A price with no period can match either. Words like `weekly draw` or `every Tuesday` are a schedule, not a price.
-
-### E5 No duplicates on a profile
-
-Two experiences with the same `app.uuid` and `creator.handle`, different `externalExperienceId`s, and the same title and description, ignoring case and punctuation. Flag both. A person decides which to keep. The same app publishing the same experience for different creators is normal.
-
-### E6 Report escalation
-
-Three or more reports for any reason, or one report with the reason `ILLEGAL`. Each report is from a different fan. Below that, a report is context for a reviewer, not a finding. E6 should outrank everything else in the queue.
-
 ## What we do not automate
 
-- what the experience shows inside its iframe
-- whether the cover image is safe for work
-- whether a reported experience really is illegal, stolen or abusive
+- what a cover, an experience page or a stream shows
+- whether a report is true
 - whether an action is worth its price
