@@ -20,7 +20,7 @@ Fanvue does not send events for experiences today. For this exercise, assume it 
 
 ## The rules
 
-The rules read only the [event history](../src/lib/fanvue/experiences.ts). "After approval" means the experience was approved before the change.
+The rules read only the [event history](../fixtures/experience-events.ts). The event and experience types are in [`src/lib/fanvue/experiences.ts`](../src/lib/fanvue/experiences.ts). "After approval" means the experience was approved before the change.
 
 ### E1 Unreviewed change to what fans buy
 

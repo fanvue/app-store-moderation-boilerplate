@@ -24,7 +24,7 @@ const EXPECTED: Record<string, string[]> = {
   "dex/after-hours": ["E3"],
   "nico/gym-live": ["E3"],
   "rocco/late-night": ["E4"],
-  "noor/trivia-weekly": [], // one fan twice, and the rest more than 7 days apart
+  "noor/trivia-weekly": [], // four reports from three fans, never three different fans within 7 days
   "jax/wheel-v2": [], // an update that changes nothing a rule reads
 };
 
