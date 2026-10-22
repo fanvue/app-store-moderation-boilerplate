@@ -1,8 +1,6 @@
 # Fan Experience Requirements — moderation edition
 
-What a fan experience has to meet to stay live on a creator's profile, written for the people doing the reviewing. **Revision 1, October 2026.**
-
-For [`DESIGN.md`](../DESIGN.md), read the first two sections and skim the rule headings.
+What a fan experience has to meet to stay live. For [`DESIGN.md`](../DESIGN.md), read the first two sections and skim the rule headings.
 
 ## How experiences differ from listings
 
