@@ -3,8 +3,8 @@ import type { ExperienceEvent, ExperienceReport, FanExperience } from "@/lib/fan
 /**
  * The event history `npm run replay-events` posts to `app/api/moderation/events`,
  * and that `src/lib/moderation/experiences/spec.test.ts` replays. Each
- * experience is published, approved by a reviewer, then changed or reported.
- * The cases are listed in `docs/production.md`.
+ * experience is published. Most are then approved by a reviewer and changed
+ * or reported. The cases are listed in `docs/production.md`.
  */
 
 type Step = {
@@ -326,7 +326,7 @@ const drafts: Draft[] = [
     ],
   ),
 
-  // Four reports, but one fan twice and the rest spread out: fine. One report is delivered twice.
+  // Four reports from three fans, but never three different fans within 7 days: fine. One report is delivered twice.
   ...history(
     experience({
       uuid: "e3c4d5e6-f708-4192-a3b4-c5d6e7f8091a",
