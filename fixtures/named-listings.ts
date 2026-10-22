@@ -413,7 +413,7 @@ export const namedListings: AppListing[] = [
     ratingDistribution: null,
   },
   {
-    uuid: "5d6e7f80-9102-4b3c-c435-465768798091",
+    uuid: "5d6e7f80-9102-4b3c-8435-465768798091",
     name: "Copilot for Creators",
     tagline: "Reply drafting and fan ranking for busy creators",
     description: "An inbox assistant that drafts replies, sorts fans by spend and flags the chats worth your time.",
@@ -434,7 +434,7 @@ export const namedListings: AppListing[] = [
     galleryImageUrls: ["https://placehold.co/1280x800/png?text=c4c+inbox"],
     pricingPlans: [
       {
-        uuid: "d6879809-1acb-4dce-c546-576879809102",
+        uuid: "d6879809-1acb-4dce-8546-576879809102",
         name: "Standard",
         description: "Reply drafting and fan ranking.",
         billingType: "recurring",
