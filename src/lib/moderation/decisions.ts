@@ -3,7 +3,7 @@ import type { Issue } from "./rules";
 /**
  * What a moderator decided about one listing, and what they were looking at.
  * Findings are recomputed every run; a decision is the record. The README's
- * "bar for decisions" says what it must survive.
+ * "What done looks like" says what it must survive.
  */
 export type ModeratorDecision = {
   listingUuid: string;

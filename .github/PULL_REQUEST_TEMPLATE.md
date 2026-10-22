@@ -1,4 +1,4 @@
-<!-- Interview candidates: open this PR in your own fork, as the README describes. -->
+<!-- Interview candidates: open this PR in your own private copy, as the README describes. -->
 
 ## What I did
 

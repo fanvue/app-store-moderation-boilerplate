@@ -11,8 +11,8 @@ export const dynamic = "force-dynamic";
  * everything. The footer says what it cost.
  *
  * TODO (yours): read a page from `src/lib/moderation/store.ts`, with page,
- * size, severity and rule from `searchParams`. See the README's "bar for the
- * queue".
+ * size, severity and rule from `searchParams`. See the README's "What
+ * done looks like".
  */
 export default async function ReviewQueuePage() {
   const { listings, apiCalls, ms } = await fetchEveryListing();
