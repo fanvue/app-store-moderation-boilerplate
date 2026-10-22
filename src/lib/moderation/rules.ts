@@ -1,5 +1,9 @@
 import type { AppListing } from "@/lib/fanvue/types";
 
+/**
+ * `reject`: the listing cannot go live as it is. `fix`: the developer can correct
+ * it without anyone's judgement. `warn`: a person should look.
+ */
 export type Severity = "reject" | "fix" | "warn";
 
 /**
