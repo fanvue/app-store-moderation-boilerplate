@@ -8,9 +8,8 @@ import { reviewListings } from "@/lib/moderation/rules";
 export const dynamic = "force-dynamic";
 
 /**
- * One listing. Reviewed against the whole store on every request, because 4.2
- * compares listings to each other and nothing has stored the result yet. The
- * footer says what that cost, as on the queue.
+ * One listing, reviewed against the whole store on every request because
+ * nothing has stored the result yet. The footer says what that cost.
  *
  * TODO (yours): read the stored review from `src/lib/moderation/store.ts`.
  */

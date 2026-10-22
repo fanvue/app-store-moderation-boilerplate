@@ -8,7 +8,7 @@ export const dynamic = "force-dynamic";
  * decision. How the client says what it saw (a version, a timestamp, the
  * previous decision's id) is yours.
  *
- * TODO: implement POST. Storage goes in `src/lib/moderation/decisions.ts`.
+ * TODO: implement POST. Storage is in `src/lib/moderation/decisions.ts`.
  */
 export async function GET() {
   return Response.json({ decisions: await listDecisions() });

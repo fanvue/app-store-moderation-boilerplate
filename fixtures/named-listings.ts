@@ -2,13 +2,8 @@ import type { AppListing } from "@/lib/fanvue/types";
 
 /**
  * The fifteen listings the moderation spec is written against
- * (`src/lib/moderation/spec.test.ts`). Every one is a real-looking submission
- * with a story: some are clean, some break exactly one rule, some break two.
- *
- * All apps, developers and URLs are invented. Images point at a placeholder
- * host because the repo works offline — image content is never a signal here.
- *
- * Typed as `AppListing`, so `npm run typecheck` is the schema check.
+ * (`src/lib/moderation/spec.test.ts`). All apps, developers and URLs are
+ * invented.
  */
 export const namedListings: AppListing[] = [
   {

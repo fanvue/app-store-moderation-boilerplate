@@ -1,14 +1,12 @@
 import type { Review, Severity } from "./rules";
 
 /**
- * The index the queue reads: reviews the job wrote, served worst first a page
- * at a time. `GET /apps` cannot do this, so the tables are yours, in
- * `db/migrations/`.
+ * The index the queue reads: reviews the job wrote, sorted by severity, a page
+ * at a time. The tables are yours, in `db/migrations/`.
  *
  * The types below are a starting point. Change them if your design needs to:
  * a queue row need not carry a full listing, and the queue also has to show
- * which listings a person already decided. The requirements doc is on
- * revision 3.
+ * which listings a person already decided.
  */
 
 export type QueueFilter = {
@@ -38,7 +36,7 @@ export type ReviewStore = {
   saveReviews(reviews: Review[], ruleRevision: string): Promise<void>;
   /** One listing's stored review, or `null` if the job has not reached it. */
   getReview(uuid: string): Promise<Review | null>;
-  /** Worst first within the filter. Rows with the same worst severity keep submission order. */
+  /** Sorted by worst severity within the filter. Rows with the same worst severity keep submission order. */
   getQueuePage(filter: QueueFilter): Promise<QueuePage>;
 };
 

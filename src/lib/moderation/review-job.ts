@@ -33,9 +33,6 @@ export async function fetchEveryListing(): Promise<{ listings: AppListing[]; api
 /**
  * The job: crawl, review, store. `npm run review` runs it.
  *
- * `reviewListings` takes the whole set because 4.2 compares listings to each
- * other, so one edited listing can change another listing's findings.
- *
  * TODO: implement. The pieces are all imported.
  */
 export async function runReviewJob(): Promise<void> {

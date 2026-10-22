@@ -2,12 +2,8 @@ import type { FanExperience } from "@/lib/fanvue/experiences";
 
 /**
  * The eleven experiences the experience spec is written against
- * (`src/lib/moderation/experiences/spec.test.ts`). Every one is already live
- * on a creator's profile; some are fine, some break exactly one rule.
- *
- * All apps, creators and URLs are invented. Images point at a placeholder host
- * because the repo works offline. What the experience actually renders in its
- * iframe is never a signal here.
+ * (`src/lib/moderation/experiences/spec.test.ts`). All apps, creators and URLs
+ * are invented.
  */
 export const namedExperiences: FanExperience[] = [
   {

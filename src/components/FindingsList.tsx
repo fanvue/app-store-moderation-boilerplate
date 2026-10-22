@@ -9,7 +9,6 @@ import type { Issue } from "@/lib/moderation/rules";
  */
 export function FindingsList({ issues }: { issues: Issue[] }) {
   if (issues.length === 0) {
-    // TODO: this is ambiguous. Did no rules run, or did they all pass?
     return <p>No findings.</p>;
   }
 

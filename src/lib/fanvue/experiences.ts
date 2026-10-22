@@ -1,15 +1,6 @@
 /**
- * Fan experience types.
- *
- * Hand-derived from the public docs for publishing experiences
- * (https://api.fanvue.com/docs/app-store/experiences/publish) and the fan
- * report reasons the platform accepts. An experience is one row per app,
- * creator and `externalExperienceId`; publishing the same id again updates
- * the row in place.
- *
- * Unlike a listing, an experience is live the moment the API accepts it. There
- * is no submit-for-review step. Everything the moderation tool sees here is
- * already on a creator's profile.
+ * Fan experience types. An experience is one row per app, creator and
+ * `externalExperienceId`; publishing the same id again updates it in place.
  */
 
 export type ExperienceAccessMode = "FREE" | "SUBSCRIPTION" | "PAID" | "HIDDEN";
@@ -33,18 +24,14 @@ export type ExperienceAction = {
   /** Shown to the fan in the payment dialog. */
   title: string;
   description: string | null;
-  /** USD cents. E4 in `docs/experience-requirements.md` requires 300 to 50000. */
+  /** USD cents. */
   priceCents: number;
   status: "active" | "withdrawn";
 };
 
 export type ExperienceReportReason = "ABUSE" | "HACKED" | "ILLEGAL" | "OFFENSIVE" | "SPAM" | "STOLEN";
 
-/**
- * A fan's report against a published experience. One per reporter per
- * experience: the platform drops repeat reports from the same fan, so every
- * row here is a distinct person.
- */
+/** A fan's report against an experience. Each report is from a different fan. */
 export type ExperienceReport = {
   reporterUuid: string;
   reason: ExperienceReportReason;
@@ -77,25 +64,24 @@ export type FanExperience = {
   externalUrl: string | null;
   /** Never listed on the profile; reachable by share link only. Always true for HIDDEN. */
   hidden: boolean;
-  /** USD cents; E4 requires 300 to 50000. `null` unless `accessMode` is PAID. */
+  /** USD cents. `null` unless `accessMode` is PAID. */
   priceCents: number | null;
   /** With `priceCents`, bills the fan monthly instead of once. */
   priceRecurring: boolean;
   actions: ExperienceAction[];
   /** ISO 8601. */
   publishedAt: string;
-  /** ISO 8601. Updates re-trigger review. */
+  /** ISO 8601. */
   updatedAt: string;
-  /** Fans with live recurring access. A takedown has to deal with them. */
+  /** Fans with live recurring access. */
   activeSubscribers: number;
   reports: ExperienceReport[];
 };
 
 /**
- * What the platform sends about an experience: when it is published, when
- * it changes, and when a fan reports it. Every event carries the whole
- * experience as it is at that moment, reports included, not a diff.
- * Delivery is at least once, so the same `id` can arrive more than once.
+ * Sent when an experience is published, changes, or is reported. Every event
+ * carries the whole experience at that moment, reports included. Delivery is
+ * at least once, so the same `id` can arrive more than once.
  */
 export type ExperienceEvent = {
   /** Unique per event, stable across redeliveries. */

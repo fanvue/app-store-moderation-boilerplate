@@ -9,7 +9,7 @@ import { namedExperiences } from "./named-experiences";
  * arrive as their own events. It ends with every experience in the state
  * `named-experiences.ts` shows, which the experience spec is written against.
  *
- * The deliberate cases are listed in `docs/production.md`.
+ * The cases are listed in `docs/production.md`.
  */
 
 const byKey = new Map(

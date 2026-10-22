@@ -1,14 +1,13 @@
 # How this runs in production
 
-The fixtures are here so the repo works offline. The mock API behaves like the real one in the ways that matter, and these are all of them.
+The mock API behaves like the live one in these ways.
 
 ## Listings
 
 - `GET /apps` returns at most 50 summaries a page. The fields the rules need come from `GET /apps/{uuid}`, one call per listing: 41 list calls and 2,015 detail calls for everything.
 - Every call takes about three milliseconds and is counted. The live API allows 200 calls a minute, so fetching everything takes about ten minutes. Nothing on a page load can do that.
-- `GET /apps` is in submission order and cannot filter by severity or rule. Worst first across pages has to come from an index you keep.
+- `GET /apps` is in submission order and cannot filter by severity or rule. Sorting by severity across pages needs an index you keep.
 - Editing a listing or a pricing plan starts a new submission, and a webhook says so. Listings are reviewed again after every edit, and because [4.2](listing-requirements.md#42-originality) compares listings to each other, one edit can change another listing's findings.
-- The requirements doc is on revision 3. Revision 4 changes a word list and a price ceiling next quarter. Decisions made under revision 3 stay made.
 
 ## Storage
 
@@ -19,9 +18,9 @@ The fixtures are here so the repo works offline. The mock API behaves like the r
 
 ## Experiences
 
-Experiences arrive as events: published, updated and reported, at least once each, in order per experience. Every event carries the whole experience as it then is, so a review that only runs on publish never sees a report. [`getAllExperiences()`](../src/lib/fanvue/api.ts) stands in for a one-off backfill and returns the end state of the replay below.
+Experiences arrive as events: published, updated and reported, at least once each, in order per experience. Every event carries the whole experience as it then is, so a review that only runs on publish never sees a report. [`getAllExperiences()`](../src/lib/fanvue/api.ts) is a one-off backfill and returns the end state of the replay below.
 
-`npm run replay-events` posts the events in [`fixtures/experience-events.ts`](../fixtures/experience-events.ts) to your dev server. Each experience is first published as it was on the day, with no reports. These cases are there on purpose:
+`npm run replay-events` posts the events in [`fixtures/experience-events.ts`](../fixtures/experience-events.ts) to your dev server. Each experience is first published as it was on the day, with no reports. It contains these cases:
 
 - Private Q&A is published clean, then updated into an [E3](experience-requirements.md#e3-no-off-platform-payment) violation.
 - A second Tip Jar Royale arrives four minutes after the first, same app and profile, new id. [E5](experience-requirements.md#e5-no-duplicates-on-a-profile) cannot be decided from either event alone.

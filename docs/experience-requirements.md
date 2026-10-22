@@ -1,13 +1,13 @@
-# Fan Experience Requirements — moderation edition
+# Fan Experience Requirements: moderation edition
 
 What a fan experience has to meet to stay live. For [`DESIGN.md`](../DESIGN.md), read the first two sections and skim the rule headings.
 
 ## How experiences differ from listings
 
-An app publishes an experience straight onto a creator's profile, with no review step.
+An experience is an embedded page on Fanvue that an app publishes to a creator's profile, like a game or a live stream. It is live immediately, and nobody reviews it first.
 
-- **It is already live.** The question is not whether to approve it, but how long it may stay up.
-- **Fans have paid.** A paid experience can have fans holding live monthly access (`activeSubscribers`). The platform blocks an unpublish until someone acknowledges them, so a takedown has to decide what happens to those fans first.
+- **It is already live.** The question is how long it may stay up, not whether to approve it.
+- **Fans have paid.** A paid experience can have fans holding live monthly access (`activeSubscribers`). Fanvue will not unpublish it until someone acknowledges them, so a takedown has to decide what happens to those fans first.
 - **Fans report.** A report is a second kind of signal, trusted differently from a rule. The queue carries both.
 
 Fans can buy actions inside any experience. A `HIDDEN` experience is not listed on the profile and is reachable by share link only.
@@ -20,7 +20,7 @@ For each rule, decide which of these a finding leads to:
 - **Hide pending review:** a moderation hold, not the app's `hidden` flag. Take it off the profile, keep it open for fans who already paid, and put it in front of a person.
 - **Notify the developer:** say what is wrong and give the app time to fix it.
 
-A finding is still an `Issue` with a severity of `reject`, `fix` or `warn`, because one queue carries listings and experiences. How those map onto the three actions goes in `DESIGN.md`.
+A finding is still an `Issue` with a severity of `reject`, `fix` or `warn`, because one queue carries listings and experiences.
 
 ## The rules
 
@@ -40,15 +40,15 @@ The title or description contains a draft marker, ignoring case: `lorem`, `ipsum
 
 ### E3 No off-platform payment
 
-The title, the description, or any action's title or description steers a fan to pay somewhere else. That means naming a payment app or rail (`Venmo`, `CashApp`, `PayPal`, `Zelle`, `Revolut`, `Wise`, `crypto`, `BTC`, `USDT`) or an instruction such as `cheaper on my site`, `DM me to pay`, `send it directly` or `pay me outside`.
+The title, the description, or any action's title or description steers a fan to pay somewhere else. That means naming a payment app or method (`Venmo`, `CashApp`, `PayPal`, `Zelle`, `Revolut`, `Wise`, `crypto`, `BTC`, `USDT`) or an instruction such as `cheaper on my site`, `DM me to pay`, `send it directly` or `pay me outside`.
 
-Match whole words, ignoring case: `Wise` is not in `otherwise`. A mention in passing still counts. This is the most serious thing a rule can find in an experience's copy, because it takes the fan outside the platform's protections.
+Match whole words, ignoring case: `Wise` is not in `otherwise`. A mention in passing still counts.
 
 ### E4 Pricing accuracy
 
 What the copy says a fan pays has to be what the fan is charged.
 
-1. The access price, when there is one, and every action are USD cents from 300 to 50000 inclusive. Prices can be re-set after publish, so the tool checks again.
+1. The access price, when there is one, and every action are USD cents from 300 to 50000 inclusive.
 2. A price quoted in the experience's title or description, such as `$7 a month`, `just $5`, `5 USD` or `$12/mo`, equals the access price or an action's price. Only `PAID` experiences have an access price; otherwise `priceCents` is `null`.
 3. The billing period matches. Only the access price can recur (`priceRecurring`), and only monthly; actions charge once. `a month`, `monthly`, `/mo` or `per month` must match a monthly charge, `one-off` or `once` a one-time charge, and a price with no period can match either. Words like `weekly draw` or `every Tuesday` are a schedule, not a price.
 

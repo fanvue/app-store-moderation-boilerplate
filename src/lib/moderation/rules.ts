@@ -34,9 +34,8 @@ export type Review = {
  * Reviews a set of listings and returns the findings for each, in the order
  * they came in.
  *
- * This is the entry point the spec test calls and the pages render, and it
- * takes the whole set rather than one listing. How the work inside is
- * organised is up to you.
+ * Takes the whole set because 4.2 compares listings to each other. How the
+ * work inside is organised is up to you.
  *
  * Pure: no I/O, and the same input always gives the same output.
  */
@@ -55,8 +54,7 @@ function checkListing(listing: AppListing): Issue[] {
  * not two."
  *
  * `fix` because a developer can add a screenshot without anyone making a
- * judgement call. Argue for something else if you disagree — bring the
- * accept-with-fixes bar in 4.5 with you.
+ * judgement call. Argue for something else if you disagree.
  */
 function checkScreenshotCount(listing: AppListing): Issue[] {
   const distinct = new Set(listing.previewImageUrls).size;

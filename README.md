@@ -19,7 +19,7 @@ npm run dev
 
 ## The task
 
-The Fanvue App Store lets third-party developers list apps for creators. Every listing has to meet the Listing Requirements before it goes live, and today a moderator checks each one by hand. There are 2,015 listings in the queue, and the page you just opened fetches and reviews every one of them on every request.
+The Fanvue App Store lists apps: web applications a creator installs on Fanvue and gives consent to. Every listing has to meet the Listing Requirements before it goes live, and today a moderator checks each one by hand. There are 2,015 listings in the queue, and the page you just opened fetches and reviews every one of them on every request.
 
 **Part one: listings**
 
@@ -31,7 +31,7 @@ The Fanvue App Store lets third-party developers list apps for creators. Every l
 
 **Part two: experiences**
 
-Apps can also publish fan experiences onto a creator's profile: a quiz, a stream, a game. They go live straight away, fans pay inside them, and nobody checks them unless a fan complains.
+An experience is an embedded page on Fanvue that an app publishes to a creator's profile, like a game or a live stream. It is live immediately, fans pay inside it, and nobody checks it unless a fan complains.
 
 1. Read [`docs/experience-requirements.md`](docs/experience-requirements.md). Six more rules, and a choice about what a finding does to something already live.
 2. Write the design in [`DESIGN.md`](DESIGN.md). This is the deliverable for part two.
@@ -54,7 +54,7 @@ npm run replay-events # posts the experience events to your dev server
 npm run db:query -- "select * from review_runs"   # look inside the database
 ```
 
-The specs say which listings are in trouble and under which rule. They say nothing about how to detect anything, how serious anything is, or what a moderator should see. **Do not edit them.** If you think one is wrong, say so and we will talk about it.
+The specs say what must be flagged and under which rule. They say nothing about how to detect anything, how serious anything is, or what a moderator should see. **Do not edit them.** If you think one is wrong, say so and we will talk about it.
 
 `npm run metrics` puts each rule's count next to how many the fixture generator planted, so you see a rule flooding the queue before a moderator does. The generator plants no duplicates, so any [4.2](docs/listing-requirements.md#42-originality) pair among generated listings is a false positive.
 
@@ -75,10 +75,10 @@ The specs say which listings are in trouble and under which rule. They say nothi
 
 ## Rules of the game
 
-- **Every finding is an `Issue`** (see [`rules.ts`](src/lib/moderation/rules.ts)): a rule number, a severity, a code, a message, and optionally the field at fault. Add fields if a finding needs to carry more, such as the matched text.
+- **Every finding is an `Issue`** (see [`rules.ts`](src/lib/moderation/rules.ts)): a rule number, a severity, a code, a message, and optionally the field at fault.
 - **Rule numbers are section headings.** `2.3 Listing quality` is rule `2.3`, so a finding about it sets `rule: "2.3"`. Experience rules are numbered `E3`.
-- **Severity is your call.** `reject`: the listing cannot go live as it is. `fix`: the developer can correct it without anyone's judgement. `warn`: a human should look. Pick one per rule and be ready to say why. Argue for a different scheme if you prefer one.
-- **Write down what the docs do not say** in [`ASSUMPTIONS.md`](ASSUMPTIONS.md), including what triggers the review job, your schema and why, and what the job re-reviews when one listing changes.
+- **Severity is your call.** `reject`: the listing cannot go live as it is. `fix`: the developer can correct it without anyone's judgement. `warn`: a human should look. Pick one per rule and be ready to say why.
+- **Write down what the docs do not say** in [`ASSUMPTIONS.md`](ASSUMPTIONS.md).
 - **Deterministic only.** No network, no LLM, no external API. The listing or experience data is all you get.
 - **Images are placeholders.** Every image URL in the fixtures points at a placeholder host because this repo works offline. Image content is never a signal here.
 - **Use your AI tool as much as you like.** Read the diff before you keep it. [`AGENTS.md`](AGENTS.md) tells it how to behave here; you may change or delete it, and we will ask why.
@@ -114,4 +114,4 @@ The session ends with a conversation. These are the questions, so you can think 
 | [`ASSUMPTIONS.md`](ASSUMPTIONS.md)                                                                                            | Your notes on what the docs leave open                                                              |
 | [`DESIGN.md`](DESIGN.md)                                                                                                      | The part two design, with its headings                                                              |
 
-Everything else — the fixtures, the mock API, the database plumbing, the types, the two spec files — is there to be read, not changed.
+Everything else (the fixtures, the mock API, the database plumbing, the types, the two spec files) is there to be read, not changed.

@@ -8,7 +8,7 @@ import type { Issue } from "./rules";
 export type ModeratorDecision = {
   listingUuid: string;
   decision: "approve" | "reject" | "request_fixes";
-  /** Who decided. Two moderators share this queue. */
+  /** Who decided. */
   moderator: string;
   /** ISO 8601. */
   decidedAt: string;
@@ -21,8 +21,7 @@ export type ModeratorDecision = {
 };
 
 /**
- * Stores a decision in Postgres. Conflicting decisions are detected here and
- * the route answers `409`.
+ * Stores a decision in Postgres.
  *
  * TODO: implement, with a migration in `db/migrations/`. Change the signature
  * as you need: the route has to answer `409` with the earlier decision.

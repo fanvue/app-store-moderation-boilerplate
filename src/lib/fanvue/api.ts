@@ -5,9 +5,8 @@ import type { FanExperience } from "./experiences";
 import type { AppListing, AppListingSummary, PaginatedAppListings } from "./types";
 
 /**
- * The mock Fanvue API: async functions over the fixtures that behave like the
- * live endpoints they are named after. Pages call these directly; the routes
- * under `app/api/v0/apps` wrap them.
+ * The mock Fanvue API, over the fixtures. Pages call these directly; the
+ * routes under `app/api/v0/apps` wrap them.
  *
  * Every call waits `MOCK_API_LATENCY_MS` (default 3) and is counted by
  * `apiCallCount()`. `docs/production.md` lists the rest.
@@ -23,11 +22,7 @@ const LATENCY_MS = Number(process.env.MOCK_API_LATENCY_MS ?? 3);
 
 let calls = 0;
 
-/**
- * Total mock API calls since the process started. One counter for the whole
- * process, so two overlapping requests see each other's calls; it is a dev
- * aid, not a meter.
- */
+/** Total mock API calls since the process started, across all requests. */
 export function apiCallCount(): number {
   return calls;
 }
@@ -48,12 +43,8 @@ export type ListAppsParams = {
 
 /**
  * Mirrors `GET /apps`. Summaries only: the fields the rules need come from
- * {@link getApp}, one call per listing.
- *
- * The spec describes `search` as "matched against the app's listing metadata";
- * our interpretation is a case-insensitive substring match over `name`,
- * `tagline`, `description` and `developer.name`. `pagination.size` is the
- * number of records returned on this page, as in the spec.
+ * {@link getApp}, one call per listing. `pagination.size` is the number of
+ * records returned on this page.
  */
 export async function listApps({
   page = 1,
@@ -89,13 +80,8 @@ export async function getApp(uuid: string): Promise<AppListing | null> {
 }
 
 /**
- * Every live experience, newest first.
- *
- * The public API has no cross-creator list: `GET /experiences?appUuid=` is
- * scoped to one app and the creator whose token is calling. A review tool
- * reads an internal feed instead, and this stands in for a backfill of it. In
- * production the feed is event-driven: a publish, an update or a report arrives
- * as it happens, which is what `app/api/moderation/events` receives.
+ * Every live experience, newest first: a one-off backfill. In production,
+ * experiences arrive as events at `app/api/moderation/events`.
  */
 export async function getAllExperiences(): Promise<FanExperience[]> {
   await roundTrip();

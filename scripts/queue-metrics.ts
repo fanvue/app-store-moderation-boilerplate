@@ -71,4 +71,3 @@ for (const { issues } of reviews) {
 console.log(
   `listings by worst severity: reject ${byWorst.reject}, fix ${byWorst.fix}, warn ${byWorst.warn}, none ${byWorst.none}`,
 );
-console.log("which of those a person has to look at depends on the severities you chose in ASSUMPTIONS.md");

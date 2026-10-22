@@ -7,8 +7,8 @@ import { reviewListings } from "@/lib/moderation/rules";
 export const dynamic = "force-dynamic";
 
 /**
- * The queue, built the slow way: fetch everything, review everything, render
- * everything. The footer says what it cost.
+ * The queue, the slow way: fetch, review and render everything. The footer
+ * says what it cost.
  *
  * TODO (yours): read a page from `src/lib/moderation/store.ts`, with page,
  * size, severity and rule from `searchParams`. See the README's "What

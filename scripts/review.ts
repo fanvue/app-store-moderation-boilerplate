@@ -1,7 +1,4 @@
-/**
- * Runs the review job: `npm run review`. A separate process from `npm run dev`,
- * so it can only reach what the web server reads through the database.
- */
+/** Runs the review job: `npm run review`. */
 import { getDb } from "@/lib/db/client";
 import { runReviewJob } from "@/lib/moderation/review-job";
 

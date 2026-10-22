@@ -5,8 +5,8 @@
  *   npm run dev            # in one terminal
  *   npm run replay-events  # in another
  *
- * One event is sent twice on purpose. Both deliveries should get a 2xx and
- * only one of them should have any effect.
+ * One event is sent twice. Both deliveries should get a 2xx and only one
+ * should have any effect.
  */
 import { experienceEvents } from "@fixtures/experience-events";
 

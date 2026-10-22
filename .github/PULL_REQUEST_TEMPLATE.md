@@ -1,5 +1,3 @@
-<!-- Interview candidates: open this PR in your own private copy, as the README describes. -->
-
 ## What I did
 
 ## What I would do next

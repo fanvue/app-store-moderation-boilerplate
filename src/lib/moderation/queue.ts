@@ -16,11 +16,11 @@ export function worstSeverity(issues: Issue[]): Severity | null {
 }
 
 /**
- * Orders rows worst first in memory: reject, then fix, then warn, then rows
- * with no findings. Rows in the same band keep their original order.
+ * Sorts rows by worst severity in memory: reject, then fix, then warn, then
+ * rows with no findings. Rows in the same band keep their original order.
  *
- * A helper, not the queue's ordering: worst first across pages has to come
- * from the store (`getQueuePage` in `store.ts`).
+ * A helper only: sorting across pages has to come from the store
+ * (`getQueuePage` in `store.ts`).
  *
  * TODO: implement if you need it.
  */

@@ -1,8 +1,7 @@
 // `npm run db`: Postgres (PGlite) on port 5544, files under data/pg.
 //
-// Two servers on one data directory can corrupt it, so if the port is taken
-// this says so and exits cleanly instead of starting a second one. Binding the
-// port answers at once; connecting to it can hang on WSL.
+// If the port is taken, this says so and exits instead of starting a second
+// server on the same data directory.
 import { spawn } from "node:child_process";
 import { mkdirSync } from "node:fs";
 import net from "node:net";
