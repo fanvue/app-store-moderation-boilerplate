@@ -1,6 +1,6 @@
 # Fanvue product engineer session: App Store moderation
 
-A 90-minute pairing session. You build a tool that a Fanvue moderator uses to check App Store listings against the [Listing Requirements](docs/listing-requirements.md). Then you design how the tool handles fan experiences, which go live before anyone checks them. The interviewer watches and asks questions as you go.
+A 90-minute pairing session. You build a tool that a Fanvue moderator uses to check App Store listings against the [Listing Requirements](docs/listing-requirements.md). Then you design how the tool handles fan experiences. A reviewer approves each experience before fans see it, but some later changes go live with no review. The interviewer watches and asks questions as you go.
 
 ## Getting Started
 
