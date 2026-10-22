@@ -8,7 +8,7 @@
     "node": ">=24"
   },
   "scripts": {
-    "dev": "concurrently --kill-others-on-fail -n db,web -c blue,green \"npm:db\" \"next dev --turbopack\"",
+    "dev": "concurrently --kill-others-on-fail -n db,web -c blue,green \"npm:db\" \"next dev --turbopack -p 3000\"",
     "db": "node scripts/db.mjs",
     "db:query": "tsx --tsconfig tsconfig.json scripts/db-query.ts",
     "db:migrate": "tsx --tsconfig tsconfig.json scripts/db-migrate.ts",

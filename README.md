@@ -17,7 +17,7 @@ npm i
 npm run dev
 ```
 
-`npm run dev` starts the web app and a Postgres database, so there is nothing else to install. Open [http://localhost:3000](http://localhost:3000) and check you see a queue of listings. It takes 15 to 25 seconds to load, and can take 40 seconds or more on Windows. Opening one listing is just as slow, because that page also fetches all 2,015 listings to show one. The footer explains why.
+`npm run dev` starts the web app and a Postgres database, so there is nothing else to install. Open [http://localhost:3000](http://localhost:3000) and check you see a queue of listings. It takes 15 to 25 seconds to load, and can take 40 seconds or more on Windows. Opening one listing is just as slow, because that page also fetches all 2,015 listings to show one. The footer explains why. If something else is using port 3000, the web app stops with an "address already in use" error. Free the port and run it again.
 
 If you want to work on the screens before your store exists, create a file called `.env.local` in the project folder with this line, then restart `npm run dev`:
 
@@ -67,7 +67,7 @@ npm run test:spec:experiences  # just the experience spec
 npm run test:watch    # your own tests, as you write them. Skips the two specs
 npm run see-all-rule-counts  # how many listings each rule flags, out of all 2,015
 npm run review        # the review job, once you have written it
-npm run replay-events # posts the experience events to your dev server
+npm run replay-events # posts the experience events to localhost:3000. Set MODERATION_BASE_URL to send them elsewhere
 npm run db:query -- "select * from review_runs"   # look inside the database
 ```
 
