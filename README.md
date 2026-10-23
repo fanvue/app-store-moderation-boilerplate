@@ -19,7 +19,7 @@ npm i
 npm run dev
 ```
 
-`npm run dev` starts the web app and a Postgres database, so there is nothing else to install. Open [http://localhost:3000](http://localhost:3000) and check you see a queue of listings. It takes 15 to 25 seconds to load, and can take 40 seconds or more on Windows. Opening one listing is just as slow, because that page also fetches all 2,015 listings to show one. The footer explains why. If something else is using port 3000, the web app stops with an "address already in use" error. Free the port and run it again.
+`npm run dev` starts the web app and a Postgres database, so there is nothing else to install. Open [http://localhost:3000](http://localhost:3000) and check you see a queue of listings. It takes 15 to 25 seconds to load, and can take 40 seconds or more on Windows. Opening one listing is just as slow, because that page also fetches all 2,015 listings to show one. The footer explains why.
 
 If you want to work on the screens before your store exists, create a file called `.env.local` in the project folder with this line, then restart `npm run dev`:
 
@@ -41,13 +41,16 @@ Use any AI tool you like, and read what it changes before you keep it. [`AGENTS.
 
 **Moderators** check both against Fanvue's requirements. Every app listing must meet the Listing Requirements before it goes live. Today a moderator checks each listing by hand. In this exercise, a reviewer approves each experience before fans see it, but some later changes go live with no review.
 
-There are 2,015 listings in the queue. The page you just opened fetches and reviews all of them every time it loads.
+There are 2,015 listings in the queue. The app is too slow to use today:
+
+- The queue page fetches all 2,015 listings and reviews them on every load, then renders every row in one table.
+- The listing page fetches all 2,015 listings to show one.
+- Nothing is stored, so every page load repeats the work.
 
 **Part one: listings**
 
 1. Read [`docs/listing-requirements.md`](docs/listing-requirements.md). Six rules can be checked from the listing data alone: [2.1](docs/listing-requirements.md#21-production-ready) production ready, [6.2](docs/listing-requirements.md#62-valid-owned-url) valid, owned URL, [1.6](docs/listing-requirements.md#16-no-promotion-of-other-platforms) no promotion of other platforms, [4.2](docs/listing-requirements.md#42-originality) originality, [3.3](docs/listing-requirements.md#33-pricing-accuracy) pricing accuracy and [2.3](docs/listing-requirements.md#23-listing-quality) listing quality. A person decides the rest.
-2. Implement rules in [`src/lib/moderation/rules.ts`](src/lib/moderation/rules.ts). Rule 2.3 is already done as an example. Rules must be deterministic: they use only the listing data, with no network, LLM or external API. Each finding needs a severity (`reject`, `fix` or `warn`). Choose one per rule and be ready to explain why.
-3. Move the review out of the page. Write the review job in [`review-job.ts`](src/lib/moderation/review-job.ts) and the store in [`store.ts`](src/lib/moderation/store.ts). Then make [`app/page.tsx`](app/page.tsx) read one page of stored reviews. This is the core of part one. `@fanvue/ui` is installed if you want it. The mock API behaves like the live one in these ways:
+2. Make the pages fast. Write the review job in [`review-job.ts`](src/lib/moderation/review-job.ts) and the store in [`store.ts`](src/lib/moderation/store.ts). Then make [`app/page.tsx`](app/page.tsx) read one page of stored reviews and [the listing page](app/listings/%5Buuid%5D/page.tsx) read one stored review. Rule 2.3 is already done as an example, so the job has findings to store before you write a rule. This is the core of part one. `@fanvue/ui` is installed if you want it. The mock API behaves like the live one in these ways:
    - `GET /apps` returns at most 50 summaries a page.
    - The rules need fields from `GET /apps/{uuid}`, one call per listing. Fetching everything takes 41 list calls and 2,015 detail calls.
    - Every call takes about three milliseconds and is counted.
@@ -56,6 +59,7 @@ There are 2,015 listings in the queue. The page you just opened fetches and revi
    - Sorting by severity across pages needs your own index.
    - Editing a listing or a pricing plan starts a new submission, and a webhook reports it.
    - Listings are reviewed again after every edit. Because [4.2](docs/listing-requirements.md#42-originality) compares listings to each other, one edit can change another listing's findings.
+3. Implement the other rules in [`src/lib/moderation/rules.ts`](src/lib/moderation/rules.ts). Rules must be deterministic: they use only the listing data, with no network, LLM or external API. Each finding needs a severity (`reject`, `fix` or `warn`). Choose one per rule and be ready to explain why. Run `npm run review` again to see new findings in the queue.
 4. Optional: add moderator decisions in [`decisions.ts`](src/lib/moderation/decisions.ts). We will ask about them whether or not you build them.
 
 **Part two: experiences**
@@ -83,7 +87,7 @@ The specs say what must be flagged, and under which rule. They do not say how to
 
 **The queue is the product.** One moderator works through two thousand listings, so the worst ones must come first. The queue is done when:
 
-- Loading the page reads from your store and makes no API calls. It does not load all 2,000 listings at once.
+- Loading the queue or one listing reads from your store and makes no API calls. The queue does not load all 2,000 listings at once.
 - The most serious listings come first, across all pages.
 - Each finding shows which rule fired and the text that triggered it.
 - The page shows when the review job last ran, which listings passed every rule and which are not reviewed yet.
