@@ -19,7 +19,7 @@ npm i
 npm run dev
 ```
 
-`npm run dev` starts the web app and a Postgres database, so there is nothing else to install. Open [http://localhost:3000](http://localhost:3000) and check you see a queue of listings. It takes 15 to 25 seconds to load, and can take 40 seconds or more on Windows. Opening one listing is just as slow, because that page also fetches all 2,015 listings to show one. The footer explains why. Making it fast is part of the task. If something else is using port 3000, the web app stops with an "address already in use" error. Free the port and run it again.
+`npm run dev` starts the web app and a Postgres database, so there is nothing else to install. Open [http://localhost:3000](http://localhost:3000) and check you see a queue of listings. It takes 15 to 25 seconds to load, and can take 40 seconds or more on Windows. Opening one listing is just as slow, because that page also fetches all 2,015 listings to show one. The footer explains why.
 
 If you want to work on the screens before your store exists, create a file called `.env.local` in the project folder with this line, then restart `npm run dev`:
 
