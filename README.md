@@ -2,15 +2,11 @@
 
 A 90-minute pairing session. You build a tool that a Fanvue moderator uses to check App Store listings against the [Listing Requirements](docs/listing-requirements.md). Then you design how the tool handles fan experiences. A reviewer approves each experience before fans see it, but some later changes go live with no review. The interviewer watches and asks questions as you go.
 
-## Before the session
-
-Do this before we meet, so the session is spent on the task.
+## Getting Started
 
 On [the repository](https://github.com/fanvue/app-store-moderation-boilerplate), choose **Use this template → Create a new repository** and make it private. Add `simonstaton` as a collaborator. Do all your work in a pull request in your copy. Do not fork it. Forks are public, and pull requests to this repository are closed automatically.
 
 You need Node 24 (`nvm use` reads `.nvmrc`).
-
-**On Windows:** nvm for Windows does not read `.nvmrc`, so run `nvm install 24` then `nvm use 24` (fnm and Volta also work). If PowerShell says running scripts is disabled when you run `npm`, use Command Prompt or Git Bash instead, or run `Set-ExecutionPolicy -Scope CurrentUser RemoteSigned` once.
 
 ```bash
 git clone https://github.com/yourname/app-store-moderation-boilerplate.git
@@ -21,13 +17,11 @@ npm run dev
 
 `npm run dev` starts the web app and a Postgres database, so there is nothing else to install. Open [http://localhost:3000](http://localhost:3000) and check you see a queue of listings. It takes 15 to 25 seconds to load, and can take 40 seconds or more on Windows. Opening one listing is just as slow, because that page also fetches all 2,015 listings to show one. The footer explains why.
 
-If you want to work on the screens before your store exists, create a file called `.env.local` in the project folder with this line, then restart `npm run dev`:
+We're adding simulated latency to slow down requests. To disable this, set `MOCK_API_LATENCY_MS=0` in your `.env.local` file:
 
 ```
 MOCK_API_LATENCY_MS=0
 ```
-
-This removes the wait on each mock API call in the web app. The pages still make the same number of calls. Delete the file to go back to the normal speed.
 
 Then read [`docs/listing-requirements.md`](docs/listing-requirements.md) and [`docs/experience-requirements.md`](docs/experience-requirements.md). The task below refers to them.
 
