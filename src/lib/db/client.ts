@@ -1,7 +1,11 @@
+import { Kysely, PostgresDialect } from "kysely";
 import { Pool } from "pg";
 
+import type { Database } from "@db/schema";
+
 /**
- * The moderation tool's own Postgres, served by PGlite on port 5544.
+ * The moderation tool's own Postgres, served by PGlite on port 5544, through
+ * [Kysely](https://kysely.dev). The tables it knows about are in `db/schema.ts`.
  *
  * Keep the review store, decisions and anything else here. The Fanvue API
  * under `src/lib/fanvue/` is a different system and stays an API.
@@ -9,11 +13,11 @@ import { Pool } from "pg";
 
 export const DEFAULT_DATABASE_URL = "postgresql://postgres:postgres@127.0.0.1:5544/postgres";
 
-const globalForDb = globalThis as unknown as { moderationPool?: Pool };
+const globalForDb = globalThis as unknown as { moderationDb?: Kysely<Database> };
 
-/** One pool per process, kept across hot reloads in development. */
-export function getDb(): Pool {
-  if (!globalForDb.moderationPool) {
+/** One database per process, kept across hot reloads in development. */
+export function getDb(): Kysely<Database> {
+  if (!globalForDb.moderationDb) {
     const pool = new Pool({
       connectionString: process.env.DATABASE_URL ?? DEFAULT_DATABASE_URL,
       // PGlite runs one statement at a time across connections. Keep transactions short.
@@ -24,7 +28,7 @@ export function getDb(): Pool {
     });
     // Unhandled, a lost idle connection would crash the process.
     pool.on("error", (error) => console.error(`database connection lost: ${error.message}`));
-    globalForDb.moderationPool = pool;
+    globalForDb.moderationDb = new Kysely<Database>({ dialect: new PostgresDialect({ pool }) });
   }
-  return globalForDb.moderationPool;
+  return globalForDb.moderationDb;
 }

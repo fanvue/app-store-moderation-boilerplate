@@ -60,7 +60,9 @@ for (const rule of rules) {
   );
 }
 
-console.log(`\nfindings by severity: reject ${findingsPerSeverity.reject}, fix ${findingsPerSeverity.fix}, warn ${findingsPerSeverity.warn}`);
+console.log(
+  `\nfindings by severity: reject ${findingsPerSeverity.reject}, fix ${findingsPerSeverity.fix}, warn ${findingsPerSeverity.warn}`,
+);
 console.log(`listings with no findings: ${clean} of ${reviews.length}`);
 
 const byWorst: Record<string, number> = { reject: 0, fix: 0, warn: 0, none: 0 };
