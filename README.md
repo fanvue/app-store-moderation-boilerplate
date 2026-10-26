@@ -15,7 +15,7 @@ npm run dev
 
 `npm run dev` starts the web app and a Postgres database, so there is nothing else to install. Open [http://localhost:3000](http://localhost:3000) and check you see a queue of listings. It takes 15 to 25 seconds to load, and can take 40 seconds or more on Windows. Opening one listing is just as slow, because that page also fetches all 2,015 listings to show one. The footer explains why.
 
-We add simulated latency to slow down requests. To disable it, set `MOCK_API_LATENCY_MS=0` in your `.env.local` file:
+We add simulated latency to slow down requests. To disable it, put this line in a file called `.env.local` in the project folder and restart `npm run dev`:
 
 ```
 MOCK_API_LATENCY_MS=0
@@ -49,7 +49,7 @@ There are 2,015 listings in the queue. The app is too slow to use today:
    - Sorting by severity across pages needs your own index.
    - Editing a listing or a pricing plan starts a new submission, and a webhook reports it.
    - Listings are reviewed again after every edit. Because [4.2](docs/listing-requirements.md#42-originality) compares listings to each other, one edit can change another listing's findings.
-3. Implement one more rule in [`src/lib/moderation/rules.ts`](src/lib/moderation/rules.ts). Choose the one you think matters most to a moderator, and be ready to say why. Rules must be deterministic: they use only the listing data, with no network, LLM or external API. Each finding needs a severity (`reject`, `fix` or `warn`). Choose one and be ready to explain why. Run `npm run review` again to see the new findings in the queue.
+3. Implement one more rule in [`src/lib/moderation/rules.ts`](src/lib/moderation/rules.ts). Choose the one you think matters most to a moderator, and be ready to say why. Rules must be deterministic: they use only the listing data, with no network, LLM or external API. Each finding needs a severity (`reject`, `fix` or `warn`), and we will ask why you chose it. Run `npm run review` again to see the new findings in the queue.
 4. We will ask about moderator decisions ([`decisions.ts`](src/lib/moderation/decisions.ts)) whether or not you build them. Build them only if you have time.
 
 **Part two: experiences**
@@ -62,7 +62,7 @@ You will not finish everything. We care more about what you choose to do, and wh
 
 Two test files check your rules.
 
-- [`spec.test.ts`](src/lib/moderation/spec.test.ts) checks the listing rules (part one). It has 15 example listings and the rules that should flag each one. Look at the cases for the rule you chose; the rest stay red.
+- [`spec.test.ts`](src/lib/moderation/spec.test.ts) checks the listing rules (part one). It has 15 example listings and the rules that should flag each one. Look at the cases for the rule you chose. The rest will still fail.
 - [`experiences/spec.test.ts`](src/lib/moderation/experiences/spec.test.ts) checks the experience rules (part two). It replays the history of 12 example experiences and lists the rules that should flag each one. Read it for the discussion; you do not need to make it pass.
 
 ```bash
@@ -79,7 +79,7 @@ The specs say what must be flagged, and under which rule. They do not say how to
 - Loading the queue or one listing reads from your store and makes no API calls. The queue does not load all 2,000 listings at once.
 - The most serious listings come first, across all pages.
 - Each finding shows which rule fired and the text that triggered it.
-- The page shows when the review job last ran and under which revision of the requirements doc, which listings passed every rule and which are not reviewed yet.
+- The page shows when the review job last ran and under which revision of the requirements doc. It also shows which listings passed every rule and which are not reviewed yet.
 - The page number and page size are in the URL, so a moderator can share a link to a page. A severity filter and a rule filter are optional.
 
 If you implement 4.2, two listings flagged as duplicates of each other appear once, as a pair.

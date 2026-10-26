@@ -23,7 +23,7 @@ export type ModeratorDecision = {
 /**
  * Stores a decision in Postgres.
  *
- * TODO: implement, with a migration in `db/migrations/`. Change the signature
+ * TODO, if you have time: implement, with a migration in `db/migrations/`. Change the signature
  * as you need. The route has to answer `409` with the earlier decision.
  */
 export async function recordDecision(decision: ModeratorDecision): Promise<void> {
@@ -33,7 +33,7 @@ export async function recordDecision(decision: ModeratorDecision): Promise<void>
 
 /**
  * Every decision, newest first. The queue uses it to tell "passed every rule"
- * from "a person cleared it". TODO: implement.
+ * from "a person cleared it". TODO, if you have time: implement.
  */
 export async function listDecisions(): Promise<ModeratorDecision[]> {
   return [];
