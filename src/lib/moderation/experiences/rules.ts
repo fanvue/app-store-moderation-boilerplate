@@ -21,7 +21,8 @@ export const experienceKey = (experience: FanExperience) =>
  * just the latest state. Pure: no I/O, and the same input always gives the
  * same output.
  *
- * TODO: implement the rules. This version only keeps the latest state.
+ * This version only keeps the latest state. The README says part two is a
+ * discussion; implement a rule here only if you have time.
  */
 export function reviewEvents(events: ExperienceEvent[]): ExperienceReview[] {
   const latest = new Map<string, FanExperience>();

@@ -1,15 +1,13 @@
 # Fanvue product engineer session: App Store moderation
 
-A 90-minute pairing session. You build a tool that a Fanvue moderator uses to check App Store listings against the [Listing Requirements](docs/listing-requirements.md). Then you design how the tool handles fan experiences. A reviewer approves each experience before fans see it, but some later changes go live with no review. The interviewer watches and asks questions as you go.
+A 60-minute pairing session. You build a tool that a Fanvue moderator uses to check App Store listings against the [Listing Requirements](docs/listing-requirements.md). Then we talk through how the tool should handle fan experiences. The interviewer watches and asks questions as you go.
 
-## Getting Started
-
-On [the repository](https://github.com/fanvue/app-store-moderation-boilerplate), choose **Use this template → Create a new repository** and make it private. Add `simonstaton` as a collaborator. Do all your work in a pull request in your copy. Do not fork it. Forks are public, and pull requests to this repository are closed automatically.
+## Getting started
 
 You need Node 24 (`nvm use` reads `.nvmrc`).
 
 ```bash
-git clone https://github.com/yourname/app-store-moderation-boilerplate.git
+git clone https://github.com/fanvue/app-store-moderation-boilerplate.git
 cd app-store-moderation-boilerplate
 npm i
 npm run dev
@@ -17,13 +15,11 @@ npm run dev
 
 `npm run dev` starts the web app and a Postgres database, so there is nothing else to install. Open [http://localhost:3000](http://localhost:3000) and check you see a queue of listings. It takes 15 to 25 seconds to load, and can take 40 seconds or more on Windows. Opening one listing is just as slow, because that page also fetches all 2,015 listings to show one. The footer explains why.
 
-We're adding simulated latency to slow down requests. To disable this, set `MOCK_API_LATENCY_MS=0` in your `.env.local` file:
+We add simulated latency to slow down requests. To disable it, set `MOCK_API_LATENCY_MS=0` in your `.env.local` file:
 
 ```
 MOCK_API_LATENCY_MS=0
 ```
-
-Then read [`docs/listing-requirements.md`](docs/listing-requirements.md) and [`docs/experience-requirements.md`](docs/experience-requirements.md). The task below refers to them.
 
 Use any AI tool you like, and read what it changes before you keep it. [`AGENTS.md`](AGENTS.md) tells it how to work in this repo. You may change or delete that file.
 
@@ -44,7 +40,7 @@ There are 2,015 listings in the queue. The app is too slow to use today:
 **Part one: listings**
 
 1. Read [`docs/listing-requirements.md`](docs/listing-requirements.md). Six rules can be checked from the listing data alone: [2.1](docs/listing-requirements.md#21-production-ready) production ready, [6.2](docs/listing-requirements.md#62-valid-owned-url) valid, owned URL, [1.6](docs/listing-requirements.md#16-no-promotion-of-other-platforms) no promotion of other platforms, [4.2](docs/listing-requirements.md#42-originality) originality, [3.3](docs/listing-requirements.md#33-pricing-accuracy) pricing accuracy and [2.3](docs/listing-requirements.md#23-listing-quality) listing quality. A person decides the rest.
-2. Make the pages fast. Write the review job in [`review-job.ts`](src/lib/moderation/review-job.ts) and the store in [`store.ts`](src/lib/moderation/store.ts). Then make [`app/page.tsx`](app/page.tsx) read one page of stored reviews and [the listing page](app/listings/%5Buuid%5D/page.tsx) read one stored review. Rule 2.3 is already done as an example, so the job has findings to store before you write a rule. This is the core of part one. `@fanvue/ui` is installed if you want it. The mock API behaves like the live one in these ways:
+2. Make the pages fast. Write the review job in [`review-job.ts`](src/lib/moderation/review-job.ts) and the store in [`store.ts`](src/lib/moderation/store.ts). Then make [`app/page.tsx`](app/page.tsx) read one page of stored reviews and [the listing page](app/listings/%5Buuid%5D/page.tsx) read one stored review. Rule 2.3 is already done as an example, so the job has findings to store before you write a rule. Run `npm run review` to fill the store. This is the core of part one. `@fanvue/ui` is installed if you want it. The mock API behaves like the live one in these ways:
    - `GET /apps` returns at most 50 summaries a page.
    - The rules need fields from `GET /apps/{uuid}`, one call per listing. Fetching everything takes 41 list calls and 2,015 detail calls.
    - Every call takes about three milliseconds and is counted.
@@ -53,22 +49,21 @@ There are 2,015 listings in the queue. The app is too slow to use today:
    - Sorting by severity across pages needs your own index.
    - Editing a listing or a pricing plan starts a new submission, and a webhook reports it.
    - Listings are reviewed again after every edit. Because [4.2](docs/listing-requirements.md#42-originality) compares listings to each other, one edit can change another listing's findings.
-3. Implement the other rules in [`src/lib/moderation/rules.ts`](src/lib/moderation/rules.ts). Rules must be deterministic: they use only the listing data, with no network, LLM or external API. Each finding needs a severity (`reject`, `fix` or `warn`). Choose one per rule and be ready to explain why. Run `npm run review` again to see new findings in the queue.
-4. Optional: add moderator decisions in [`decisions.ts`](src/lib/moderation/decisions.ts). We will ask about them whether or not you build them.
+3. Implement one more rule in [`src/lib/moderation/rules.ts`](src/lib/moderation/rules.ts). Choose the one you think matters most to a moderator, and be ready to say why. Rules must be deterministic: they use only the listing data, with no network, LLM or external API. Each finding needs a severity (`reject`, `fix` or `warn`). Choose one and be ready to explain why. Run `npm run review` again to see the new findings in the queue.
+4. We will ask about moderator decisions ([`decisions.ts`](src/lib/moderation/decisions.ts)) whether or not you build them. Build them only if you have time.
 
 **Part two: experiences**
 
-1. Read [`docs/experience-requirements.md`](docs/experience-requirements.md). It sets out how experiences are reviewed in this exercise, the events Fanvue sends, and five rules that catch what review misses. We will talk through how the tool should handle them, whether or not you write code for them.
-2. Optional: make [the events route](app/api/moderation/events/route.ts) accept the events that `npm run replay-events` sends ([the cases it contains](docs/experience-requirements.md#how-changes-reach-the-tool)). Optional: implement one rule in [`experiences/rules.ts`](src/lib/moderation/experiences/rules.ts).
+Read [`docs/experience-requirements.md`](docs/experience-requirements.md). It sets out how experiences are reviewed in this exercise, the events Fanvue sends, and five rules that catch what review misses. We will talk through how the tool should handle them. You do not need to write code for part two.
 
-You choose where to start. You will not finish everything. We care more about what you choose to do, and why, than how much you finish.
+You will not finish everything. We care more about what you choose to do, and why, than how much you finish.
 
 ## What done looks like
 
 Two test files check your rules.
 
-- [`spec.test.ts`](src/lib/moderation/spec.test.ts) checks the listing rules (part one). It has 15 example listings and the rules that should flag each one.
-- [`experiences/spec.test.ts`](src/lib/moderation/experiences/spec.test.ts) checks the experience rules (part two). It replays the history of 12 example experiences and lists the rules that should flag each one.
+- [`spec.test.ts`](src/lib/moderation/spec.test.ts) checks the listing rules (part one). It has 15 example listings and the rules that should flag each one. Look at the cases for the rule you chose; the rest stay red.
+- [`experiences/spec.test.ts`](src/lib/moderation/experiences/spec.test.ts) checks the experience rules (part two). It replays the history of 12 example experiences and lists the rules that should flag each one. Read it for the discussion; you do not need to make it pass.
 
 ```bash
 npm run test:spec     # both specs. They fail today
@@ -84,12 +79,12 @@ The specs say what must be flagged, and under which rule. They do not say how to
 - Loading the queue or one listing reads from your store and makes no API calls. The queue does not load all 2,000 listings at once.
 - The most serious listings come first, across all pages.
 - Each finding shows which rule fired and the text that triggered it.
-- The page shows when the review job last ran, which listings passed every rule and which are not reviewed yet.
-- The page number, page size and severity filter are in the URL, so a moderator can share a link to a filtered view. A rule filter is optional.
+- The page shows when the review job last ran and under which revision of the requirements doc, which listings passed every rule and which are not reviewed yet.
+- The page number and page size are in the URL, so a moderator can share a link to a page. A severity filter and a rule filter are optional.
 
 If you implement 4.2, two listings flagged as duplicates of each other appear once, as a pair.
 
-**Moderator decisions** are optional. We will ask about these whether or not you build them. They are done when:
+**Moderator decisions**, if you build them, are done when:
 
 - Decisions are saved in Postgres, and the queue shows which listings a person already decided.
 - Each decision records the findings the moderator saw and the revision of the requirements doc. When revision 4 arrives, earlier approvals stay approved.
@@ -132,7 +127,7 @@ npm run test:spec:experiences  # just the experience spec
 npm run test:watch    # your own tests, as you write them. Skips the two specs
 npm run see-all-rule-counts  # how many listings each rule flags, out of all 2,015
 npm run review        # the review job, once you have written it
-npm run replay-events # posts the experience events to localhost:3000. Set MODERATION_BASE_URL to send them elsewhere
+npm run replay-events # posts the experience events to localhost:3000
 npm run db            # only the database
 npm run db:migrate    # applies migrations to it
 npm run db:reset      # deletes the database. Stop npm run dev first

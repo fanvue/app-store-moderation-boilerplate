@@ -11,7 +11,7 @@ export const dynamic = "force-dynamic";
  * retries. Delivery is at least once, so a redelivered event must not produce a
  * second finding, notification or suspension.
  *
- * TODO: implement.
+ * The README says part two is a discussion; implement this only if you have time.
  */
 export async function POST(request: Request) {
   const event = (await request.json()) as ExperienceEvent;
