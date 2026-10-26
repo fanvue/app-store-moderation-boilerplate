@@ -13,7 +13,7 @@ function findingsLabel(count: number): string {
  * findings". Once reviews come from the store, some listings will not be
  * reviewed yet. Show those differently from listings that passed.
  *
- * TODO (yours): see the README's "What done looks like". Sorting across pages
+ * TODO (yours): see the README's "Acceptance criteria". Sorting across pages
  * comes from the store (`getQueuePage` in `src/lib/moderation/store.ts`), not
  * from sorting this page.
  */
@@ -31,7 +31,7 @@ export function ReviewQueue({ rows }: { rows: Review[] }) {
             <th className="py-2 pr-4">Developer</th>
             <th className="py-2 pr-4">Pricing</th>
             <th className="py-2 pr-4">Screenshots</th>
-            {/* TODO: status of the worst finding, or Not checked / No findings */}
+            {/* TODO: status of the worst finding (`worstSeverity` in queue.ts), or Not reviewed yet / No findings */}
             <th className="py-2 pr-4">Status</th>
           </tr>
         </thead>

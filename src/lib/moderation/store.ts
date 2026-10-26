@@ -40,7 +40,12 @@ export type ReviewStore = {
   getQueuePage(filter: QueueFilter): Promise<QueuePage>;
 };
 
-/** TODO: implement. `getDb()` in `src/lib/db/client.ts` is the pool. */
+/**
+ * TODO: implement. `getDb()` in `src/lib/db/client.ts` is the Kysely database.
+ * Add your tables to `db/schema.ts` so it knows their columns. Two things to
+ * know about `pg`: `count(*)` comes back as a string unless you cast it
+ * (`count(*)::int`), and a `jsonb` column takes `JSON.stringify(value)`.
+ */
 export function createReviewStore(): ReviewStore {
   const notImplemented = () => Promise.reject(new Error("the review store is not implemented yet"));
   return {
