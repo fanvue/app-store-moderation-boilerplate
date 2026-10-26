@@ -31,7 +31,7 @@ export function ReviewQueue({ rows }: { rows: Review[] }) {
             <th className="py-2 pr-4">Developer</th>
             <th className="py-2 pr-4">Pricing</th>
             <th className="py-2 pr-4">Screenshots</th>
-            {/* TODO: status of the worst finding, or Not checked / No findings */}
+            {/* TODO: status of the worst finding (`worstSeverity` in queue.ts), or Not reviewed yet / No findings */}
             <th className="py-2 pr-4">Status</th>
           </tr>
         </thead>
