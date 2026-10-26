@@ -18,12 +18,9 @@
     "test": "vitest run",
     "test:watch": "vitest --exclude \"**/spec.test.*\"",
     "test:spec": "vitest run spec",
-    "test:spec:listings": "vitest run src/lib/moderation/spec.test.ts",
-    "test:spec:experiences": "vitest run src/lib/moderation/experiences/spec.test.ts",
     "test:smoke": "vitest run --exclude \"**/spec.test.*\"",
     "see-all-rule-counts": "tsx --tsconfig tsconfig.json scripts/see-all-rule-counts.ts",
     "review": "tsx --tsconfig tsconfig.json scripts/review.ts",
-    "replay-events": "tsx --tsconfig tsconfig.json scripts/replay-events.ts",
     "typecheck": "tsc --noEmit",
     "lint": "eslint ."
   },

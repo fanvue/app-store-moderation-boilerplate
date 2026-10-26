@@ -1,7 +1,5 @@
-import { experiences } from "@fixtures/experiences";
 import { listings } from "@fixtures/listings";
 
-import type { FanExperience } from "./experiences";
 import type { AppListing, AppListingSummary, PaginatedAppListings } from "./types";
 
 /**
@@ -77,16 +75,6 @@ export async function getApp(uuid: string): Promise<AppListing | null> {
 
   const wanted = uuid.toLowerCase();
   return listings.find((listing) => listing.uuid.toLowerCase() === wanted) ?? null;
-}
-
-/**
- * Every experience as it is now, newest first: a one-off backfill. New changes
- * arrive as events at `app/api/moderation/events`.
- */
-export async function getAllExperiences(): Promise<FanExperience[]> {
-  await roundTrip();
-
-  return [...experiences].sort((a, b) => b.publishedAt.localeCompare(a.publishedAt));
 }
 
 /** Projects a full listing down to exactly the fields `GET /apps` returns per item. */
