@@ -17,4 +17,4 @@ migrateWithRetry({ attempts: 3 })
     console.error(error instanceof Error ? error.message : error);
     process.exitCode = 1;
   })
-  .finally(() => getDb().end());
+  .finally(() => getDb().destroy());
