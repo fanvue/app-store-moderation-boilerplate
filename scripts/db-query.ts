@@ -20,7 +20,7 @@ sql
   .execute(getDb())
   .then((result) => {
     if (result.rows.length > 0) console.table(result.rows);
-    else console.log(`ok, ${result.numAffectedRows ?? 0} rows affected`);
+    else console.log(result.numAffectedRows === undefined ? "no rows" : `${result.numAffectedRows} rows affected`);
   })
   .catch((error) => {
     console.error(error instanceof Error ? error.message : error);

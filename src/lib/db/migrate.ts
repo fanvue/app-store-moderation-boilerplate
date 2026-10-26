@@ -10,13 +10,11 @@ import { getDb } from "./client";
 /**
  * Applies the migrations in `db/migrations/` that have not been applied yet,
  * in file name order. Kysely records each name in `kysely_migration`, so a
- * file is applied once per database, and takes a lock so two migrators
- * starting at once (the web server and `npm run db:migrate`) do not both run
- * the same file.
+ * file is applied once per database.
  *
- * Add a migration by adding a file that exports `up` and `down`:
- * `0002_reviews.ts`, `0003_decisions.ts`. Nothing rewrites an applied file,
- * so change the schema with a new one.
+ * Add a migration by adding a file that exports `up` (and `down` if you want
+ * to undo it): `0002_reviews.ts`, `0003_decisions.ts`. Nothing rewrites an
+ * applied file, so change the schema with a new one.
  */
 
 export const MIGRATIONS_DIR = path.join(process.cwd(), "db", "migrations");

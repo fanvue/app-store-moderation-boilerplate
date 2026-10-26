@@ -2,6 +2,7 @@
   "name": "app-store-moderation-boilerplate",
   "version": "0.1.0",
   "private": true,
+  "type": "module",
   "description": "Interview boilerplate: a Fanvue App Store listing moderation tool (Next.js 15, @fanvue/ui, fixtures-backed mock of the public /v0/apps API)",
   "license": "MIT",
   "engines": {

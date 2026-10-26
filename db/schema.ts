@@ -6,7 +6,8 @@ import type { Generated } from "kysely";
  * add a migration for it, and `getDb()` knows about it.
  *
  * `Generated<T>` marks a column the database fills in, so inserts can leave
- * it out.
+ * it out. `JSONColumnType<T>`, also from `kysely`, is for a `jsonb` column:
+ * insert `JSON.stringify(value)` and read it back as `T`.
  */
 export interface Database {
   review_runs: ReviewRunsTable;
