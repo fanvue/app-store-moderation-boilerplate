@@ -13,7 +13,7 @@ function findingsLabel(count: number): string {
  * findings". Once reviews come from the store, some listings will not be
  * reviewed yet. Show those differently from listings that passed.
  *
- * TODO (yours): see the README's "What done looks like". Sorting across pages
+ * TODO (yours): see the README's "Acceptance criteria". Sorting across pages
  * comes from the store (`getQueuePage` in `src/lib/moderation/store.ts`), not
  * from sorting this page.
  */

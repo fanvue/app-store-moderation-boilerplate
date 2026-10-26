@@ -2,8 +2,9 @@ import type { Issue } from "./rules";
 
 /**
  * What a moderator decided about one listing, and what they were looking at.
- * Findings are recomputed on every run. A decision is the lasting record. The
- * README's "What done looks like" says what it must survive.
+ * Findings are recomputed on every run. A decision is the lasting record, so it
+ * keeps the findings the moderator saw and the requirements revision they were
+ * made under.
  */
 export type ModeratorDecision = {
   listingUuid: string;

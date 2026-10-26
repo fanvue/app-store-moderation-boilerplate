@@ -49,35 +49,14 @@ There are 2,015 listings in the queue. The app is too slow to use today:
 
 You will not finish everything. We care more about what you choose to do, and why, than how much you finish.
 
-## What done looks like
+## Acceptance criteria
 
-[`spec.test.ts`](src/lib/moderation/spec.test.ts) checks your rules. It has 15 example listings and the rules that should flag each one. Look at the cases for the rule you chose. The rest will still fail.
-
-```bash
-npm run test:spec     # the spec. It fails today
-npm run test:watch    # your own tests, as you write them. Skips the spec
-```
-
-The spec says what must be flagged, and under which rule. It does not say how to detect it, how serious it is, or what a moderator should see. **Do not edit it.** If you think a case is wrong, say so and we will talk about it.
-
-`npm run see-all-rule-counts` runs your rules over all 2,015 listings, not just the 15 in the spec. Use it to spot a rule that flags too much. Each rule's count appears next to the expected count. Rule [4.2](docs/listing-requirements.md#42-originality) has no expected count: any 4.2 match among the generated listings is a mistake.
-
-**The queue is the product.** One moderator works through two thousand listings, so the worst ones must come first. The queue is done when:
-
-- Loading the queue or one listing reads from your store and makes no API calls. The queue does not load all 2,000 listings at once.
+- The queue and the listing page read from your store and make no API calls.
 - The most serious listings come first, across all pages.
 - Each finding shows which rule fired and the text that triggered it.
-- The page shows when the review job last ran and under which revision of the requirements doc. It also shows which listings passed every rule and which are not reviewed yet.
-- The page number and page size are in the URL, so a moderator can share a link to a page. A severity filter and a rule filter are optional.
-
-If you implement 4.2, two listings flagged as duplicates of each other appear once, as a pair.
-
-**Moderator decisions**, if you build them, are done when:
-
-- Decisions are saved in Postgres, and the queue shows which listings a person already decided.
-- Each decision records the findings the moderator saw and the revision of the requirements doc. When revision 4 arrives, earlier approvals stay approved.
-- If two moderators decide the same listing, the second gets a `409` response with the first decision. You choose what the second moderator sees.
-- The note sent to the developer is separate from the moderator's own notes. Think about what a 1.6 rejection note should not reveal.
+- The queue says when the job last ran and under which revision of the requirements doc, and tells listings that passed from ones not reviewed yet.
+- The page number and page size are in the URL.
+- Your rule passes its cases in `npm run test:spec`. Do not edit that file. `npm run see-all-rule-counts` shows how many of the 2,015 listings each rule flags, next to the count it should.
 
 ## Where to work
 
