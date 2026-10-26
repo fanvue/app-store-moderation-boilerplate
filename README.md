@@ -89,6 +89,7 @@ If you implement 4.2, two listings flagged as duplicates of each other appear on
 | [`src/lib/moderation/review-job.ts`](src/lib/moderation/review-job.ts)                                                        | The review job, run by `npm run review`. Also holds `fetchEveryListing`, which the pages call today    |
 | [`src/lib/moderation/store.ts`](src/lib/moderation/store.ts)                                                                  | The review store the job writes and the pages read. Interface only                                     |
 | [`db/migrations/`](db/migrations)                                                                                             | The database schema, applied when `npm run dev` starts and by `npm run db:migrate`                     |
+| [`db/schema.ts`](db/schema.ts)                                                                                                | The table types Kysely uses. Add a table here when you add a migration for it                          |
 | [`src/lib/moderation/decisions.ts`](src/lib/moderation/decisions.ts)                                                          | Moderator decisions, called by the decisions route                                                     |
 | [`src/lib/moderation/queue.ts`](src/lib/moderation/queue.ts)                                                                  | Severity helpers. `SEVERITY_ORDER` is used by `npm run see-all-rule-counts`                            |
 | [`app/page.tsx`](app/page.tsx), [`app/listings/[uuid]/page.tsx`](app/listings/%5Buuid%5D/page.tsx)                            | The queue at `/` and one listing at `/listings/<uuid>`                                                 |
@@ -98,7 +99,7 @@ If you implement 4.2, two listings flagged as duplicates of each other appear on
 
 You may add new files too, such as components, modules, migrations and tests. Everything else (the fixtures, the mock API, the database plumbing, the types, the spec file) is there to be read, not changed.
 
-Your storage is Postgres. [`src/lib/db/client.ts`](src/lib/db/client.ts) is the pool, and [`db/migrations/`](db/migrations) is the schema. [`0001_review_runs.sql`](db/migrations/0001_review_runs.sql) is the worked example.
+Your storage is Postgres, through [Kysely](https://kysely.dev). [`src/lib/db/client.ts`](src/lib/db/client.ts) gives you the database, [`db/schema.ts`](db/schema.ts) holds the table types and [`db/migrations/`](db/migrations) the migrations. [`0001_review_runs.ts`](db/migrations/0001_review_runs.ts) is the worked example.
 
 - `npm run dev` applies migrations when it starts.
 - `npm run review` and `npm run dev` are different processes, so anything the job writes for the page goes through the database, not memory.

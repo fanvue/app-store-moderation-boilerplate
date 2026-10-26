@@ -17,7 +17,8 @@
     "plugins": [{ "name": "next" }],
     "paths": {
       "@/*": ["./src/*"],
-      "@fixtures/*": ["./fixtures/*"]
+      "@fixtures/*": ["./fixtures/*"],
+      "@db/*": ["./db/*"]
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
