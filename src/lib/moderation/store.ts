@@ -5,8 +5,8 @@ import type { Review, Severity } from "./rules";
  * at a time. You design the tables in `db/migrations/`.
  *
  * The types below are a starting point. Change them if your design needs to.
- * A queue row does not need to carry a full listing. The queue also has to show
- * which listings a person already decided.
+ * A queue row does not need to carry a full listing. If you build decisions, the
+ * queue also shows which listings a person already decided.
  */
 
 export type QueueFilter = {

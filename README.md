@@ -1,19 +1,13 @@
 # Fanvue product engineer session: App Store moderation
 
-A 90-minute pairing session. You build a tool that a Fanvue moderator uses to check App Store listings against the [Listing Requirements](docs/listing-requirements.md). Then you design how the tool handles fan experiences. A reviewer approves each experience before fans see it, but some later changes go live with no review. The interviewer watches and asks questions as you go.
+A 60-minute pairing session. You build a tool that a Fanvue moderator uses to check App Store listings against the [Listing Requirements](docs/listing-requirements.md). The interviewer watches and asks questions as you go.
 
-## Before the session
-
-Do this before we meet, so the session is spent on the task.
-
-On [the repository](https://github.com/fanvue/app-store-moderation-boilerplate), choose **Use this template → Create a new repository** and make it private. Add `simonstaton` as a collaborator. Do all your work in a pull request in your copy. Do not fork it. Forks are public, and pull requests to this repository are closed automatically.
+## Getting started
 
 You need Node 24 (`nvm use` reads `.nvmrc`).
 
-**On Windows:** nvm for Windows does not read `.nvmrc`, so run `nvm install 24` then `nvm use 24` (fnm and Volta also work). If PowerShell says running scripts is disabled when you run `npm`, use Command Prompt or Git Bash instead, or run `Set-ExecutionPolicy -Scope CurrentUser RemoteSigned` once.
-
 ```bash
-git clone https://github.com/yourname/app-store-moderation-boilerplate.git
+git clone https://github.com/fanvue/app-store-moderation-boilerplate.git
 cd app-store-moderation-boilerplate
 npm i
 npm run dev
@@ -21,15 +15,11 @@ npm run dev
 
 `npm run dev` starts the web app and a Postgres database, so there is nothing else to install. Open [http://localhost:3000](http://localhost:3000) and check you see a queue of listings. It takes 15 to 25 seconds to load, and can take 40 seconds or more on Windows. Opening one listing is just as slow, because that page also fetches all 2,015 listings to show one. The footer explains why.
 
-If you want to work on the screens before your store exists, create a file called `.env.local` in the project folder with this line, then restart `npm run dev`:
+We add simulated latency to slow down requests. To disable it, put this line in a file called `.env.local` in the project folder and restart `npm run dev`:
 
 ```
 MOCK_API_LATENCY_MS=0
 ```
-
-This removes the wait on each mock API call in the web app. The pages still make the same number of calls. Delete the file to go back to the normal speed.
-
-Then read [`docs/listing-requirements.md`](docs/listing-requirements.md) and [`docs/experience-requirements.md`](docs/experience-requirements.md). The task below refers to them.
 
 Use any AI tool you like, and read what it changes before you keep it. [`AGENTS.md`](AGENTS.md) tells it how to work in this repo. You may change or delete that file.
 
@@ -37,9 +27,7 @@ Use any AI tool you like, and read what it changes before you keep it. [`AGENTS.
 
 **Apps** are web applications that creators install on Fanvue and give consent to. Developers list them in the Fanvue App Store.
 
-**Experiences** are embedded pages that an app publishes to a creator's profile on Fanvue, such as a game or a live stream. Fans can pay inside them.
-
-**Moderators** check both against Fanvue's requirements. Every app listing must meet the Listing Requirements before it goes live. Today a moderator checks each listing by hand. In this exercise, a reviewer approves each experience before fans see it, but some later changes go live with no review.
+**Moderators** check them against Fanvue's requirements. Every app listing must meet the Listing Requirements before it goes live. Today a moderator checks each listing by hand.
 
 There are 2,015 listings in the queue. The app is too slow to use today:
 
@@ -47,10 +35,8 @@ There are 2,015 listings in the queue. The app is too slow to use today:
 - The listing page fetches all 2,015 listings to show one.
 - Nothing is stored, so every page load repeats the work.
 
-**Part one: listings**
-
 1. Read [`docs/listing-requirements.md`](docs/listing-requirements.md). Six rules can be checked from the listing data alone: [2.1](docs/listing-requirements.md#21-production-ready) production ready, [6.2](docs/listing-requirements.md#62-valid-owned-url) valid, owned URL, [1.6](docs/listing-requirements.md#16-no-promotion-of-other-platforms) no promotion of other platforms, [4.2](docs/listing-requirements.md#42-originality) originality, [3.3](docs/listing-requirements.md#33-pricing-accuracy) pricing accuracy and [2.3](docs/listing-requirements.md#23-listing-quality) listing quality. A person decides the rest.
-2. Make the pages fast. Write the review job in [`review-job.ts`](src/lib/moderation/review-job.ts) and the store in [`store.ts`](src/lib/moderation/store.ts). Then make [`app/page.tsx`](app/page.tsx) read one page of stored reviews and [the listing page](app/listings/%5Buuid%5D/page.tsx) read one stored review. Rule 2.3 is already done as an example, so the job has findings to store before you write a rule. This is the core of part one. `@fanvue/ui` is installed if you want it. The mock API behaves like the live one in these ways:
+2. Make the pages fast. Write the review job in [`review-job.ts`](src/lib/moderation/review-job.ts) and the store in [`store.ts`](src/lib/moderation/store.ts). Then make [`app/page.tsx`](app/page.tsx) read one page of stored reviews and [the listing page](app/listings/%5Buuid%5D/page.tsx) read one stored review. Rule 2.3 is already done as an example, so the job has findings to store before you write a rule. Run `npm run review` to fill the store. This is the core of the task. `@fanvue/ui` is installed if you want it. The mock API behaves like the live one in these ways:
    - `GET /apps` returns at most 50 summaries a page.
    - The rules need fields from `GET /apps/{uuid}`, one call per listing. Fetching everything takes 41 list calls and 2,015 detail calls.
    - Every call takes about three milliseconds and is counted.
@@ -59,29 +45,21 @@ There are 2,015 listings in the queue. The app is too slow to use today:
    - Sorting by severity across pages needs your own index.
    - Editing a listing or a pricing plan starts a new submission, and a webhook reports it.
    - Listings are reviewed again after every edit. Because [4.2](docs/listing-requirements.md#42-originality) compares listings to each other, one edit can change another listing's findings.
-3. Implement the other rules in [`src/lib/moderation/rules.ts`](src/lib/moderation/rules.ts). Rules must be deterministic: they use only the listing data, with no network, LLM or external API. Each finding needs a severity (`reject`, `fix` or `warn`). Choose one per rule and be ready to explain why. Run `npm run review` again to see new findings in the queue.
-4. Optional: add moderator decisions in [`decisions.ts`](src/lib/moderation/decisions.ts). We will ask about them whether or not you build them.
+3. Implement one more rule in [`src/lib/moderation/rules.ts`](src/lib/moderation/rules.ts). Choose the one you think matters most to a moderator, and be ready to say why. Rules must be deterministic: they use only the listing data, with no network, LLM or external API. Each finding needs a severity (`reject`, `fix` or `warn`), and we will ask why you chose it. Run `npm run review` again to see the new findings in the queue.
+4. We will ask about moderator decisions ([`decisions.ts`](src/lib/moderation/decisions.ts)) whether or not you build them. Build them only if you have time.
 
-**Part two: experiences**
-
-1. Read [`docs/experience-requirements.md`](docs/experience-requirements.md). It sets out how experiences are reviewed in this exercise, the events Fanvue sends, and five rules that catch what review misses. We will talk through how the tool should handle them, whether or not you write code for them.
-2. Optional: make [the events route](app/api/moderation/events/route.ts) accept the events that `npm run replay-events` sends ([the cases it contains](docs/experience-requirements.md#how-changes-reach-the-tool)). Optional: implement one rule in [`experiences/rules.ts`](src/lib/moderation/experiences/rules.ts).
-
-You choose where to start. You will not finish everything. We care more about what you choose to do, and why, than how much you finish.
+You will not finish everything. We care more about what you choose to do, and why, than how much you finish.
 
 ## What done looks like
 
-Two test files check your rules.
-
-- [`spec.test.ts`](src/lib/moderation/spec.test.ts) checks the listing rules (part one). It has 15 example listings and the rules that should flag each one.
-- [`experiences/spec.test.ts`](src/lib/moderation/experiences/spec.test.ts) checks the experience rules (part two). It replays the history of 12 example experiences and lists the rules that should flag each one.
+[`spec.test.ts`](src/lib/moderation/spec.test.ts) checks your rules. It has 15 example listings and the rules that should flag each one. Look at the cases for the rule you chose. The rest will still fail.
 
 ```bash
-npm run test:spec     # both specs. They fail today
-npm run test:watch    # your own tests, as you write them. Skips the two specs
+npm run test:spec     # the spec. It fails today
+npm run test:watch    # your own tests, as you write them. Skips the spec
 ```
 
-The specs say what must be flagged, and under which rule. They do not say how to detect it, how serious it is, or what a moderator should see. **Do not edit them.** If you think one is wrong, say so and we will talk about it.
+The spec says what must be flagged, and under which rule. It does not say how to detect it, how serious it is, or what a moderator should see. **Do not edit it.** If you think a case is wrong, say so and we will talk about it.
 
 `npm run see-all-rule-counts` runs your rules over all 2,015 listings, not just the 15 in the spec. Use it to spot a rule that flags too much. Each rule's count appears next to the expected count. Rule [4.2](docs/listing-requirements.md#42-originality) has no expected count: any 4.2 match among the generated listings is a mistake.
 
@@ -90,12 +68,12 @@ The specs say what must be flagged, and under which rule. They do not say how to
 - Loading the queue or one listing reads from your store and makes no API calls. The queue does not load all 2,000 listings at once.
 - The most serious listings come first, across all pages.
 - Each finding shows which rule fired and the text that triggered it.
-- The page shows when the review job last ran, which listings passed every rule and which are not reviewed yet.
-- The page number, page size and severity filter are in the URL, so a moderator can share a link to a filtered view. A rule filter is optional.
+- The page shows when the review job last ran and under which revision of the requirements doc. It also shows which listings passed every rule and which are not reviewed yet.
+- The page number and page size are in the URL, so a moderator can share a link to a page. A severity filter and a rule filter are optional.
 
 If you implement 4.2, two listings flagged as duplicates of each other appear once, as a pair.
 
-**Moderator decisions** are optional. We will ask about these whether or not you build them. They are done when:
+**Moderator decisions**, if you build them, are done when:
 
 - Decisions are saved in Postgres, and the queue shows which listings a person already decided.
 - Each decision records the findings the moderator saw and the revision of the requirements doc. When revision 4 arrives, earlier approvals stay approved.
@@ -116,11 +94,9 @@ If you implement 4.2, two listings flagged as duplicates of each other appear on
 | [`app/page.tsx`](app/page.tsx), [`app/listings/[uuid]/page.tsx`](app/listings/%5Buuid%5D/page.tsx)                            | The queue at `/` and one listing at `/listings/<uuid>`                                                 |
 | [`src/components/ReviewQueue.tsx`](src/components/ReviewQueue.tsx)                                                            | The queue table, rendered by `app/page.tsx`                                                            |
 | [`src/components/ListingDetail.tsx`](src/components/ListingDetail.tsx), [`FindingsList.tsx`](src/components/FindingsList.tsx) | One listing and its findings, rendered by the listing page                                             |
-| [`app/api/moderation/`](app/api/moderation)                                                                                   | The decisions route and the events route that `npm run replay-events` posts to                         |
-| [`src/lib/moderation/experiences/rules.ts`](src/lib/moderation/experiences/rules.ts)                                          | The experience rules. `reviewEvents` is called by the experience spec                                  |
-| [`src/lib/moderation/experiences/rules.test.ts`](src/lib/moderation/experiences/rules.test.ts)                                | Unit tests for the experience rules, run by `npm run test:watch`                                       |
+| [`app/api/moderation/`](app/api/moderation)                                                                                   | The decisions route                                                                                    |
 
-You may add new files too, such as components, modules, migrations and tests. Everything else (the fixtures, the mock API, the database plumbing, the types, the two spec files) is there to be read, not changed.
+You may add new files too, such as components, modules, migrations and tests. Everything else (the fixtures, the mock API, the database plumbing, the types, the spec file) is there to be read, not changed.
 
 Your storage is Postgres. [`src/lib/db/client.ts`](src/lib/db/client.ts) is the pool, and [`db/migrations/`](db/migrations) is the schema. [`0001_review_runs.sql`](db/migrations/0001_review_runs.sql) is the worked example.
 
@@ -132,13 +108,10 @@ Your storage is Postgres. [`src/lib/db/client.ts`](src/lib/db/client.ts) is the 
 
 ```bash
 npm run dev           # the web app and the database
-npm run test:spec     # both specs. They fail today
-npm run test:spec:listings     # just the listing spec
-npm run test:spec:experiences  # just the experience spec
-npm run test:watch    # your own tests, as you write them. Skips the two specs
+npm run test:spec     # the spec. It fails today
+npm run test:watch    # your own tests, as you write them. Skips the spec
 npm run see-all-rule-counts  # how many listings each rule flags, out of all 2,015
 npm run review        # the review job, once you have written it
-npm run replay-events # posts the experience events to localhost:3000. Set MODERATION_BASE_URL to send them elsewhere
 npm run db            # only the database
 npm run db:migrate    # applies migrations to it
 npm run db:reset      # deletes the database. Stop npm run dev first

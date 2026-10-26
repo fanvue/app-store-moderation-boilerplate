@@ -14,7 +14,7 @@ import { FindingsList } from "./FindingsList";
 export function ListingDetail({ listing, issues }: { listing: AppListing; issues: Issue[] }) {
   return (
     <article className="flex flex-col gap-6 text-sm">
-      {/* TODO: keep the moderator's queue filter when going back. */}
+      {/* TODO: keep the moderator's page, and filter if you add one, when going back. */}
       <Link href="/" className="underline">
         Back to queue
       </Link>
@@ -61,8 +61,14 @@ export function ListingDetail({ listing, issues }: { listing: AppListing; issues
         <h2 className="font-semibold">Images</h2>
         <dl className="grid grid-cols-[max-content_1fr] gap-x-4 gap-y-1">
           <Field label="heroImageUrl" value={listing.heroImageUrl} />
-          <Field label="previewImageUrls" value={`${listing.previewImageUrls.length}: ${listing.previewImageUrls.join(" ")}`} />
-          <Field label="galleryImageUrls" value={`${listing.galleryImageUrls.length}: ${listing.galleryImageUrls.join(" ")}`} />
+          <Field
+            label="previewImageUrls"
+            value={`${listing.previewImageUrls.length}: ${listing.previewImageUrls.join(" ")}`}
+          />
+          <Field
+            label="galleryImageUrls"
+            value={`${listing.galleryImageUrls.length}: ${listing.galleryImageUrls.join(" ")}`}
+          />
         </dl>
       </section>
 

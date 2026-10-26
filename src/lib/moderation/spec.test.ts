@@ -1,5 +1,5 @@
 /**
- * Acceptance criteria for the listing rules (part one). Do not edit.
+ * Acceptance criteria for the listing rules. Do not edit.
  *
  *   npm run test:spec:listings
  *

@@ -10,8 +10,8 @@ export const dynamic = "force-dynamic";
  * The queue, the slow way: fetch, review and render everything. The footer
  * says what it cost.
  *
- * TODO (yours): read a page from `src/lib/moderation/store.ts`, with page,
- * size, severity and rule from `searchParams`. See the README's "What
+ * TODO (yours): read a page from `src/lib/moderation/store.ts`, with page and
+ * size from `searchParams`, and severity and rule if you add filters. See the README's "What
  * done looks like".
  */
 export default async function ReviewQueuePage() {
