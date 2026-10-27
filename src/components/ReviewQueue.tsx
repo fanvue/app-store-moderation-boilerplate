@@ -1,47 +1,32 @@
 import Link from "next/link";
 
-import { worstSeverity } from "@/lib/moderation/queue";
-import type { Severity } from "@/lib/moderation/rules";
-import { isFullListing, type QueuePage, type StoredListing } from "@/lib/moderation/store";
+import { isFullListing, type QueuePage, type QueueSort } from "@/lib/moderation/store";
 
-const SEVERITY_CLASS: Record<Severity, string> = {
-  reject: "font-semibold text-red-700",
-  fix: "font-semibold text-amber-700",
-  warn: "text-sky-700",
-};
+import { queueHref } from "./queueHref";
+import { QueueTable, type QueueRow } from "./QueueTable";
 
 /** When the job last finished, for the moderator to read. */
 export function formatReviewedAt(iso: string): string {
   return `${new Date(iso).toLocaleString("en-GB", { dateStyle: "medium", timeStyle: "short", timeZone: "UTC" })} UTC`;
 }
 
-function Status({ review }: Pick<StoredListing, "review">) {
-  if (!review) return <span className="text-neutral-500 italic">Not reviewed yet</span>;
-
-  const worst = worstSeverity(review.issues);
-  if (!worst) return <span className="text-green-700">No findings</span>;
-
-  const count = review.issues.length;
-  return (
-    <span>
-      <span className={SEVERITY_CLASS[worst]}>{worst}</span>{" "}
-      <span className="text-neutral-500">
-        ({count === 1 ? "1 finding" : `${count} findings`}, rule{" "}
-        {[...new Set(review.issues.map((issue) => issue.rule))].join(", ")})
-      </span>
-    </span>
-  );
-}
-
 /**
  * The moderator's queue, one page of it: listings not reviewed yet first, then
- * the most serious, then submission order. The order comes from the store
- * (`getQueuePage`), across every page.
+ * the most serious, then submission order, unless the moderator picked a sort.
+ * The order comes from the store (`getQueuePage`), across every page.
  */
-export function ReviewQueue({ queue }: { queue: QueuePage }) {
+export function ReviewQueue({ queue, sort }: { queue: QueuePage; sort?: QueueSort }) {
   const { rows, total, page, size, reviewedAt, ruleRevision } = queue;
   const pageCount = Math.max(1, Math.ceil(total / size));
-  const pageHref = (target: number) => `/?page=${target}&size=${size}`;
+  const pageHref = (target: number) => queueHref({ page: target, size, sort });
+  const tableRows: QueueRow[] = rows.map(({ listing, review }) => ({
+    uuid: listing.uuid,
+    name: listing.name,
+    developerHandle: listing.developer.handle,
+    pricingType: listing.pricingType,
+    screenshotCount: isFullListing(listing) ? listing.previewImageUrls.length : null,
+    review,
+  }));
 
   return (
     <section className="flex flex-col gap-4">
@@ -53,34 +38,7 @@ export function ReviewQueue({ queue }: { queue: QueuePage }) {
           : "The review job has not finished a run yet. Run npm run review."}
       </p>
 
-      <table className="w-full border-collapse text-left text-sm">
-        <thead>
-          <tr className="border-b">
-            <th className="py-2 pr-4">App</th>
-            <th className="py-2 pr-4">Developer</th>
-            <th className="py-2 pr-4">Pricing</th>
-            <th className="py-2 pr-4">Screenshots</th>
-            <th className="py-2 pr-4">Status</th>
-          </tr>
-        </thead>
-        <tbody>
-          {rows.map(({ listing, review }) => (
-            <tr key={listing.uuid} className="border-b">
-              <td className="py-2 pr-4">
-                <Link href={`/listings/${listing.uuid}`} className="underline">
-                  {listing.name}
-                </Link>
-              </td>
-              <td className="py-2 pr-4">{listing.developer.handle ? `@${listing.developer.handle}` : "-"}</td>
-              <td className="py-2 pr-4">{listing.pricingType}</td>
-              <td className="py-2 pr-4">{isFullListing(listing) ? listing.previewImageUrls.length : "-"}</td>
-              <td className="py-2 pr-4">
-                <Status review={review} />
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+      <QueueTable rows={tableRows} size={size} sort={sort} />
 
       <nav className="flex items-center gap-4 text-sm">
         {page > 1 ? (

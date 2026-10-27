@@ -17,6 +17,14 @@ export type QueueFilter = {
   /** 1-based. */
   page: number;
   size: number;
+  /** A moderator-chosen order. Without it, the default queue order. */
+  sort?: QueueSort;
+};
+
+/** The queue columns a moderator can sort by. Severity ascending is most serious first. */
+export type QueueSort = {
+  column: "severity" | "developer";
+  direction: "asc" | "desc";
 };
 
 /**
@@ -70,6 +78,11 @@ export type ReviewStore = {
   /** Every stored listing and its review, in submission order. For re-reviewing the whole set after an edit. */
   getAll(): Promise<StoredListing[]>;
 };
+
+const SORT_COLUMNS = {
+  severity: "reviews.severity_rank",
+  developer: "listings.developer_handle",
+} as const;
 
 /** PGlite runs one statement at a time, so writes go in short transactions of this many listings. */
 const CHUNK_SIZE = 200;
@@ -252,13 +265,20 @@ export function createReviewStore(db: Kysely<Database> = getDb()): ReviewStore {
       return stored ?? null;
     },
 
-    async getQueuePage({ page, size }) {
+    async getQueuePage({ page, size, sort }) {
       const rows = await db
         .selectFrom("listings")
         .leftJoin("reviews", "reviews.listing_uuid", "listings.uuid")
         .selectAll("listings")
         .select(["reviews.rule_revision", "reviews.reviewed_at"])
-        .orderBy("reviews.severity_rank", (ob) => ob.asc().nullsFirst())
+        // Not reviewed and no developer handle have nothing to sort on, so they go last either way.
+        .$call((query) =>
+          sort
+            ? query.orderBy(SORT_COLUMNS[sort.column], (ob) =>
+                (sort.direction === "asc" ? ob.asc() : ob.desc()).nullsLast(),
+              )
+            : query.orderBy("reviews.severity_rank", (ob) => ob.asc().nullsFirst()),
+        )
         .orderBy("listings.position")
         .limit(size)
         .offset((page - 1) * size)

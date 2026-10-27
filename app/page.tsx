@@ -1,3 +1,4 @@
+import { parseQueueSort } from "@/components/queueHref";
 import { ReviewQueue } from "@/components/ReviewQueue";
 import { createReviewStore } from "@/lib/moderation/store";
 
@@ -12,17 +13,19 @@ function positiveInt(raw: string | string[] | undefined, fallback: number): numb
   return Number.isInteger(value) && value > 0 ? value : fallback;
 }
 
-/** The queue at `/?page=N&size=M`, read from the review store. */
+/** The queue at `/?page=N&size=M&sort=severity|developer&dir=asc|desc`, read from the review store. */
 export default async function ReviewQueuePage({
   searchParams,
 }: {
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 }) {
   const params = await searchParams;
+  const sort = parseQueueSort(params.sort, params.dir);
   const queue = await createReviewStore().getQueuePage({
     page: positiveInt(params.page, 1),
     size: positiveInt(params.size, DEFAULT_PAGE_SIZE),
+    sort,
   });
 
-  return <ReviewQueue queue={queue} />;
+  return <ReviewQueue queue={queue} sort={sort} />;
 }
