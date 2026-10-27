@@ -30,6 +30,7 @@ const issue = (severity: Issue["severity"]): Issue => ({
   severity,
   message: `a ${severity} finding`,
   field: "previewImageUrls",
+  matched: "https://example.com/one.png, https://example.com/one.png",
 });
 
 const [first, second, third, fourth] = namedListings as [AppListing, AppListing, AppListing, AppListing];

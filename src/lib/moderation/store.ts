@@ -227,8 +227,8 @@ export function createReviewStore(db: Kysely<Database> = getDb()): ReviewStore {
               severity: issue.severity,
               message: issue.message,
               field: issue.field ?? null,
-              evidence: null,
-              related_listing_uuid: null,
+              evidence: issue.matched ?? null,
+              related_listing_uuid: issue.relatedListingUuid ?? null,
             })),
           );
           if (findings.length > 0) await trx.insertInto("findings").values(findings).execute();
@@ -428,5 +428,7 @@ function toIssue(finding: Selectable<FindingsTable>): Issue {
     severity: finding.severity,
     message: finding.message,
     ...(finding.field ? { field: finding.field } : {}),
+    ...(finding.evidence ? { matched: finding.evidence } : {}),
+    ...(finding.related_listing_uuid ? { relatedListingUuid: finding.related_listing_uuid } : {}),
   };
 }

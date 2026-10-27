@@ -25,6 +25,10 @@ export type Issue = {
   severity: Severity;
   message: string;
   field?: string;
+  /** The text the check matched, so a reviewer can see why it fired. */
+  matched?: string;
+  /** For 4.2: the other listing in the pair. */
+  relatedListingUuid?: string;
 };
 
 /** One listing and everything the rules found on it. */
@@ -66,6 +70,7 @@ function checkScreenshotCount(listing: AppListing): Issue[] {
           ? `Only ${distinct} screenshot${distinct === 1 ? "" : "s"}; rule 2.3 needs two.`
           : `${listing.previewImageUrls.length} screenshots but only ${distinct} distinct; rule 2.3 needs two.`,
       field: "previewImageUrls",
+      matched: listing.previewImageUrls.length ? listing.previewImageUrls.join(", ") : "(no screenshots)",
     },
   ];
 }
