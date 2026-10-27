@@ -25,16 +25,19 @@ function createThrottle(callsPerMinute: number): () => Promise<void> {
 }
 
 /**
- * The job: fetch every listing, review the whole set, store. `npm run review`
- * runs it.
+ * The job: fetch listings, review the whole set, store. `npm run review` runs
+ * it; `npm run review -- --full` fetches every detail again.
  *
- * 1. The list pass saves every summary, so the queue shows each listing as not
+ * 1. The list pass saves every summary, so the queue shows new listings as not
  *    reviewed yet before any detail call.
- * 2. The detail pass saves full listings in batches.
- * 3. The rules run once over the full set, because 4.2 compares listings with
- *    each other, and the reviews are saved.
+ * 2. The detail pass fetches only listings never fetched before, unless `full`.
+ *    The webhook keeps fetched listings fresh, so a run after the first takes
+ *    seconds, not ten minutes. A full run catches anything a missed webhook left
+ *    stale.
+ * 3. The rules run once over every stored listing, because 4.2 compares
+ *    listings with each other, and the reviews are saved.
  */
-export async function runReviewJob(): Promise<void> {
+export async function runReviewJob({ full = process.argv.includes("--full") } = {}): Promise<void> {
   const db = getDb();
   const store = createReviewStore(db);
   const throttle = createThrottle(LIVE_RATE_LIMIT_PER_MINUTE);
@@ -47,7 +50,7 @@ export async function runReviewJob(): Promise<void> {
     .executeTakeFirstOrThrow();
   const runId = Number(run.id);
   console.log(
-    `run ${runId} under requirements revision ${ruleRevision}, at ${LIVE_RATE_LIMIT_PER_MINUTE} calls a minute`,
+    `run ${runId} (${full ? "full" : "incremental"}) under requirements revision ${ruleRevision}, at ${LIVE_RATE_LIMIT_PER_MINUTE} calls a minute`,
   );
 
   const summaries: AppListingSummary[] = [];
@@ -61,24 +64,29 @@ export async function runReviewJob(): Promise<void> {
     hasMore = result.pagination.hasMore;
     page += 1;
   }
-  console.log(`list pass: ${summaries.length} listings`);
 
-  const listings: AppListing[] = [];
+  const fetched = new Set(
+    (await store.getAll()).flatMap(({ listing }) => (isFullListing(listing) ? [listing.uuid] : [])),
+  );
+  const toFetch = full ? summaries : summaries.filter(({ uuid }) => !fetched.has(uuid));
+  console.log(`list pass: ${summaries.length} listings, ${toFetch.length} to fetch`);
+
+  let done = 0;
   let batch: AppListing[] = [];
-  for (const summary of summaries) {
+  for (const summary of toFetch) {
     await throttle();
     const listing = await getApp(summary.uuid);
     if (listing) batch.push(listing);
+    done += 1;
     if (batch.length === DETAIL_BATCH_SIZE) {
       await store.saveListings(batch);
-      listings.push(...batch);
       batch = [];
-      console.log(`detail pass: ${listings.length} of ${summaries.length}`);
+      console.log(`detail pass: ${done} of ${toFetch.length}`);
     }
   }
   await store.saveListings(batch);
-  listings.push(...batch);
 
+  const listings = (await store.getAll()).flatMap(({ listing }) => (isFullListing(listing) ? [listing] : []));
   await store.saveReviews(reviewListings(listings), ruleRevision, runId);
 
   await db
