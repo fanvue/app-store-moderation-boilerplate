@@ -1,8 +1,8 @@
-import Link from "next/link";
+import { TableCard, TablePagination } from "@fanvue/ui";
 
 import { isFullListing, type QueuePage, type QueueSort } from "@/lib/moderation/store";
 
-import { queueHref } from "./queueHref";
+import { QueuePagination } from "./QueuePagination";
 import { QueueTable, type QueueRow } from "./QueueTable";
 
 /** When the job last finished, for the moderator to read. */
@@ -18,7 +18,8 @@ export function formatReviewedAt(iso: string): string {
 export function ReviewQueue({ queue, sort }: { queue: QueuePage; sort?: QueueSort }) {
   const { rows, total, page, size, reviewedAt, ruleRevision } = queue;
   const pageCount = Math.max(1, Math.ceil(total / size));
-  const pageHref = (target: number) => queueHref({ page: target, size, sort });
+  const first = total === 0 ? 0 : (page - 1) * size + 1;
+  const last = Math.min(page * size, total);
   const tableRows: QueueRow[] = rows.map(({ listing, review }) => ({
     uuid: listing.uuid,
     name: listing.name,
@@ -30,35 +31,21 @@ export function ReviewQueue({ queue, sort }: { queue: QueuePage; sort?: QueueSor
 
   return (
     <section className="flex flex-col gap-4">
-      <h1 className="text-2xl font-semibold">Review queue</h1>
-      <p>
+      <h1 className="typography-header-heading-md">Review queue</h1>
+      <p className="typography-body-small-14px-regular text-content-secondary">
         {total.toLocaleString()} listings.{" "}
         {reviewedAt
           ? `The review job last finished ${formatReviewedAt(reviewedAt)}, under requirements revision ${ruleRevision}.`
           : "The review job has not finished a run yet. Run npm run review."}
       </p>
 
-      <QueueTable rows={tableRows} size={size} sort={sort} />
-
-      <nav className="flex items-center gap-4 text-sm">
-        {page > 1 ? (
-          <Link href={pageHref(page - 1)} className="underline">
-            Previous
-          </Link>
-        ) : (
-          <span className="text-neutral-400">Previous</span>
-        )}
-        <span>
-          Page {page} of {pageCount}
-        </span>
-        {page < pageCount ? (
-          <Link href={pageHref(page + 1)} className="underline">
-            Next
-          </Link>
-        ) : (
-          <span className="text-neutral-400">Next</span>
-        )}
-      </nav>
+      <TableCard size="condensed">
+        <QueueTable rows={tableRows} size={size} sort={sort} />
+        <TablePagination
+          summary={`${first.toLocaleString()}–${last.toLocaleString()} of ${total.toLocaleString()}`}
+          paginationSlot={<QueuePagination page={page} pageCount={pageCount} size={size} sort={sort} />}
+        />
+      </TableCard>
     </section>
   );
 }

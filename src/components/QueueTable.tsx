@@ -1,13 +1,25 @@
 "use client";
 
+import {
+  Badge,
+  Link as FanvueLink,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+  TableSortLabel,
+} from "@fanvue/ui";
 import { FlexRender, createColumnHelper, rowSortingFeature, tableFeatures, useTable } from "@tanstack/react-table";
 import Link, { useLinkStatus } from "next/link";
+import type { ReactNode } from "react";
 
 import { worstSeverity } from "@/lib/moderation/queue";
-import type { Severity } from "@/lib/moderation/rules";
 import type { QueueSort, StoredReview } from "@/lib/moderation/store";
 
 import { queueHref, SORTABLE_COLUMNS } from "./queueHref";
+import { SEVERITY_BADGE } from "./severityBadge";
 
 /** One queue row, flattened on the server so this component needs no store code. */
 export type QueueRow = {
@@ -20,41 +32,44 @@ export type QueueRow = {
   review: StoredReview | null;
 };
 
-const SEVERITY_CLASS: Record<Severity, string> = {
-  reject: "font-semibold text-red-700",
-  fix: "font-semibold text-amber-700",
-  warn: "text-sky-700",
+/** Fixed widths, so the columns stay put when a sort brings in different rows. They add up to 100%. */
+const COLUMN_WIDTH: Record<string, string> = {
+  name: "w-[22%]",
+  developer: "w-[18%]",
+  pricingType: "w-[10%]",
+  screenshotCount: "w-[10%]",
+  severity: "w-[10%]",
+  status: "w-[30%]",
 };
 
-const SORT_ARROW: Record<QueueSort["direction"], string> = {
-  asc: " ↑",
-  desc: " ↓",
-};
-
-/** The header's sort arrow, or an ellipsis while the store reads the newly sorted page. Must sit inside a `Link`. */
-function SortIndicator({ sorted }: { sorted: QueueSort["direction"] | false }) {
+/** The header label with its sort arrow, and an ellipsis while the store reads the newly sorted page. Must sit inside a `Link`. */
+function SortLabel({ sorted, children }: { sorted: QueueSort["direction"] | false; children: ReactNode }) {
   const { pending } = useLinkStatus();
-  if (pending) return " …";
-  return sorted ? SORT_ARROW[sorted] : " ↕";
+  return (
+    <TableSortLabel direction={sorted || null}>
+      {children}
+      {pending ? " …" : null}
+    </TableSortLabel>
+  );
 }
 
 function Severity({ review }: { review: StoredReview | null }) {
   if (!review) return "-";
 
   const worst = worstSeverity(review.issues);
-  if (!worst) return <span className="text-green-700">none</span>;
+  if (!worst) return <Badge variant="successColour">none</Badge>;
 
-  return <span className={SEVERITY_CLASS[worst]}>{worst}</span>;
+  return <Badge variant={SEVERITY_BADGE[worst]}>{worst}</Badge>;
 }
 
 function Status({ review }: { review: StoredReview | null }) {
-  if (!review) return <span className="text-neutral-500 italic">Not reviewed yet</span>;
+  if (!review) return <span className="text-content-tertiary italic">Not reviewed yet</span>;
 
   const count = review.issues.length;
-  if (count === 0) return <span className="text-green-700">No findings</span>;
+  if (count === 0) return <span className="text-content-secondary">No findings</span>;
 
   return (
-    <span className="text-neutral-500">
+    <span className="text-content-secondary">
       {count === 1 ? "1 finding" : `${count} findings`}, rule{" "}
       {[...new Set(review.issues.map((issue) => issue.rule))].join(", ")}
     </span>
@@ -69,9 +84,9 @@ const columns = columnHelper.columns([
     header: "App",
     enableSorting: false,
     cell: ({ row }) => (
-      <Link href={`/listings/${row.original.uuid}`} className="underline">
-        {row.original.name}
-      </Link>
+      <FanvueLink asChild size="14">
+        <Link href={`/listings/${row.original.uuid}`}>{row.original.name}</Link>
+      </FanvueLink>
     ),
   }),
   columnHelper.accessor("developerHandle", {
@@ -120,42 +135,43 @@ export function QueueTable({ rows, size, sort }: { rows: QueueRow[]; size: numbe
   });
 
   return (
-    <table className="w-full border-collapse text-left text-sm">
-      <thead>
+    <Table className="table-fixed">
+      <TableHeader>
         {table.getHeaderGroups().map((headerGroup) => (
-          <tr key={headerGroup.id} className="border-b">
+          <TableRow key={headerGroup.id}>
             {headerGroup.headers.map((header) => {
               const column = SORTABLE_COLUMNS.find((id) => id === header.column.id);
               const sorted = header.column.getIsSorted();
               const next = header.column.getNextSortingOrder();
               return (
-                <th key={header.id} className="py-2 pr-4">
+                <TableHead key={header.id} className={COLUMN_WIDTH[header.column.id]}>
                   {column && header.column.getCanSort() ? (
                     // A new sort starts again at page 1. The third click goes back to the default order.
                     <Link href={queueHref({ page: 1, size, sort: next ? { column, direction: next } : undefined })}>
-                      <FlexRender header={header} />
-                      <SortIndicator sorted={sorted} />
+                      <SortLabel sorted={sorted}>
+                        <FlexRender header={header} />
+                      </SortLabel>
                     </Link>
                   ) : (
                     <FlexRender header={header} />
                   )}
-                </th>
+                </TableHead>
               );
             })}
-          </tr>
+          </TableRow>
         ))}
-      </thead>
-      <tbody>
+      </TableHeader>
+      <TableBody>
         {table.getRowModel().rows.map((row) => (
-          <tr key={row.id} className="border-b">
+          <TableRow key={row.id}>
             {row.getAllCells().map((cell) => (
-              <td key={cell.id} className="py-2 pr-4">
+              <TableCell key={cell.id} className="break-words">
                 <FlexRender cell={cell} />
-              </td>
+              </TableCell>
             ))}
-          </tr>
+          </TableRow>
         ))}
-      </tbody>
-    </table>
+      </TableBody>
+    </Table>
   );
 }

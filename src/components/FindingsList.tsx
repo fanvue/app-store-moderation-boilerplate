@@ -1,7 +1,11 @@
+import { Badge, Card, CardContent, CardFooter, CardHeader, CardTitle, Link as FanvueLink } from "@fanvue/ui";
+import Link from "next/link";
+
 import type { Severity } from "@/lib/moderation/rules";
 import type { StoredReview } from "@/lib/moderation/store";
 
 import { formatReviewedAt } from "./ReviewQueue";
+import { SEVERITY_BADGE } from "./severityBadge";
 
 /** What each severity means for the listing, from `rules.ts`. */
 const NEXT_STEP: Record<Severity, string> = {
@@ -10,56 +14,60 @@ const NEXT_STEP: Record<Severity, string> = {
   warn: "A person should look.",
 };
 
-const SEVERITY_CLASS: Record<Severity, string> = {
-  reject: "bg-red-100 text-red-800",
-  fix: "bg-amber-100 text-amber-800",
-  warn: "bg-sky-100 text-sky-800",
-};
-
 /**
  * Findings for one listing, shown on the listing page: severity, the rule that
  * fired, the field and the text that triggered it. `null` means the rules have
  * not run on the listing yet, which is different from no findings.
  */
 export function FindingsList({ review }: { review: StoredReview | null }) {
-  if (!review) return <p className="text-neutral-500 italic">Not reviewed yet.</p>;
+  if (!review) return <p className="text-content-tertiary italic">Not reviewed yet.</p>;
 
   return (
     <>
       {review.issues.length === 0 ? (
-        <p className="text-green-700">No findings. Every rule passed.</p>
+        <Badge variant="successColour">No findings. Every rule passed.</Badge>
       ) : (
         <ul className="flex flex-col gap-3">
           {review.issues.map((issue, index) => (
-            <li key={`${issue.code}-${index}`} className="rounded border p-3">
-              <p>
-                <span className={`rounded px-1.5 py-0.5 text-xs font-semibold ${SEVERITY_CLASS[issue.severity]}`}>
-                  {issue.severity}
-                </span>{" "}
-                <span className="font-semibold">Rule {issue.rule}</span>
-                {issue.field ? <span className="font-mono text-xs text-neutral-500"> · {issue.field}</span> : null}
-              </p>
-              <p className="mt-1">{issue.message}</p>
-              {issue.matched ? (
-                <p className="mt-1">
-                  Matched: <mark className="bg-yellow-100 font-mono text-xs break-all">{issue.matched}</mark>
-                </p>
-              ) : null}
-              {issue.relatedListingUuid ? (
-                <p className="mt-1">
-                  Matches{" "}
-                  <a href={`/listings/${issue.relatedListingUuid}`} className="underline">
-                    another listing
-                  </a>
-                  .
-                </p>
-              ) : null}
-              <p className="mt-1 text-xs text-neutral-500">{NEXT_STEP[issue.severity]}</p>
+            <li key={`${issue.code}-${index}`}>
+              <Card hierarchy="secondary" type="container" className="flex flex-col gap-2">
+                <CardHeader action={<Badge variant={SEVERITY_BADGE[issue.severity]}>{issue.severity}</Badge>}>
+                  <CardTitle className="typography-body-small-14px-semibold">
+                    Rule {issue.rule}
+                    {issue.field ? (
+                      <span className="font-mono text-xs font-normal text-content-secondary"> · {issue.field}</span>
+                    ) : null}
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="flex flex-col gap-1 typography-body-small-14px-regular">
+                  <p>{issue.message}</p>
+                  {issue.matched ? (
+                    <p>
+                      Matched:{" "}
+                      <mark className="rounded border border-border-strong bg-background-primary px-1 font-mono text-xs break-all text-content-primary">
+                        {issue.matched}
+                      </mark>
+                    </p>
+                  ) : null}
+                  {issue.relatedListingUuid ? (
+                    <p>
+                      Matches{" "}
+                      <FanvueLink asChild size="14">
+                        <Link href={`/listings/${issue.relatedListingUuid}`}>another listing</Link>
+                      </FanvueLink>
+                      .
+                    </p>
+                  ) : null}
+                </CardContent>
+                <CardFooter className="typography-description-12px-regular text-content-secondary">
+                  {NEXT_STEP[issue.severity]}
+                </CardFooter>
+              </Card>
             </li>
           ))}
         </ul>
       )}
-      <p className="mt-2 text-xs text-neutral-500">
+      <p className="mt-2 typography-description-12px-regular text-content-secondary">
         Reviewed {formatReviewedAt(review.reviewedAt)} under requirements revision {review.ruleRevision}.
       </p>
     </>
