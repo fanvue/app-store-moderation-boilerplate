@@ -4,7 +4,7 @@ import type { AppListing, AppListingSummary } from "@/lib/fanvue/types";
 
 import { readRuleRevision } from "./rule-revision";
 import { reviewListings } from "./rules";
-import { createReviewStore, isFullListing } from "./store";
+import { createReviewStore, isFullListing, type ReviewStore } from "./store";
 
 /** Detail calls saved per write, so the listing page fills in during the run. */
 const DETAIL_BATCH_SIZE = 50;
@@ -25,8 +25,7 @@ function createThrottle(callsPerMinute: number): () => Promise<void> {
 }
 
 /**
- * The job: fetch listings, review the whole set, store. `npm run review` runs
- * it; `npm run review -- --full` fetches every detail again.
+ * Fetches listings into the store, at the live rate limit.
  *
  * 1. The list pass saves every summary, so the queue shows new listings as not
  *    reviewed yet before any detail call.
@@ -34,24 +33,9 @@ function createThrottle(callsPerMinute: number): () => Promise<void> {
  *    The webhook keeps fetched listings fresh, so a run after the first takes
  *    seconds, not ten minutes. A full run catches anything a missed webhook left
  *    stale.
- * 3. The rules run once over every stored listing, because 4.2 compares
- *    listings with each other, and the reviews are saved.
  */
-export async function runReviewJob({ full = process.argv.includes("--full") } = {}): Promise<void> {
-  const db = getDb();
-  const store = createReviewStore(db);
+async function fetchListings(store: ReviewStore, full: boolean): Promise<void> {
   const throttle = createThrottle(LIVE_RATE_LIMIT_PER_MINUTE);
-  const ruleRevision = await readRuleRevision();
-
-  const run = await db
-    .insertInto("review_runs")
-    .values({ rule_revision: ruleRevision })
-    .returning("id")
-    .executeTakeFirstOrThrow();
-  const runId = Number(run.id);
-  console.log(
-    `run ${runId} (${full ? "full" : "incremental"}) under requirements revision ${ruleRevision}, at ${LIVE_RATE_LIMIT_PER_MINUTE} calls a minute`,
-  );
 
   const summaries: AppListingSummary[] = [];
   let page = 1;
@@ -85,6 +69,36 @@ export async function runReviewJob({ full = process.argv.includes("--full") } = 
     }
   }
   await store.saveListings(batch);
+}
+
+/**
+ * The job: fetch listings, then review every stored listing and save the
+ * reviews. The rules run over the whole set at once because 4.2 compares
+ * listings with each other.
+ *
+ * - `npm run review`: incremental. Fetches only listings never fetched before.
+ * - `npm run review -- --full`: fetches every listing's detail again.
+ * - `npm run review -- --rules-only`: no API calls. Re-runs the rules over what
+ *   is stored, for a new rule or a new requirements revision.
+ */
+export async function runReviewJob({
+  full = process.argv.includes("--full"),
+  rulesOnly = process.argv.includes("--rules-only"),
+} = {}): Promise<void> {
+  const db = getDb();
+  const store = createReviewStore(db);
+  const ruleRevision = await readRuleRevision();
+
+  const run = await db
+    .insertInto("review_runs")
+    .values({ rule_revision: ruleRevision })
+    .returning("id")
+    .executeTakeFirstOrThrow();
+  const runId = Number(run.id);
+  const mode = rulesOnly ? "rules only" : full ? "full" : "incremental";
+  console.log(`run ${runId} (${mode}) under requirements revision ${ruleRevision}`);
+
+  if (!rulesOnly) await fetchListings(store, full);
 
   const listings = (await store.getAll()).flatMap(({ listing }) => (isFullListing(listing) ? [listing] : []));
   await store.saveReviews(reviewListings(listings), ruleRevision, runId);
