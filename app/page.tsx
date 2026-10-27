@@ -1,31 +1,28 @@
 import { ReviewQueue } from "@/components/ReviewQueue";
-import { LIVE_RATE_LIMIT_PER_MINUTE } from "@/lib/fanvue/api";
-import { fetchEveryListing } from "@/lib/moderation/review-job";
-import { reviewListings } from "@/lib/moderation/rules";
+import { createReviewStore } from "@/lib/moderation/store";
 
-// Rendered on every request, so the cost below is paid on every request.
+// Reads the store on every request: one page of stored reviews, no API calls.
 export const dynamic = "force-dynamic";
 
-/**
- * The queue, the slow way: fetch, review and render everything. The footer
- * says what it cost.
- *
- * TODO (yours): read a page from `src/lib/moderation/store.ts`, with page and
- * size from `searchParams`, and severity and rule if you add filters. See the
- * README's "Acceptance criteria".
- */
-export default async function ReviewQueuePage() {
-  const { listings, apiCalls, ms } = await fetchEveryListing();
-  const rows = reviewListings(listings);
+const DEFAULT_PAGE_SIZE = 50;
 
-  return (
-    <>
-      <ReviewQueue rows={rows} />
-      <p className="mt-6 text-xs text-neutral-500">
-        This page made {apiCalls.toLocaleString()} API calls, spending {ms.toLocaleString()} ms on them before rendering
-        anything, to review {rows.length.toLocaleString()} listings. The live API allows {LIVE_RATE_LIMIT_PER_MINUTE}{" "}
-        calls a minute.
-      </p>
-    </>
-  );
+/** A positive whole number from the query string, or `fallback`. */
+function positiveInt(raw: string | string[] | undefined, fallback: number): number {
+  const value = Number(raw);
+  return Number.isInteger(value) && value > 0 ? value : fallback;
+}
+
+/** The queue at `/?page=N&size=M`, read from the review store. */
+export default async function ReviewQueuePage({
+  searchParams,
+}: {
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
+}) {
+  const params = await searchParams;
+  const queue = await createReviewStore().getQueuePage({
+    page: positiveInt(params.page, 1),
+    size: positiveInt(params.size, DEFAULT_PAGE_SIZE),
+  });
+
+  return <ReviewQueue queue={queue} />;
 }
