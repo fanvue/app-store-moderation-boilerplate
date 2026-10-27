@@ -88,29 +88,3 @@ export async function runReviewJob(): Promise<void> {
     .execute();
   console.log(`reviewed ${listings.length} listings`);
 }
-
-/**
- * Fetches every listing the slow way, unthrottled. Only the pages still call
- * it, until they read from the store.
- */
-export async function fetchEveryListing(): Promise<{ listings: AppListing[]; apiCalls: number; ms: number }> {
-  const startedAt = performance.now();
-
-  const listings: AppListing[] = [];
-  let apiCalls = 0;
-  let page = 1;
-  let hasMore = true;
-  while (hasMore) {
-    const result = await listApps({ page, size: MAX_PAGE_SIZE });
-    apiCalls += 1;
-    for (const summary of result.data) {
-      const listing = await getApp(summary.uuid);
-      apiCalls += 1;
-      if (listing) listings.push(listing);
-    }
-    hasMore = result.pagination.hasMore;
-    page += 1;
-  }
-
-  return { listings, apiCalls, ms: Math.round(performance.now() - startedAt) };
-}
