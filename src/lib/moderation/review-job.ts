@@ -4,7 +4,7 @@ import type { AppListing, AppListingSummary } from "@/lib/fanvue/types";
 
 import { readRuleRevision } from "./rule-revision";
 import { reviewListings } from "./rules";
-import { createReviewStore } from "./store";
+import { createReviewStore, isFullListing } from "./store";
 
 /** Detail calls saved per write, so the listing page fills in during the run. */
 const DETAIL_BATCH_SIZE = 50;
@@ -87,4 +87,50 @@ export async function runReviewJob(): Promise<void> {
     .where("id", "=", runId)
     .execute();
   console.log(`reviewed ${listings.length} listings`);
+}
+
+/**
+ * Handles one new submission (the webhook): fetch the edited listing, re-run
+ * the rules over every stored listing because 4.2 compares them with each
+ * other, and save only the reviews that changed. The store moves any listing
+ * whose worst severity changed to the end of submission order. Returns how
+ * many reviews changed.
+ */
+export async function reviewSubmission(uuid: string): Promise<{ changed: number } | null> {
+  const listing = await getApp(uuid);
+  if (!listing) return null;
+
+  const db = getDb();
+  const store = createReviewStore(db);
+  const ruleRevision = await readRuleRevision();
+  await store.saveListings([listing]);
+
+  const stored = await store.getAll();
+  const before = new Map(stored.map(({ listing: { uuid: key }, review }) => [key, review]));
+  const reviews = reviewListings(
+    stored.flatMap(({ listing: candidate }) => (isFullListing(candidate) ? [candidate] : [])),
+  );
+  const changed = reviews.filter(({ listing: reviewed, issues }) => {
+    const previous = before.get(reviewed.uuid);
+    return (
+      reviewed.uuid === uuid ||
+      !previous ||
+      previous.ruleRevision !== ruleRevision ||
+      JSON.stringify(previous.issues) !== JSON.stringify(issues)
+    );
+  });
+
+  const run = await db
+    .insertInto("review_runs")
+    .values({ rule_revision: ruleRevision })
+    .returning("id")
+    .executeTakeFirstOrThrow();
+  await store.saveReviews(changed, ruleRevision, Number(run.id));
+  await db
+    .updateTable("review_runs")
+    .set({ finished_at: new Date(), listing_count: changed.length })
+    .where("id", "=", run.id)
+    .execute();
+
+  return { changed: changed.length };
 }

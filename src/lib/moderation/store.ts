@@ -67,6 +67,8 @@ export type ReviewStore = {
   getReview(uuid: string): Promise<StoredListing | null>;
   /** One page of the queue. */
   getQueuePage(filter: QueueFilter): Promise<QueuePage>;
+  /** Every stored listing and its review, in submission order. For re-reviewing the whole set after an edit. */
+  getAll(): Promise<StoredListing[]>;
 };
 
 /** PGlite runs one statement at a time, so writes go in short transactions of this many listings. */
@@ -284,6 +286,17 @@ export function createReviewStore(db: Kysely<Database> = getDb()): ReviewStore {
         ruleRevision: lastRun?.rule_revision ?? null,
       };
     },
+
+    async getAll() {
+      const rows = await db
+        .selectFrom("listings")
+        .leftJoin("reviews", "reviews.listing_uuid", "listings.uuid")
+        .selectAll("listings")
+        .select(["reviews.rule_revision", "reviews.reviewed_at"])
+        .orderBy("listings.position")
+        .execute();
+      return assemble(db, rows);
+    },
   };
 }
 
@@ -307,15 +320,15 @@ async function assemble(db: Kysely<Database>, rows: ListingRow[]): Promise<Store
     .orderBy("id")
     .execute();
 
+  const plansByListing = Map.groupBy(plans, (plan) => plan.listing_uuid);
+  const findingsByListing = Map.groupBy(findings, (finding) => finding.listing_uuid);
+
   return rows.map((row) => ({
-    listing: toListing(
-      row,
-      plans.filter((plan) => plan.listing_uuid === row.uuid),
-    ),
+    listing: toListing(row, plansByListing.get(row.uuid) ?? []),
     review:
       row.rule_revision && row.reviewed_at
         ? {
-            issues: findings.filter((finding) => finding.listing_uuid === row.uuid).map(toIssue),
+            issues: (findingsByListing.get(row.uuid) ?? []).map(toIssue),
             ruleRevision: row.rule_revision,
             reviewedAt: row.reviewed_at.toISOString(),
           }
