@@ -8,19 +8,21 @@
  * the migrations by hand once the database is reachable.
  */
 export async function register() {
-  if (process.env.NEXT_RUNTIME !== "nodejs") return;
+  if (process.env.NEXT_RUNTIME !== 'nodejs') {
+    return
+  }
 
-  const { DatabaseUnreachableError, migrateWithRetry } = await import("./src/lib/db/migrate");
+  const { DatabaseUnreachableError, migrateWithRetry } = await import('./src/lib/db/migrate')
   void migrateWithRetry()
-    .then((applied) => {
-      console.log(applied.length ? `applied migrations: ${applied.join(", ")}` : "database schema up to date");
+    .then(applied => {
+      console.log(applied.length ? `applied migrations: ${applied.join(', ')}` : 'database schema up to date')
     })
     .catch((error: unknown) => {
-      const message = error instanceof Error ? error.message : String(error);
+      const message = error instanceof Error ? error.message : String(error)
       console.error(
         error instanceof DatabaseUnreachableError
           ? `database unavailable: ${message}. Is \`npm run db\` running on port 5544?`
           : `${message}. Fix the file and run \`npm run db:migrate\`.`,
-      );
-    });
+      )
+    })
 }

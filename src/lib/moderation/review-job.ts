@@ -1,13 +1,13 @@
-import { getDb } from "@/lib/db/client";
-import { getApp, listApps, LIVE_RATE_LIMIT_PER_MINUTE, MAX_PAGE_SIZE } from "@/lib/fanvue/api";
-import type { AppListing, AppListingSummary } from "@/lib/fanvue/types";
+import { getDb } from '@/lib/db/client'
+import { getApp, LIVE_RATE_LIMIT_PER_MINUTE, listApps, MAX_PAGE_SIZE } from '@/lib/fanvue/api'
+import type { AppListing, AppListingSummary } from '@/lib/fanvue/types'
 
-import { readRuleRevision } from "./rule-revision";
-import { reviewListings } from "./rules";
-import { createReviewStore, isFullListing, type ReviewStore } from "./store";
+import { readRuleRevision } from './rule-revision'
+import { reviewListings } from './rules'
+import { createReviewStore, isFullListing, type ReviewStore } from './store'
 
 /** Detail calls saved per write, so the listing page fills in during the run. */
-const DETAIL_BATCH_SIZE = 50;
+const DETAIL_BATCH_SIZE = 50
 
 /**
  * Resolves when the next call may go out, spacing calls evenly so the job
@@ -15,13 +15,15 @@ const DETAIL_BATCH_SIZE = 50;
  * job keeps to it anyway, so a full run takes about ten minutes.
  */
 function createThrottle(callsPerMinute: number): () => Promise<void> {
-  const intervalMs = 60_000 / callsPerMinute;
-  let nextAt = 0;
+  const intervalMs = 60_000 / callsPerMinute
+  let nextAt = 0
   return async () => {
-    const waitMs = nextAt - Date.now();
-    if (waitMs > 0) await new Promise((resolve) => setTimeout(resolve, waitMs));
-    nextAt = Date.now() + intervalMs;
-  };
+    const waitMs = nextAt - Date.now()
+    if (waitMs > 0) {
+      await new Promise(resolve => setTimeout(resolve, waitMs))
+    }
+    nextAt = Date.now() + intervalMs
+  }
 }
 
 /**
@@ -35,40 +37,42 @@ function createThrottle(callsPerMinute: number): () => Promise<void> {
  *    stale.
  */
 async function fetchListings(store: ReviewStore, full: boolean): Promise<void> {
-  const throttle = createThrottle(LIVE_RATE_LIMIT_PER_MINUTE);
+  const throttle = createThrottle(LIVE_RATE_LIMIT_PER_MINUTE)
 
-  const summaries: AppListingSummary[] = [];
-  let page = 1;
-  let hasMore = true;
+  const summaries: AppListingSummary[] = []
+  let page = 1
+  let hasMore = true
   while (hasMore) {
-    await throttle();
-    const result = await listApps({ page, size: MAX_PAGE_SIZE });
-    await store.saveListings(result.data);
-    summaries.push(...result.data);
-    hasMore = result.pagination.hasMore;
-    page += 1;
+    await throttle()
+    const result = await listApps({ page, size: MAX_PAGE_SIZE })
+    await store.saveListings(result.data)
+    summaries.push(...result.data)
+    hasMore = result.pagination.hasMore
+    page += 1
   }
 
   const fetched = new Set(
     (await store.getAll()).flatMap(({ listing }) => (isFullListing(listing) ? [listing.uuid] : [])),
-  );
-  const toFetch = full ? summaries : summaries.filter(({ uuid }) => !fetched.has(uuid));
-  console.log(`list pass: ${summaries.length} listings, ${toFetch.length} to fetch`);
+  )
+  const toFetch = full ? summaries : summaries.filter(({ uuid }) => !fetched.has(uuid))
+  console.log(`list pass: ${summaries.length} listings, ${toFetch.length} to fetch`)
 
-  let done = 0;
-  let batch: AppListing[] = [];
+  let done = 0
+  let batch: AppListing[] = []
   for (const summary of toFetch) {
-    await throttle();
-    const listing = await getApp(summary.uuid);
-    if (listing) batch.push(listing);
-    done += 1;
+    await throttle()
+    const listing = await getApp(summary.uuid)
+    if (listing) {
+      batch.push(listing)
+    }
+    done += 1
     if (batch.length === DETAIL_BATCH_SIZE) {
-      await store.saveListings(batch);
-      batch = [];
-      console.log(`detail pass: ${done} of ${toFetch.length}`);
+      await store.saveListings(batch)
+      batch = []
+      console.log(`detail pass: ${done} of ${toFetch.length}`)
     }
   }
-  await store.saveListings(batch);
+  await store.saveListings(batch)
 }
 
 /**
@@ -82,33 +86,36 @@ async function fetchListings(store: ReviewStore, full: boolean): Promise<void> {
  *   is stored, for a new rule or a new requirements revision.
  */
 export async function runReviewJob({
-  full = process.argv.includes("--full"),
-  rulesOnly = process.argv.includes("--rules-only"),
+  full = process.argv.includes('--full'),
+  rulesOnly = process.argv.includes('--rules-only'),
 } = {}): Promise<void> {
-  const db = getDb();
-  const store = createReviewStore(db);
-  const ruleRevision = await readRuleRevision();
+  const db = getDb()
+  const store = createReviewStore(db)
+  const ruleRevision = await readRuleRevision()
 
   const run = await db
-    .insertInto("review_runs")
+    .insertInto('review_runs')
     .values({ rule_revision: ruleRevision })
-    .returning("id")
-    .executeTakeFirstOrThrow();
-  const runId = Number(run.id);
-  const mode = rulesOnly ? "rules only" : full ? "full" : "incremental";
-  console.log(`run ${runId} (${mode}) under requirements revision ${ruleRevision}`);
+    .returning('id')
+    .executeTakeFirstOrThrow()
+  const runId = Number(run.id)
+  const fetchMode = full ? 'full' : 'incremental'
+  const mode = rulesOnly ? 'rules only' : fetchMode
+  console.log(`run ${runId} (${mode}) under requirements revision ${ruleRevision}`)
 
-  if (!rulesOnly) await fetchListings(store, full);
+  if (!rulesOnly) {
+    await fetchListings(store, full)
+  }
 
-  const listings = (await store.getAll()).flatMap(({ listing }) => (isFullListing(listing) ? [listing] : []));
-  await store.saveReviews(reviewListings(listings), ruleRevision, runId);
+  const listings = (await store.getAll()).flatMap(({ listing }) => (isFullListing(listing) ? [listing] : []))
+  await store.saveReviews(reviewListings(listings), ruleRevision, runId)
 
   await db
-    .updateTable("review_runs")
+    .updateTable('review_runs')
     .set({ finished_at: new Date(), listing_count: listings.length })
-    .where("id", "=", runId)
-    .execute();
-  console.log(`reviewed ${listings.length} listings`);
+    .where('id', '=', runId)
+    .execute()
+  console.log(`reviewed ${listings.length} listings`)
 }
 
 /**
@@ -119,40 +126,42 @@ export async function runReviewJob({
  * many reviews changed.
  */
 export async function reviewSubmission(uuid: string): Promise<{ changed: number } | null> {
-  const listing = await getApp(uuid);
-  if (!listing) return null;
+  const listing = await getApp(uuid)
+  if (!listing) {
+    return null
+  }
 
-  const db = getDb();
-  const store = createReviewStore(db);
-  const ruleRevision = await readRuleRevision();
-  await store.saveListings([listing]);
+  const db = getDb()
+  const store = createReviewStore(db)
+  const ruleRevision = await readRuleRevision()
+  await store.saveListings([listing])
 
-  const stored = await store.getAll();
-  const before = new Map(stored.map(({ listing: { uuid: key }, review }) => [key, review]));
+  const stored = await store.getAll()
+  const before = new Map(stored.map(({ listing: { uuid: key }, review }) => [key, review]))
   const reviews = reviewListings(
     stored.flatMap(({ listing: candidate }) => (isFullListing(candidate) ? [candidate] : [])),
-  );
+  )
   const changed = reviews.filter(({ listing: reviewed, issues }) => {
-    const previous = before.get(reviewed.uuid);
+    const previous = before.get(reviewed.uuid)
     return (
       reviewed.uuid === uuid ||
       !previous ||
       previous.ruleRevision !== ruleRevision ||
       JSON.stringify(previous.issues) !== JSON.stringify(issues)
-    );
-  });
+    )
+  })
 
   const run = await db
-    .insertInto("review_runs")
+    .insertInto('review_runs')
     .values({ rule_revision: ruleRevision })
-    .returning("id")
-    .executeTakeFirstOrThrow();
-  await store.saveReviews(changed, ruleRevision, Number(run.id));
+    .returning('id')
+    .executeTakeFirstOrThrow()
+  await store.saveReviews(changed, ruleRevision, Number(run.id))
   await db
-    .updateTable("review_runs")
+    .updateTable('review_runs')
     .set({ finished_at: new Date(), listing_count: changed.length })
-    .where("id", "=", run.id)
-    .execute();
+    .where('id', '=', run.id)
+    .execute()
 
-  return { changed: changed.length };
+  return { changed: changed.length }
 }

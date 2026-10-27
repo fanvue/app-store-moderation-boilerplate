@@ -3,49 +3,53 @@
 // If the port is taken, this says so and exits instead of starting a second
 // server on the same data directory. If the system will not let us use the
 // port (Windows can reserve it), this says what to do instead of crashing.
-import { spawn } from "node:child_process";
-import { mkdirSync } from "node:fs";
-import net from "node:net";
-import path from "node:path";
+import { spawn } from 'node:child_process'
+import { mkdirSync } from 'node:fs'
+import net from 'node:net'
+import path from 'node:path'
 
-const port = 5544;
+const port = 5544
 
 const free = await new Promise((resolve, reject) => {
-  const probe = net.createServer();
-  probe.once("error", (error) => {
-    if (error.code === "EADDRINUSE") return resolve(false);
-    if (error.code === "EACCES") {
+  const probe = net.createServer()
+  probe.once('error', error => {
+    if (error.code === 'EADDRINUSE') {
+      return resolve(false)
+    }
+    if (error.code === 'EACCES') {
       console.error(
         `Port ${port} is not allowed on this machine. Windows sometimes reserves a range of ports that includes it.\n` +
-          "Restarting Windows usually frees it. If not, run these in a terminal opened as administrator, then try again:\n" +
-          "  net stop winnat\n" +
-          "  net start winnat",
-      );
-      process.exit(1);
+          'Restarting Windows usually frees it. If not, run these in a terminal opened as administrator, then try again:\n' +
+          '  net stop winnat\n' +
+          '  net start winnat',
+      )
+      process.exit(1)
     }
-    reject(error);
-  });
-  probe.listen(port, "127.0.0.1", () => probe.close(() => resolve(true)));
-});
+    reject(error)
+  })
+  probe.listen(port, '127.0.0.1', () => probe.close(() => resolve(true)))
+})
 
 if (!free) {
-  console.log(`Postgres is already running on port ${port} (another npm run dev or npm run db). Using that one.`);
-  process.exit(0);
+  console.log(`Postgres is already running on port ${port} (another npm run dev or npm run db). Using that one.`)
+  process.exit(0)
 }
 
-mkdirSync("data", { recursive: true });
+mkdirSync('data', { recursive: true })
 const server = spawn(
   process.execPath,
   [
-    path.join("node_modules", "@electric-sql", "pglite-socket", "dist", "scripts", "server.js"),
-    "--db",
-    "./data/pg",
-    "--port",
+    path.join('node_modules', '@electric-sql', 'pglite-socket', 'dist', 'scripts', 'server.js'),
+    '--db',
+    './data/pg',
+    '--port',
     String(port),
-    "--max-connections",
-    "8",
+    '--max-connections',
+    '8',
   ],
-  { stdio: "inherit" },
-);
-for (const signal of ["SIGINT", "SIGTERM"]) process.on(signal, () => server.kill(signal));
-server.on("exit", (code, signal) => process.exit(code ?? (signal ? 0 : 1)));
+  { stdio: 'inherit' },
+)
+for (const signal of ['SIGINT', 'SIGTERM']) {
+  process.on(signal, () => server.kill(signal))
+}
+server.on('exit', (code, signal) => process.exit(code ?? (signal ? 0 : 1)))

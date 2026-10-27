@@ -1,32 +1,37 @@
-import { parseQueueSearch, parseQueueSeverity, parseQueueSort, type QueueView } from "@/components/queueHref";
-import { ReviewQueue } from "@/components/ReviewQueue";
-import { createReviewStore } from "@/lib/moderation/store";
+import { parseQueueSearch, parseQueueSeverity, parseQueueSort, type QueueView } from '@/components/queueHref'
+import { ReviewQueue } from '@/components/ReviewQueue'
+import { createReviewStore } from '@/lib/moderation/store'
 
 // Reads the store on every request: one page of stored reviews, no API calls.
-export const dynamic = "force-dynamic";
+export const dynamic = 'force-dynamic'
 
-const DEFAULT_PAGE_SIZE = 50;
+const DEFAULT_PAGE_SIZE = 50
 
 /** A positive whole number from the query string, or `fallback`. */
 function positiveInt(raw: string | string[] | undefined, fallback: number): number {
-  const value = Number(raw);
-  return Number.isInteger(value) && value > 0 ? value : fallback;
+  const value = Number(raw)
+  return Number.isInteger(value) && value > 0 ? value : fallback
 }
 
 /** The queue at `/?page=N&size=M&sort=severity|developer&dir=asc|desc&severity=reject|fix|warn|none&q=…`, read from the review store. */
 export default async function ReviewQueuePage({
   searchParams,
 }: {
-  searchParams: Promise<Record<string, string | string[] | undefined>>;
+  searchParams: Promise<Record<string, string | string[] | undefined>>
 }) {
-  const params = await searchParams;
+  const params = await searchParams
   const view: QueueView = {
+    q: parseQueueSearch(params.q),
+    severity: parseQueueSeverity(params.severity),
     size: positiveInt(params.size, DEFAULT_PAGE_SIZE),
     sort: parseQueueSort(params.sort, params.dir),
-    severity: parseQueueSeverity(params.severity),
-    q: parseQueueSearch(params.q),
-  };
-  const queue = await createReviewStore().getQueuePage({ page: positiveInt(params.page, 1), ...view });
+  }
+  const queue = await createReviewStore().getQueuePage({ page: positiveInt(params.page, 1), ...view })
 
-  return <ReviewQueue queue={queue} view={view} />;
+  return (
+    <ReviewQueue
+      queue={queue}
+      view={view}
+    />
+  )
 }

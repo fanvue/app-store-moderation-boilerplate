@@ -5,25 +5,28 @@
  *
  * Needs the database up (`npm run dev` or `npm run db`).
  */
-import { sql } from "kysely";
+import { sql } from 'kysely'
 
-import { getDb } from "@/lib/db/client";
+import { getDb } from '@/lib/db/client'
 
-const statement = process.argv.slice(2).join(" ").trim();
+const statement = process.argv.slice(2).join(' ').trim()
 if (!statement) {
-  console.error('usage: npm run db:query -- "select * from review_runs"');
-  process.exit(1);
+  console.error('usage: npm run db:query -- "select * from review_runs"')
+  process.exit(1)
 }
 
 sql
   .raw<Record<string, unknown>>(statement)
   .execute(getDb())
-  .then((result) => {
-    if (result.rows.length > 0) console.table(result.rows);
-    else console.log(result.numAffectedRows === undefined ? "no rows" : `${result.numAffectedRows} rows affected`);
+  .then(result => {
+    if (result.rows.length > 0) {
+      console.table(result.rows)
+    } else {
+      console.log(result.numAffectedRows === undefined ? 'no rows' : `${result.numAffectedRows} rows affected`)
+    }
   })
-  .catch((error) => {
-    console.error(error instanceof Error ? error.message : error);
-    process.exitCode = 1;
+  .catch(error => {
+    console.error(error instanceof Error ? error.message : error)
+    process.exitCode = 1
   })
-  .finally(() => getDb().destroy());
+  .finally(() => getDb().destroy())

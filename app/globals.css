@@ -1,6 +1,6 @@
 @import "tailwindcss";
-@source "../node_modules/@fanvue/ui";
 @import "@fanvue/ui/styles/theme.css";
+@source "../node_modules/@fanvue/ui";
 
 /*
  * @fanvue/ui's typography utilities set `font-family: Inter`. Register that

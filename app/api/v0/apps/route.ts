@@ -1,8 +1,8 @@
-import type { NextRequest } from "next/server";
+import { DEFAULT_PAGE_SIZE, listApps, MAX_PAGE_SIZE } from '@/lib/fanvue/api'
 
-import { DEFAULT_PAGE_SIZE, listApps, MAX_PAGE_SIZE } from "@/lib/fanvue/api";
+import type { NextRequest } from 'next/server'
 
-export const dynamic = "force-dynamic";
+export const dynamic = 'force-dynamic'
 
 /**
  * Mock of the live `GET https://api.fanvue.com/v0/apps`.
@@ -12,25 +12,29 @@ export const dynamic = "force-dynamic";
  * Validation failures answer `400 { errors: string[] }` (the spec's `ValidationError`).
  */
 export async function GET(request: NextRequest) {
-  const params = request.nextUrl.searchParams;
-  const errors: string[] = [];
+  const params = request.nextUrl.searchParams
+  const errors: string[] = []
 
-  const page = parseIntParam(params.get("page"), 1);
-  if (page === null || page < 1) errors.push("page must be an integer greater than or equal to 1");
+  const page = parseIntParam(params.get('page'), 1)
+  if (page === null || page < 1) {
+    errors.push('page must be an integer greater than or equal to 1')
+  }
 
-  const size = parseIntParam(params.get("size"), DEFAULT_PAGE_SIZE);
+  const size = parseIntParam(params.get('size'), DEFAULT_PAGE_SIZE)
   if (size === null || size < 1 || size > MAX_PAGE_SIZE) {
-    errors.push(`size must be an integer between 1 and ${MAX_PAGE_SIZE}`);
+    errors.push(`size must be an integer between 1 and ${MAX_PAGE_SIZE}`)
   }
 
   if (errors.length > 0 || page === null || size === null) {
-    return Response.json({ errors }, { status: 400 });
+    return Response.json({ errors }, { status: 400 })
   }
 
-  return Response.json(await listApps({ page, size, search: params.get("search") }));
+  return Response.json(await listApps({ page, search: params.get('search'), size }))
 }
 
 function parseIntParam(raw: string | null, fallback: number): number | null {
-  if (raw === null || raw === "") return fallback;
-  return /^\d+$/.test(raw) ? Number(raw) : null;
+  if (raw === null || raw === '') {
+    return fallback
+  }
+  return /^\d+$/.test(raw) ? Number(raw) : null
 }

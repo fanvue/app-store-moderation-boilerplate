@@ -1,3 +1,0 @@
-# Vendored snapshots of public pages, kept in the upstream formatting rather than ours so they diff cleanly.
-docs/
-package-lock.json
