@@ -1,11 +1,11 @@
-"use client";
+'use client'
 
-import { Pagination } from "@fanvue/ui";
-import { useRouter } from "next/navigation";
+import { Pagination } from '@fanvue/ui'
 
-import type { QueueSort } from "@/lib/moderation/store";
+import type { QueueSort } from '@/lib/moderation/store'
 
-import { queueHref } from "./queueHref";
+import { queueHref } from './queueHref'
+import { useRouter } from 'next/navigation'
 
 /** The queue's page buttons. `Pagination` renders buttons, not links, so each page change is a client navigation. */
 export function QueuePagination({
@@ -14,18 +14,18 @@ export function QueuePagination({
   size,
   sort,
 }: {
-  page: number;
-  pageCount: number;
-  size: number;
-  sort?: QueueSort;
+  page: number
+  pageCount: number
+  size: number
+  sort?: QueueSort
 }) {
-  const router = useRouter();
+  const router = useRouter()
 
   return (
     <Pagination
       currentPage={page}
       totalPages={pageCount}
-      onPageChange={(target) => router.push(queueHref({ page: target, size, sort }))}
+      onPageChange={target => router.push(queueHref({ page: target, size, sort }))}
     />
-  );
+  )
 }

@@ -1,0 +1,111 @@
+{
+  "$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
+  "assist": {
+    "actions": {
+      "source": {
+        "organizeImports": {
+          "level": "on",
+          "options": {
+            "groups": [
+              ":NODE:",
+              ["react"],
+              ":BLANK_LINE:",
+              ["@*/**", "!@/**", "!@fixtures/**", "!@db/**"],
+              ["*", "!react"],
+              ":BLANK_LINE:",
+              ["@/**", "@fixtures/**", "@db/**"],
+              ":BLANK_LINE:",
+              ":PATH:"
+            ]
+          }
+        },
+        "useSortedKeys": "on"
+      }
+    },
+    "enabled": true,
+    "includes": ["**", "!**/*/package.json", "!package.json"]
+  },
+  "css": {
+    "parser": {
+      "tailwindDirectives": true
+    }
+  },
+  "extends": ["ultracite"],
+  "files": {
+    "includes": ["**", "!.claude/launch.json", "!docs", "!next-env.d.ts"]
+  },
+  "formatter": {
+    "indentStyle": "space",
+    "indentWidth": 2,
+    "lineWidth": 120
+  },
+  "javascript": {
+    "formatter": {
+      "arrowParentheses": "asNeeded",
+      "attributePosition": "multiline",
+      "jsxQuoteStyle": "single",
+      "quoteStyle": "single",
+      "semicolons": "asNeeded",
+      "trailingCommas": "all"
+    }
+  },
+  "linter": {
+    "rules": {
+      "complexity": {
+        "noForEach": "error"
+      },
+      "correctness": {
+        "noUnusedImports": {
+          "fix": "safe",
+          "level": "error"
+        }
+      },
+      "nursery": {
+        "noFloatingPromises": "error",
+        "noMisusedPromises": "error",
+        "useConsistentArrowReturn": "error"
+      },
+      "performance": {
+        "noBarrelFile": "off",
+        "noNamespaceImport": {
+          "level": "error",
+          "options": {}
+        }
+      },
+      "style": {
+        "noNestedTernary": "error",
+        "useBlockStatements": "error"
+      },
+      "suspicious": {
+        "noConsole": "error"
+      }
+    }
+  },
+  "overrides": [
+    {
+      "includes": ["**/*.test.ts"],
+      "linter": {
+        "rules": {
+          "style": {
+            "noNonNullAssertion": "off"
+          }
+        }
+      }
+    },
+    {
+      "includes": ["scripts/**", "instrumentation.ts", "src/lib/db/client.ts", "src/lib/moderation/review-job.ts"],
+      "linter": {
+        "rules": {
+          "suspicious": {
+            "noConsole": "off"
+          }
+        }
+      }
+    }
+  ],
+  "vcs": {
+    "clientKind": "git",
+    "enabled": true,
+    "useIgnoreFile": true
+  }
+}

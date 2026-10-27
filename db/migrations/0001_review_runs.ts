@@ -1,4 +1,4 @@
-import { type Kysely, sql } from "kysely";
+import { type Kysely, sql } from 'kysely'
 
 // The worked example of a migration: one row per run of the review job.
 //
@@ -13,15 +13,15 @@ import { type Kysely, sql } from "kysely";
 
 export async function up(db: Kysely<unknown>): Promise<void> {
   await db.schema
-    .createTable("review_runs")
-    .addColumn("id", "bigserial", (col) => col.primaryKey())
-    .addColumn("started_at", "timestamptz", (col) => col.notNull().defaultTo(sql`now()`))
-    .addColumn("finished_at", "timestamptz")
-    .addColumn("rule_revision", "text", (col) => col.notNull())
-    .addColumn("listing_count", "integer")
-    .execute();
+    .createTable('review_runs')
+    .addColumn('id', 'bigserial', col => col.primaryKey())
+    .addColumn('started_at', 'timestamptz', col => col.notNull().defaultTo(sql`now()`))
+    .addColumn('finished_at', 'timestamptz')
+    .addColumn('rule_revision', 'text', col => col.notNull())
+    .addColumn('listing_count', 'integer')
+    .execute()
 }
 
 export async function down(db: Kysely<unknown>): Promise<void> {
-  await db.schema.dropTable("review_runs").execute();
+  await db.schema.dropTable('review_runs').execute()
 }

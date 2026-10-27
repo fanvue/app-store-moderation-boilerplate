@@ -1,6 +1,6 @@
-import { listDecisions, recordDecision } from "@/lib/moderation/decisions";
+import { listDecisions, recordDecision } from '@/lib/moderation/decisions'
 
-export const dynamic = "force-dynamic";
+export const dynamic = 'force-dynamic'
 
 /**
  * Moderator decisions over HTTP. If someone else decided the listing after this
@@ -10,11 +10,11 @@ export const dynamic = "force-dynamic";
  * TODO, if you have time: implement POST. Storage is in `src/lib/moderation/decisions.ts`.
  */
 export async function GET() {
-  return Response.json({ decisions: await listDecisions() });
+  return Response.json({ decisions: await listDecisions() })
 }
 
 export async function POST(request: Request) {
-  void request;
-  void recordDecision;
-  return Response.json({ message: "not implemented" }, { status: 501 });
+  void request
+  void recordDecision
+  return Response.json({ message: 'not implemented' }, { status: 501 })
 }

@@ -1,7 +1,7 @@
-import type { Issue, Severity } from "./rules";
+import type { Issue, Severity } from './rules'
 
 /** Most serious first. Use it for ordering and for picking a listing's status. */
-export const SEVERITY_ORDER: readonly Severity[] = ["reject", "fix", "warn"];
+export const SEVERITY_ORDER: readonly Severity[] = ['reject', 'fix', 'warn']
 
 /**
  * The most serious severity among a listing's findings, or `null` when there
@@ -10,7 +10,9 @@ export const SEVERITY_ORDER: readonly Severity[] = ["reject", "fix", "warn"];
  */
 export function worstSeverity(issues: Issue[]): Severity | null {
   for (const severity of SEVERITY_ORDER) {
-    if (issues.some((issue) => issue.severity === severity)) return severity;
+    if (issues.some(issue => issue.severity === severity)) {
+      return severity
+    }
   }
-  return null;
+  return null
 }
