@@ -5,7 +5,7 @@ import { getDb } from "@/lib/db/client";
 import type { AppListing, AppListingSummary, PricingPlan } from "@/lib/fanvue/types";
 
 import { SEVERITY_ORDER, worstSeverity } from "./queue";
-import type { Issue, Review } from "./rules";
+import type { Issue, Review, Severity } from "./rules";
 
 /**
  * The index the queue reads: listings the job fetched and the reviews it
@@ -19,7 +19,17 @@ export type QueueFilter = {
   size: number;
   /** A moderator-chosen order. Without it, the default queue order. */
   sort?: QueueSort;
+  /** Only listings whose worst severity is this. Without it, every listing, reviewed or not. */
+  severity?: QueueSeverity;
+  /** Only listings whose name or developer handle contains this, ignoring case. */
+  q?: string;
 };
+
+/** A listing's worst severity, or `none` when every rule passed. */
+export type QueueSeverity = Severity | "none";
+
+/** How many listings matching the search have each worst severity. `all` counts them all, reviewed or not. */
+export type QueueCounts = Record<QueueSeverity | "all", number>;
 
 /** The queue columns a moderator can sort by. Severity ascending is most serious first. */
 export type QueueSort = {
@@ -47,8 +57,9 @@ export type StoredReview = {
 export type QueuePage = {
   /** Not reviewed first, then most serious first, then submission order. */
   rows: StoredListing[];
-  /** Every stored listing, across all pages. */
+  /** Every listing that matches the severity filter, across all pages. */
   total: number;
+  counts: QueueCounts;
   page: number;
   size: number;
   /** When the job last finished, or `null` if it never has. The queue shows this. */
@@ -89,6 +100,12 @@ const CHUNK_SIZE = 200;
 
 /** `severity_rank`: the index in `SEVERITY_ORDER`, or 3 when every rule passed. */
 const NO_FINDINGS_RANK = SEVERITY_ORDER.length;
+
+/** An `ilike` pattern that finds `q` anywhere, with `%`, `_` and `\\` matched literally. */
+const containsPattern = (q: string) => `%${q.replace(/[\\%_]/g, "\\$&")}%`;
+
+const rankOf = (severity: QueueSeverity): number =>
+  severity === "none" ? NO_FINDINGS_RANK : SEVERITY_ORDER.indexOf(severity);
 
 export function createReviewStore(db: Kysely<Database> = getDb()): ReviewStore {
   return {
@@ -265,12 +282,21 @@ export function createReviewStore(db: Kysely<Database> = getDb()): ReviewStore {
       return stored ?? null;
     },
 
-    async getQueuePage({ page, size, sort }) {
+    async getQueuePage({ page, size, sort, severity, q }) {
+      const pattern = q ? containsPattern(q) : null;
       const rows = await db
         .selectFrom("listings")
         .leftJoin("reviews", "reviews.listing_uuid", "listings.uuid")
         .selectAll("listings")
         .select(["reviews.rule_revision", "reviews.reviewed_at"])
+        .$call((query) =>
+          pattern
+            ? query.where((eb) =>
+                eb.or([eb("listings.name", "ilike", pattern), eb("listings.developer_handle", "ilike", pattern)]),
+              )
+            : query,
+        )
+        .$call((query) => (severity ? query.where("reviews.severity_rank", "=", rankOf(severity)) : query))
         // Not reviewed and no developer handle have nothing to sort on, so they go last either way.
         .$call((query) =>
           sort
@@ -284,10 +310,27 @@ export function createReviewStore(db: Kysely<Database> = getDb()): ReviewStore {
         .offset((page - 1) * size)
         .execute();
 
-      const { total } = await db
+      const ranks = await db
         .selectFrom("listings")
-        .select((eb) => eb.fn.countAll<number>().as("total"))
-        .executeTakeFirstOrThrow();
+        .leftJoin("reviews", "reviews.listing_uuid", "listings.uuid")
+        .select(["reviews.severity_rank", (eb) => eb.fn.countAll<number>().as("count")])
+        .$call((query) =>
+          pattern
+            ? query.where((eb) =>
+                eb.or([eb("listings.name", "ilike", pattern), eb("listings.developer_handle", "ilike", pattern)]),
+              )
+            : query,
+        )
+        .groupBy("reviews.severity_rank")
+        .execute();
+      const countFor = (rank: number) => Number(ranks.find((row) => row.severity_rank === rank)?.count ?? 0);
+      const counts: QueueCounts = {
+        all: ranks.reduce((sum, row) => sum + Number(row.count), 0),
+        reject: countFor(rankOf("reject")),
+        fix: countFor(rankOf("fix")),
+        warn: countFor(rankOf("warn")),
+        none: countFor(NO_FINDINGS_RANK),
+      };
 
       const lastRun = await db
         .selectFrom("review_runs")
@@ -299,7 +342,8 @@ export function createReviewStore(db: Kysely<Database> = getDb()): ReviewStore {
 
       return {
         rows: await assemble(db, rows),
-        total: Number(total),
+        total: severity ? counts[severity] : counts.all,
+        counts,
         page,
         size,
         reviewedAt: lastRun?.finished_at?.toISOString() ?? null,
@@ -362,8 +406,7 @@ export function isFullListing(listing: AppListingSummary | AppListing): listing 
 }
 
 function severityRank(issues: Issue[]): number {
-  const worst = worstSeverity(issues);
-  return worst ? SEVERITY_ORDER.indexOf(worst) : NO_FINDINGS_RANK;
+  return rankOf(worstSeverity(issues) ?? "none");
 }
 
 function* chunks<T>(items: T[]): Generator<T[]> {

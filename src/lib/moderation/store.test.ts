@@ -88,6 +88,41 @@ describe("review store", () => {
     ]);
   });
 
+  it("filters by worst severity and counts every severity across the whole store", async () => {
+    await store.saveListings([first, second, third, fourth]);
+    await store.saveReviews(
+      [
+        { listing: first, issues: [] },
+        { listing: second, issues: [issue("fix")] },
+        { listing: fourth, issues: [issue("warn"), issue("reject")] },
+      ],
+      "3",
+      runId,
+    );
+
+    const rejects = await store.getQueuePage({ page: 1, size: 10, severity: "reject" });
+    const clear = await store.getQueuePage({ page: 1, size: 10, severity: "none" });
+
+    expect(rejects.rows.map((row) => row.listing.name)).toEqual([fourth.name]);
+    expect(rejects.total).toBe(1);
+    expect(clear.rows.map((row) => row.listing.name)).toEqual([first.name]);
+    expect(rejects.counts).toEqual({ all: 4, reject: 1, fix: 1, warn: 0, none: 1 });
+  });
+
+  it("searches app name and developer handle ignoring case, and counts only the matches", async () => {
+    await store.saveListings([first, second, third, fourth]);
+    await store.saveReviews([{ listing: second, issues: [issue("fix")] }], "3", runId);
+
+    const byName = await store.getQueuePage({ page: 1, size: 10, q: second.name.slice(1, 5).toUpperCase() });
+    const byHandle = await store.getQueuePage({ page: 1, size: 10, q: `@${third.developer.handle}`.slice(1) });
+
+    expect(byName.rows.map((row) => row.listing.name)).toContain(second.name);
+    expect(byName.counts.fix).toBe(1);
+    expect(byName.total).toBe(byName.rows.length);
+    expect(byHandle.rows.map((row) => row.listing.name)).toContain(third.name);
+    expect((await store.getQueuePage({ page: 1, size: 10, q: "%" })).total).toBe(0);
+  });
+
   it("moves a listing to the end of submission order only when its worst severity changes", async () => {
     await store.saveListings([first, second, third]);
     await store.saveReviews(
