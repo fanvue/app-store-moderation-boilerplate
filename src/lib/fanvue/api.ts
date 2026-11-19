@@ -1,13 +1,13 @@
-import { listings } from "@fixtures/listings";
-
+import { currentListings, recordCall } from "./mock-state";
 import type { AppListing, AppListingSummary, PaginatedAppListings } from "./types";
 
 /**
- * The mock Fanvue API, built on the fixtures. Pages call these functions
- * directly. The routes under `app/api/v0/apps` wrap them.
+ * The mock Fanvue API, built on the fixtures. Call these functions directly.
+ * The routes under `app/api/v0/apps` wrap them.
  *
- * Every call waits `MOCK_API_LATENCY_MS` (default 3) and is counted by
- * `apiCallCount()`. The README describes the rest of its behaviour.
+ * Every call waits `MOCK_API_LATENCY_MS` (default 3) and is counted.
+ * `npm run measure` reports the count. The README describes the rest of its
+ * behaviour.
  */
 
 export const DEFAULT_PAGE_SIZE = 15;
@@ -20,13 +20,14 @@ const LATENCY_MS = Number(process.env.MOCK_API_LATENCY_MS ?? 3);
 
 let calls = 0;
 
-/** Total mock API calls since the process started, across all requests. */
+/** Mock API calls made by this process since it started. */
 export function apiCallCount(): number {
   return calls;
 }
 
-async function roundTrip(): Promise<void> {
+async function roundTrip(kind: "list" | "detail"): Promise<void> {
   calls += 1;
+  recordCall(kind);
   if (LATENCY_MS > 0) await new Promise((resolve) => setTimeout(resolve, LATENCY_MS));
 }
 
@@ -49,8 +50,9 @@ export async function listApps({
   size = DEFAULT_PAGE_SIZE,
   search,
 }: ListAppsParams = {}): Promise<PaginatedAppListings> {
-  await roundTrip();
+  await roundTrip("list");
 
+  const listings = currentListings();
   const needle = search?.trim().toLowerCase() ?? "";
   const matched = needle
     ? listings.filter((listing) =>
@@ -71,10 +73,10 @@ export async function listApps({
 
 /** Mirrors `GET /apps/{appUuid}`. Resolves `null` when the uuid is unknown. */
 export async function getApp(uuid: string): Promise<AppListing | null> {
-  await roundTrip();
+  await roundTrip("detail");
 
   const wanted = uuid.toLowerCase();
-  return listings.find((listing) => listing.uuid.toLowerCase() === wanted) ?? null;
+  return currentListings().find((listing) => listing.uuid.toLowerCase() === wanted) ?? null;
 }
 
 /** Projects a full listing down to exactly the fields `GET /apps` returns per item. */

@@ -19,7 +19,7 @@ coverage/
 .env
 .env.*
 
-# the local Postgres (PGlite) files. `npm run db:reset` deletes them.
+# the local Postgres (PGlite) files and the mock API's edits and call log. `npm run db:reset` deletes them.
 /data/
 
 # Claude Code agent worktrees
