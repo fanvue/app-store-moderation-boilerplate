@@ -58,7 +58,7 @@ describe("migrate", () => {
   });
 
   it("leaves the worked-example table in place", async () => {
-    const { rows } = await sql<{ count: number }>`select count(*)::int as count from review_runs`.execute(db);
+    const { rows } = await sql<{ count: number }>`select count(*)::int as count from worker_heartbeat`.execute(db);
     expect(rows).toEqual([{ count: 0 }]);
   });
 

@@ -5,8 +5,7 @@ export const SEVERITY_ORDER: readonly Severity[] = ["reject", "fix", "warn"];
 
 /**
  * The most serious severity among a listing's findings, or `null` when there
- * are none. `null` means the rules ran and found nothing. A listing the job has
- * not reached has no stored review at all.
+ * are none. `null` means the rules ran and found nothing.
  */
 export function worstSeverity(issues: Issue[]): Severity | null {
   for (const severity of SEVERITY_ORDER) {

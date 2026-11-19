@@ -10,14 +10,13 @@ import type { Generated } from "kysely";
  * insert `JSON.stringify(value)` and read it back as `T`.
  */
 export interface Database {
-  review_runs: ReviewRunsTable;
+  worker_heartbeat: WorkerHeartbeatTable;
 }
 
-/** One row per run of the review job. The worked example. */
-export interface ReviewRunsTable {
-  id: Generated<number>;
-  started_at: Generated<Date>;
-  finished_at: Date | null;
-  rule_revision: string;
-  listing_count: number | null;
+/** One row, written by the worker loop after each step. The worked example. */
+export interface WorkerHeartbeatTable {
+  id: number;
+  beat_at: Generated<Date>;
+  /** What the last step threw, or `null` if it finished. */
+  last_error: string | null;
 }

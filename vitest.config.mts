@@ -1,3 +1,5 @@
+import { tmpdir } from "node:os";
+import path from "node:path";
 import { fileURLToPath } from "node:url";
 
 import { defineConfig } from "vitest/config";
@@ -12,6 +14,8 @@ export default defineConfig({
   },
   test: {
     environment: "node",
+    // Keep the mock API's call log and edits out of `data/` while testing.
+    env: { MOCK_API_STATE_DIR: path.join(tmpdir(), `mock-api-test-${process.pid}`) },
     include: ["src/**/*.test.ts"],
   },
 });

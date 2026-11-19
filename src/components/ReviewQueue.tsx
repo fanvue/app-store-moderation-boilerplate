@@ -8,20 +8,16 @@ function findingsLabel(count: number): string {
 }
 
 /**
- * The moderator's queue. It renders every listing in submission order. Every
- * row here went through the rules, so a listing with no findings says "No
- * findings". Once reviews come from the store, some listings will not be
- * reviewed yet. Show those differently from listings that passed.
+ * The moderator's queue. Today it renders every listing in submission order.
  *
- * TODO (yours): see the README's "Acceptance criteria". Sorting across pages
- * comes from the store (`getQueuePage` in `src/lib/moderation/store.ts`), not
- * from sorting this page.
+ * TODO (yours): render one page of rows from `getQueuePage` in
+ * `src/lib/moderation/store.ts`. See the README's "Acceptance criteria".
  */
 export function ReviewQueue({ rows }: { rows: Review[] }) {
   return (
     <section className="flex flex-col gap-4">
       <h1 className="text-2xl font-semibold">Review queue</h1>
-      {/* TODO: once the queue is paged, rows.length is one page; the total comes from the store. */}
+      {/* TODO: once the queue is paged, rows.length is one page. The total comes from the store. */}
       <p>{rows.length} listings awaiting review. Open one to see the full listing.</p>
 
       <table className="w-full border-collapse text-left text-sm">
@@ -31,7 +27,7 @@ export function ReviewQueue({ rows }: { rows: Review[] }) {
             <th className="py-2 pr-4">Developer</th>
             <th className="py-2 pr-4">Pricing</th>
             <th className="py-2 pr-4">Screenshots</th>
-            {/* TODO: status of the worst finding (`worstSeverity` in queue.ts), or Not reviewed yet / No findings */}
+            {/* TODO: the most serious finding (`worstSeverity` in queue.ts), or No findings */}
             <th className="py-2 pr-4">Status</th>
           </tr>
         </thead>
