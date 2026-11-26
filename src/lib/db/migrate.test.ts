@@ -1,3 +1,10 @@
+/* ============================================================================
+ * YOU DO NOT NEED TO EDIT THIS FILE.
+ *
+ * It is database plumbing.
+ * The files you work in are in the README, under "Where to work".
+ * ============================================================================ */
+
 import { mkdtemp, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import path from "node:path";

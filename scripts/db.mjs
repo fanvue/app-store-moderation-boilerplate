@@ -1,3 +1,10 @@
+/* ============================================================================
+ * YOU DO NOT NEED TO EDIT THIS FILE.
+ *
+ * It is plumbing behind one of the npm commands.
+ * The files you work in are in the README, under "Where to work".
+ * ============================================================================ */
+
 // `npm run db`: Postgres (PGlite) on port 5544, files under data/pg.
 //
 // If the port is taken, this says so and exits instead of starting a second

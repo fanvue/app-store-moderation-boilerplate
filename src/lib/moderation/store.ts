@@ -2,7 +2,9 @@ import type { Review, Severity } from "./rules";
 
 /**
  * What the pages read. `npm run measure` calls these two functions as well, to
- * check what is stored, so keep their names and what they return.
+ * check what is stored, so keep their names and what they return. It imports
+ * this file in its own process, outside Next.js, so they must work without a
+ * Next.js request: no `unstable_cache`, `cookies` or `headers`.
  *
  * Everything else is your design: the tables in `db/migrations/`, what writes
  * to them and when, and any functions you add here.

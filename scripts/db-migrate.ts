@@ -1,3 +1,10 @@
+/* ============================================================================
+ * YOU DO NOT NEED TO EDIT THIS FILE.
+ *
+ * It is plumbing behind one of the npm commands.
+ * The files you work in are in the README, under "Where to work".
+ * ============================================================================ */
+
 /**
  * Applies pending migrations to the running database.
  *

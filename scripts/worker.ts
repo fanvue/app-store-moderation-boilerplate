@@ -1,3 +1,10 @@
+/* ============================================================================
+ * YOU DO NOT NEED TO EDIT THIS FILE.
+ *
+ * It is plumbing behind one of the npm commands.
+ * The files you work in are in the README, under "Where to work".
+ * ============================================================================ */
+
 /**
  * The worker loop: calls `runWorkerStep` again and again. `npm run dev` runs
  * it and restarts it when a file changes.

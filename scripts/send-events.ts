@@ -1,3 +1,10 @@
+/* ============================================================================
+ * YOU DO NOT NEED TO EDIT THIS FILE.
+ *
+ * It is plumbing behind one of the npm commands.
+ * The files you work in are in the README, under "Where to work".
+ * ============================================================================ */
+
 /**
  * Sends webhook events to the moderation tool, the way the Fanvue API does.
  * Needs `npm run dev` running.
@@ -5,6 +12,8 @@
  *   npm run send-events               one "submitted" event for every listing
  *   npm run send-events -- --edit 20  edits 20 listings and sends "updated" for each
  */
+import { randomInt } from "node:crypto";
+
 import { deliverEvents, editListing, restoreListing, submittedEvents, WEBHOOK_URL } from "@/lib/fanvue/simulator";
 import { currentListings, currentSubmission } from "@/lib/fanvue/mock-state";
 import type { ListingEvent } from "@/lib/fanvue/events";
@@ -24,7 +33,7 @@ if (args.some((arg) => arg !== "--edit" && !/^\d+$/.test(arg)) || !Number.isInte
  */
 function editSome(count: number): ListingEvent[] {
   const listings = currentListings();
-  const start = Math.floor(Math.random() * listings.length);
+  const start = randomInt(listings.length);
   return Array.from({ length: Math.min(count, listings.length) }, (_unused, offset) => {
     const listing = listings[(start + offset * 7) % listings.length]!;
     return currentSubmission(listing.uuid) % 2 === 1 && listing.appUrl?.startsWith("https://")

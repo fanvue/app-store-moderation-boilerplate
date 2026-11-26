@@ -1,3 +1,10 @@
+/* ============================================================================
+ * YOU DO NOT NEED TO EDIT THIS FILE.
+ *
+ * It is database plumbing.
+ * The files you work in are in the README, under "Where to work".
+ * ============================================================================ */
+
 import { Kysely, PostgresDialect } from "kysely";
 import { Pool } from "pg";
 

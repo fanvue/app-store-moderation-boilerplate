@@ -1,3 +1,10 @@
+/* ============================================================================
+ * YOU DO NOT NEED TO EDIT THIS FILE.
+ *
+ * It is part of the mock of the live Fanvue API, which is someone else's system.
+ * The files you work in are in the README, under "Where to work".
+ * ============================================================================ */
+
 import { appendFileSync, mkdirSync, readFileSync, renameSync, statSync, writeFileSync } from "node:fs";
 import path from "node:path";
 

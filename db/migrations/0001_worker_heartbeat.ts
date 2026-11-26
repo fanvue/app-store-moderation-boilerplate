@@ -1,3 +1,10 @@
+/* ============================================================================
+ * YOU DO NOT NEED TO EDIT THIS FILE.
+ *
+ * It is the worked example of a migration. Add your own tables in a new file next to it.
+ * The files you work in are in the README, under "Where to work".
+ * ============================================================================ */
+
 import { type Kysely, sql } from "kysely";
 
 // The worked example of a migration: one row that says when the worker last

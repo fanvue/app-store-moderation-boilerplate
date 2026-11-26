@@ -31,6 +31,11 @@ Use any AI tool you like, and read what it changes before you keep it. [`AGENTS.
 
 **Moderators** check each listing against the Listing Requirements before it goes live. The six rules a program can check are already written: `reviewListings` in [`rules.ts`](src/lib/moderation/rules.ts) takes listings and returns the findings for each.
 
+The tool is one [Next.js](https://nextjs.org) app. The pages in [`app/`](app) are React, and the routes in [`app/api/`](app/api) are Next.js API routes. There are two sets of routes:
+
+- [`app/api/v0/apps`](app/api/v0/apps) is a mock of our live Fanvue API. You do not need to change it.
+- [`app/api/moderation/events`](app/api/moderation/events/route.ts) is the tool's own webhook. This is the route you write.
+
 The tool around the rules is the problem. Both pages fetch all 2,015 listings from the Fanvue API and review them on every load, and nothing is stored.
 
 **Make the tool fast, and keep what it shows correct when listings change.** Start by telling the interviewer how you would design it.
@@ -41,7 +46,7 @@ You have three places to build in. What goes in each is your design:
 - **The worker step** in [`src/lib/moderation/worker.ts`](src/lib/moderation/worker.ts). `npm run dev` calls it in a loop.
 - **The database**, with your own tables in [`db/migrations/`](db/migrations).
 
-The pages read what you store through `getReview` and `getQueuePage` in [`store.ts`](src/lib/moderation/store.ts). `npm run measure` calls the same two functions.
+The pages read what you store through `getReview` and `getQueuePage` in [`store.ts`](src/lib/moderation/store.ts). `npm run measure` calls the same two functions from its own process, outside Next.js.
 
 `npm run send-events` makes the API send an event for every listing. `npm run send-events -- --edit 20` edits 20 listings and sends their events.
 
@@ -55,8 +60,8 @@ The mock API behaves like the live one in these ways:
 - The rules need fields from `GET /apps/{uuid}`, one call per listing.
 - Every call takes about three milliseconds and is counted. The live API allows 200 calls a minute, so fetching all 2,015 listings takes about ten minutes.
 - Editing a listing or a pricing plan starts a new submission. The API then sends a [webhook event](src/lib/fanvue/events.ts) with the listing's uuid and its submission number. The event does not carry the listing.
-- One webhook request holds up to 100 events. The same event can arrive twice, and two events for one listing can arrive in either order.
-- If the webhook does not answer with a 2xx, the API sends the request again.
+- One webhook request holds up to 100 events. The same event can arrive twice, in one request or in two, and two events for one listing can arrive in either order.
+- If the webhook does not answer with a 2xx, the API sends the request again. It tries three times, then gives up on those events.
 
 ## What your design has to handle
 
@@ -67,7 +72,7 @@ The mock API behaves like the live one in these ways:
 5. The worker stops halfway through its work and is started again.
 6. The requirements doc moves to revision 4, which changes two rules.
 
-`npm run measure` checks the first four. Be ready to say how your design handles the last two.
+`npm run measure` checks the first four. For the third it counts API calls: an event that is repeated or late should not cost another one. Be ready to say how your design handles the last two.
 
 ## Acceptance criteria
 
@@ -98,7 +103,7 @@ The mock API behaves like the live one in these ways:
 | [`src/lib/moderation/queue.ts`](src/lib/moderation/queue.ts)                                                                  | Severity helpers                                                                   |
 | [`src/lib/moderation/fetch-every-listing.ts`](src/lib/moderation/fetch-every-listing.ts)                                      | The slow fetch both pages use today                                                |
 
-You may add new files too, such as components, modules, migrations and tests. Everything else (the fixtures, the mock API in `src/lib/fanvue/`, the scripts, the database plumbing, the spec file) is there to be read, not changed.
+You may add new files too, such as components, modules, migrations and tests. Everything else (the fixtures, the mock API in `src/lib/fanvue/` and `app/api/v0/`, the scripts, the database plumbing, the spec file) is there to be read, not changed.
 
 Your storage is Postgres, through [Kysely](https://kysely.dev). [`src/lib/db/client.ts`](src/lib/db/client.ts) gives you the database, [`db/schema.ts`](db/schema.ts) holds the table types and [`db/migrations/`](db/migrations) the migrations. [`0001_worker_heartbeat.ts`](db/migrations/0001_worker_heartbeat.ts) is the worked example.
 

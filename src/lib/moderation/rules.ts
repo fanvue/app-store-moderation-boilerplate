@@ -100,7 +100,7 @@ const COMPETING_PLATFORMS: { name: string; words: string[] }[] = [
 /** Digits and symbols used in place of letters (`0nlyFans`, `Fans1y`). */
 const LOOKALIKES: Record<string, string> = { o: "o0", l: "l1|", i: "i1!|", e: "e3", a: "a4@", s: "s5$", t: "t7" };
 
-const letterPattern = (letter: string) => `[${(LOOKALIKES[letter] ?? letter).replace(/[|$]/g, "\\$&")}]`;
+const letterPattern = (letter: string) => `[${(LOOKALIKES[letter] ?? letter).replace(/[\\|$]/g, "\\$&")}]`;
 
 /**
  * Two patterns per platform:
@@ -110,7 +110,8 @@ const letterPattern = (letter: string) => `[${(LOOKALIKES[letter] ?? letter).rep
  *   writes these, so they always count.
  * - `spaced`: the words split by a space. `the only fans who tip` is grammar,
  *   so this counts only when every word is capitalised, as a name is
- *   (`Only Fans`). The doc prefers a missed disguise to a false rejection.
+ *   (`Only Fans`), and the sentence around it is not a headline
+ *   (`inSentenceCase`). The doc prefers a missed disguise to a false rejection.
  */
 const PLATFORM_PATTERNS = COMPETING_PLATFORMS.map(({ name, words }) => {
   const word = (text: string) => [...text].map(letterPattern).join("");
@@ -127,12 +128,31 @@ const PLATFORM_PATTERNS = COMPETING_PLATFORMS.map(({ name, words }) => {
   };
 });
 
+/**
+ * Whether the sentence around `text.slice(start, end)` is written in sentence
+ * case: some other word of four letters or more starts with a small letter. A
+ * headline capitalises every such word (`Rewards For The Only Fans Who Tip`),
+ * so the capitals there do not make `Only Fans` a name.
+ */
+function inSentenceCase(text: string, start: number, end: number): boolean {
+  const before =
+    text
+      .slice(0, start)
+      .split(/[.!?\n]/)
+      .at(-1) ?? "";
+  const after = text.slice(end).split(/[.!?\n]/)[0] ?? "";
+  return /(?<![A-Za-z])[a-z]{4,}/.test(`${before} ${after}`);
+}
+
 /** Rule 1.6: the copy names or promotes a competing creator platform. */
 function checkCompetitorMentions(listing: AppListing): Issue[] {
   const issues: Issue[] = [];
   for (const { field, text } of readableCopy(listing)) {
     for (const { name, joined, spaced } of PLATFORM_PATTERNS) {
-      const matches = [...text.matchAll(joined), ...(spaced ? text.matchAll(spaced) : [])].map((match) => match[0]);
+      const spacedMatches = [...(spaced ? text.matchAll(spaced) : [])].filter((match) =>
+        inSentenceCase(text, match.index, match.index + match[0].length),
+      );
+      const matches = [...text.matchAll(joined), ...spacedMatches].map((match) => match[0]);
       for (const matched of new Set(matches)) {
         issues.push({
           code: "competitor_platform_mentioned",

@@ -86,6 +86,22 @@ describe("moderation rules", () => {
       expect(findingsFor({ ...cleanListing, tagline })).toEqual([]);
     });
 
+    it.each([
+      "Rewards For The Only Fans Who Tip",
+      "Rewards for the Only Fans Who Tip",
+      "Built Just For Fans",
+      "Many Vids, One Library",
+      "Loyal Fans Club",
+    ])("does not flag ordinary English written as a headline: %s", (tagline) => {
+      expect(findingsFor({ ...cleanListing, tagline })).toEqual([]);
+    });
+
+    it("flags a spaced name in a sentence that follows a headline", () => {
+      const tagline = "Grow Your Audience. Built for creators moving over from Only Fans.";
+
+      expect(findingsFor({ ...cleanListing, tagline })).toMatchObject([{ rule: "1.6", evidence: "Only Fans" }]);
+    });
+
     it("reads every field a user sees before opening the app", () => {
       const listing = { ...cleanListing, highlights: ["Calendar", "Imports from ManyVids"] };
 

@@ -1,6 +1,6 @@
 # App Store Listing Requirements: moderation edition
 
-**Revision 3, October 2026.** Revision 4 is due next quarter. It will change the competitor list in [1.6](#16-no-promotion-of-other-platforms) and the price ceiling in [3.3](#33-pricing-accuracy). Listings decided under this revision stay decided. The tool should be able to say which revision each finding was made under.
+**Revision 3, October 2026.** Revision 4 is due next quarter. It will change the competitor list in [1.6](#16-no-promotion-of-other-platforms) and the price ceiling in [3.3](#33-pricing-accuracy). The tool should be able to say which revision each finding was made under.
 
 The sections below can be decided from the [listing data](../src/lib/fanvue/types.ts) alone. [What we do not automate](#what-we-do-not-automate) covers the rest.
 

@@ -1,3 +1,10 @@
+/* ============================================================================
+ * YOU DO NOT NEED TO EDIT THIS FILE.
+ *
+ * It is plumbing behind one of the npm commands.
+ * The files you work in are in the README, under "Where to work".
+ * ============================================================================ */
+
 /**
  * Runs one SQL statement against the moderation database and prints the rows.
  *
