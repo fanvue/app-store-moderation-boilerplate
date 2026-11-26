@@ -38,11 +38,15 @@ const count = (value: number) => Math.round(value).toLocaleString("en-US");
 const apiCalls = (calls: number) => `${count(calls)} API ${calls === 1 ? "call" : "calls"}`;
 const messageOf = (error: unknown) => (error instanceof Error ? error.message : String(error));
 
+/** Set by Ctrl-C. Nothing more is edited or printed after it. */
+let stopping = false;
+
 function heading(title: string): void {
-  console.log(`\n${title}`);
+  if (!stopping) console.log(`\n${title}`);
 }
 
 function line(label: string, ...values: string[]): void {
+  if (stopping) return;
   console.log(`  ${label.padEnd(36)}${values.filter(Boolean).join("   ")}`);
 }
 
@@ -54,18 +58,24 @@ function atLiveLimit(calls: number): string {
   return `${count(minutes / 60)} hours at the live rate limit`;
 }
 
+let everQuiet = true;
+
 /**
  * Waits until nothing has called the API for half a second, so the next count
  * starts clean. Returns `false` if the API was still being called when the
  * wait ran out. Every process shares one call count, so a count taken then
  * includes calls that are not from the thing being measured.
  */
-async function waitForQuiet(maxMs = 15_000): Promise<boolean> {
-  const deadline = Date.now() + maxMs;
+async function waitForQuiet(): Promise<boolean> {
+  // Once the API has failed to go quiet, a long wait is unlikely to help the next time.
+  const deadline = Date.now() + (everQuiet ? 15_000 : 3000);
   let last = totalCallCount();
   let quietSince = Date.now();
   while (Date.now() - quietSince < 500) {
-    if (Date.now() >= deadline) return false;
+    if (Date.now() >= deadline) {
+      everQuiet = false;
+      return false;
+    }
     await sleep(100);
     const now = totalCallCount();
     if (now !== last) {
@@ -90,7 +100,10 @@ async function timedGet(path: string): Promise<{ ms: number; status: number | nu
   }
 }
 
-/** One page's time and API calls. A fast page is loaded three times and the best time kept. */
+/**
+ * One page's time and API calls. A fast page is loaded three times and the best time kept.
+ * Returns the API calls one load made, or `null` when that is not known.
+ */
 async function measurePage(label: string, path: string): Promise<number | null> {
   const quiet = await waitForQuiet();
   const callsBefore = totalCallCount();
@@ -113,7 +126,8 @@ async function measurePage(label: string, path: string): Promise<number | null> 
     result.status === 200 ? "" : `(answered ${result.status})`,
     notQuiet(quiet),
   );
-  return calls;
+  // A count that includes other work does not say what the page itself does.
+  return quiet ? calls : null;
 }
 
 /** The rules each listing breaks right now, straight from the mock API's data. What the store should hold. */
@@ -278,7 +292,6 @@ async function checkWorker(): Promise<void> {
 
 /** Listings this run has edited and not put back yet. */
 const touched = new Set<string>();
-let stopping = false;
 
 /**
  * Puts every edit back and tells the tool, so the next run starts from the
@@ -312,7 +325,7 @@ process.once("SIGINT", () => {
     .finally(() => process.exit(130));
 });
 
-/** `queuePageCalls` is how many API calls one load of the queue page made, or `null` if it did not answer. */
+/** `queuePageCalls` is how many API calls one load of the queue page made, or `null` when that is not known. */
 async function measureEdits(queuePageCalls: number | null): Promise<void> {
   heading("Edits");
 
