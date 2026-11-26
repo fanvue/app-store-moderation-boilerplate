@@ -1,7 +1,12 @@
-/**
- * Acceptance criteria for the listing rules. Do not edit.
+/* ============================================================================
+ * YOU DO NOT NEED TO EDIT THIS FILE.
  *
- *   npm run test:spec:listings
+ * It is the spec that `npm test` runs.
+ * The files you work in are in the README, under "Where to work".
+ * ============================================================================ */
+
+/**
+ * What the listing rules must find. Do not edit. `npm test` runs it.
  *
  * Each row is a hand-written listing in `fixtures/named-listings.ts` and the
  * rules that must flag it. An empty list means no findings.

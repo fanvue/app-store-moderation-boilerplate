@@ -5,16 +5,10 @@ import type { Issue } from "@/lib/moderation/rules";
 
 import { FindingsList } from "./FindingsList";
 
-/**
- * One listing: a plain dump of the fields the rules work with.
- *
- * TODO (yours): put the findings where a moderator looks first, and highlight
- * the fields they point at.
- */
+/** One listing: its findings, then a plain dump of the fields the rules work with. */
 export function ListingDetail({ listing, issues }: { listing: AppListing; issues: Issue[] }) {
   return (
     <article className="flex flex-col gap-6 text-sm">
-      {/* TODO: keep the moderator's page, and filter if you add one, when going back. */}
       <Link href="/" className="underline">
         Back to queue
       </Link>
@@ -34,7 +28,6 @@ export function ListingDetail({ listing, issues }: { listing: AppListing; issues
 
       <section>
         <h2 className="font-semibold">Findings</h2>
-        {/* TODO: this is what the moderator came for */}
         <FindingsList issues={issues} />
       </section>
 

@@ -1,8 +1,21 @@
+/* ============================================================================
+ * YOU DO NOT NEED TO EDIT THIS FILE.
+ *
+ * It is part of the mock of the live Fanvue API, which is someone else's system.
+ * The files you work in are in the README, under "Where to work".
+ * ============================================================================ */
+
 import { describe, expect, it } from "vitest";
+
+import { createServer } from "node:http";
+import type { AddressInfo } from "node:net";
 
 import { listings } from "@fixtures/listings";
 
 import { apiCallCount, getApp, listApps } from "./api";
+import type { ListingEventBatch } from "./events";
+import { totalCallCount } from "./mock-state";
+import { deliverEvents, editListing, restoreListing, submittedEvents } from "./simulator";
 
 describe("listApps", () => {
   it("defaults to page 1 with 15 summaries per page", async () => {
@@ -47,7 +60,9 @@ describe("listApps", () => {
   it("filters case-insensitively on name, tagline, description and developer name", async () => {
     const target = listings[0]!;
 
-    expect((await listApps({ search: target.name.toUpperCase() })).data.map((item) => item.uuid)).toContain(target.uuid);
+    expect((await listApps({ search: target.name.toUpperCase() })).data.map((item) => item.uuid)).toContain(
+      target.uuid,
+    );
     expect(
       (await listApps({ search: target.tagline.slice(0, 12).toLowerCase() })).data.map((item) => item.uuid),
     ).toContain(target.uuid);
@@ -71,5 +86,88 @@ describe("getApp", () => {
     await listApps({ size: 1 });
 
     expect(apiCallCount() - before).toBe(2);
+  });
+});
+
+describe("the shared call log", () => {
+  it("counts the same calls, so another process can read the total", async () => {
+    const before = totalCallCount();
+
+    await getApp(listings[0]!.uuid);
+    await listApps({ size: 1 });
+
+    expect(totalCallCount() - before).toBe(2);
+  });
+});
+
+describe("edits and events", () => {
+  const target = listings[20]!;
+
+  it("serves an edited listing from both endpoints and numbers the submission", async () => {
+    const event = editListing(target.uuid, { tagline: "Edited tagline" });
+
+    expect(event).toMatchObject({ type: "listing.updated", listingUuid: target.uuid, submission: 2 });
+    expect((await getApp(target.uuid))!.tagline).toBe("Edited tagline");
+    expect((await listApps({ search: "Edited tagline" })).data.map((item) => item.uuid)).toEqual([target.uuid]);
+
+    const restored = restoreListing(target.uuid);
+
+    expect(restored.submission).toBe(3);
+    expect(restored.id).not.toBe(event.id);
+    expect(await getApp(target.uuid)).toEqual(target);
+  });
+
+  it("has one submitted event per listing", () => {
+    const events = submittedEvents();
+
+    expect(events).toHaveLength(listings.length);
+    expect(new Set(events.map((event) => event.id)).size).toBe(listings.length);
+    expect(events.find((event) => event.listingUuid === target.uuid)!.submission).toBe(3);
+  });
+
+  /** A webhook on a free local port that answers every event with `status`. */
+  async function webhook(status: number) {
+    const received: string[] = [];
+    const server = createServer((request, response) => {
+      let body = "";
+      request.on("data", (chunk) => (body += chunk));
+      request.on("end", () => {
+        received.push(...(JSON.parse(body) as ListingEventBatch).events.map((event) => event.id));
+        response.writeHead(status).end();
+      });
+    });
+    await new Promise<void>((resolve) => server.listen(0, "127.0.0.1", resolve));
+    return {
+      received,
+      url: `http://127.0.0.1:${(server.address() as AddressInfo).port}/events`,
+      close: () => new Promise((resolve) => server.close(resolve)),
+    };
+  }
+
+  it("delivers every event, some of them twice", async () => {
+    const hook = await webhook(204);
+    const events = submittedEvents().slice(0, 40);
+
+    const report = await deliverEvents(events, { url: hook.url });
+    const everything = await deliverEvents(submittedEvents(), { url: hook.url, duplicateEvery: 0 });
+    await hook.close();
+
+    expect(everything.requests).toBe(Math.ceil(listings.length / 100));
+
+    expect(report).toMatchObject({ events: 40, requests: 1, failed: 0, firstFailure: null });
+    const first = hook.received.slice(0, 44);
+    expect(new Set(first)).toEqual(new Set(events.map((event) => event.id)));
+    expect(first).not.toEqual([...first].sort());
+  });
+
+  it("reports events that were not accepted, and gives up early", async () => {
+    const hook = await webhook(501);
+
+    const report = await deliverEvents(submittedEvents(), { url: hook.url, concurrency: 1 });
+    await hook.close();
+
+    expect(report.failed).toBe(listings.length);
+    expect(report.firstFailure).toBe("the webhook answered 501");
+    expect(report.requests).toBe(3);
   });
 });

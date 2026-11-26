@@ -1,3 +1,10 @@
+/* ============================================================================
+ * YOU DO NOT NEED TO EDIT THIS FILE.
+ *
+ * It is database plumbing.
+ * The files you work in are in the README, under "Where to work".
+ * ============================================================================ */
+
 /**
  * Runs once when the Next server starts. Applies pending migrations so the
  * schema in `db/migrations/` is always what the running app expects.

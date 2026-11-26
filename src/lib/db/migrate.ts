@@ -1,3 +1,10 @@
+/* ============================================================================
+ * YOU DO NOT NEED TO EDIT THIS FILE.
+ *
+ * It is database plumbing.
+ * The files you work in are in the README, under "Where to work".
+ * ============================================================================ */
+
 import { promises as fs } from "node:fs";
 import path from "node:path";
 import { pathToFileURL } from "node:url";
@@ -13,7 +20,7 @@ import { getDb } from "./client";
  * file is applied once per database.
  *
  * Add a migration by adding a file that exports `up` (and `down` if you want
- * to undo it): `0002_reviews.ts`, `0003_decisions.ts`. Nothing rewrites an
+ * to undo it): `0002_something.ts`, `0003_something_else.ts`. Nothing rewrites an
  * applied file, so change the schema with a new one.
  */
 

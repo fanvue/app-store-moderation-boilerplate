@@ -1,3 +1,10 @@
+/* ============================================================================
+ * YOU DO NOT NEED TO EDIT THIS FILE.
+ *
+ * It is database plumbing.
+ * The files you work in are in the README, under "Where to work".
+ * ============================================================================ */
+
 import { Kysely, PostgresDialect } from "kysely";
 import { Pool } from "pg";
 
@@ -7,7 +14,7 @@ import type { Database } from "@db/schema";
  * The moderation tool's own Postgres, served by PGlite on port 5544, through
  * [Kysely](https://kysely.dev). The tables it knows about are in `db/schema.ts`.
  *
- * Keep the review store, decisions and anything else here. The Fanvue API
+ * Keep everything the moderation tool stores here. The Fanvue API
  * under `src/lib/fanvue/` is a different system and stays an API.
  */
 

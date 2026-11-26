@@ -1,3 +1,10 @@
+/* ============================================================================
+ * YOU DO NOT NEED TO EDIT THIS FILE.
+ *
+ * It is database plumbing.
+ * The files you work in are in the README, under "Where to work".
+ * ============================================================================ */
+
 import { mkdtemp, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import path from "node:path";
@@ -58,7 +65,7 @@ describe("migrate", () => {
   });
 
   it("leaves the worked-example table in place", async () => {
-    const { rows } = await sql<{ count: number }>`select count(*)::int as count from review_runs`.execute(db);
+    const { rows } = await sql<{ count: number }>`select count(*)::int as count from worker_heartbeat`.execute(db);
     expect(rows).toEqual([{ count: 0 }]);
   });
 
