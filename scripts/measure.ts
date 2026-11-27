@@ -16,8 +16,6 @@
  * through `getReview` and `getQueuePage` in `src/lib/moderation/store.ts`.
  * Every edit is put back before it finishes, also when you stop it with Ctrl-C.
  */
-import { sql } from "kysely";
-
 import { getDb } from "@/lib/db/client";
 import { LIVE_RATE_LIMIT_PER_MINUTE } from "@/lib/fanvue/api";
 import type { ListingEvent } from "@/lib/fanvue/events";
@@ -277,19 +275,6 @@ function reportQueueSeverities(label: string, rows: QueueRow[], total: number): 
   if (problems[0]) console.log(`    ${problems[0]}`);
 }
 
-/** Says so when no worker has finished a step in the last five seconds. */
-async function checkWorker(): Promise<void> {
-  const beat = await sql<{
-    age: number;
-  }>`select extract(epoch from now() - beat_at)::float as age from worker_heartbeat`
-    .execute(getDb())
-    .then((result) => result.rows[0]?.age ?? null)
-    .catch(() => null);
-  if (beat === null || beat > 5) {
-    console.log("\nNo worker has run in the last 5 seconds. `npm run dev` starts one.");
-  }
-}
-
 /** Listings this run has edited and not put back yet. */
 const touched = new Set<string>();
 
@@ -496,7 +481,6 @@ async function main(): Promise<void> {
   console.log(
     `${count(listings.length)} listings. Running the rules over all of them in memory takes ${count(performance.now() - started)} ms.`,
   );
-  await checkWorker();
 
   heading("Pages");
   const queuePageCalls = await measurePage(`queue page ${QUEUE_PATH}`, QUEUE_PATH);

@@ -10,13 +10,12 @@ import type { Generated } from "kysely";
  * insert `JSON.stringify(value)` and read it back as `T`.
  */
 export interface Database {
-  worker_heartbeat: WorkerHeartbeatTable;
+  example: ExampleTable;
 }
 
-/** One row, written by the worker loop after each step. The worked example. */
-export interface WorkerHeartbeatTable {
+/** The table from the worked-example migration. Nothing uses it. */
+export interface ExampleTable {
   id: number;
-  beat_at: Generated<Date>;
-  /** What the last step threw, or `null` if it finished. */
-  last_error: string | null;
+  created_at: Generated<Date>;
+  note: string | null;
 }

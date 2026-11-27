@@ -9,8 +9,7 @@
     "node": ">=24"
   },
   "scripts": {
-    "dev": "concurrently --kill-others-on-fail -n db,web,worker -c blue,green,magenta \"npm:db\" \"next dev --turbopack -p 3000\" \"npm:worker\"",
-    "worker": "tsx watch --clear-screen=false --tsconfig tsconfig.json scripts/worker.ts",
+    "dev": "concurrently --kill-others-on-fail -n db,web -c blue,green \"npm:db\" \"next dev --turbopack -p 3000\"",
     "send-events": "tsx --tsconfig tsconfig.json scripts/send-events.ts",
     "measure": "tsx --tsconfig tsconfig.json scripts/measure.ts",
     "db": "node scripts/db.mjs",
