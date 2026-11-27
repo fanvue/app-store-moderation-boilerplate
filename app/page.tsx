@@ -1,4 +1,6 @@
+import { ApiCallCount } from "@/components/ApiCallCount";
 import { ReviewQueue } from "@/components/ReviewQueue";
+import { apiCallCount } from "@/lib/fanvue/api";
 import { fetchEveryListing } from "@/lib/moderation/fetch-every-listing";
 import { reviewListings } from "@/lib/moderation/rules";
 
@@ -13,7 +15,13 @@ export const dynamic = "force-dynamic";
  * page number and size from `searchParams`.
  */
 export default async function ReviewQueuePage() {
+  const callsBefore = apiCallCount();
   const rows = reviewListings(await fetchEveryListing());
 
-  return <ReviewQueue rows={rows} />;
+  return (
+    <>
+      <ReviewQueue rows={rows} />
+      <ApiCallCount calls={apiCallCount() - callsBefore} />
+    </>
+  );
 }

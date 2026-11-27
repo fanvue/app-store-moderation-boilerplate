@@ -7,7 +7,7 @@ A 60-minute pairing session. Moderators use this tool to check App Store listing
 1. [Start the app](#getting-started). The first load is slow, so read on while it starts.
 2. Read this page to the end before you write any code.
 3. [Tell the interviewer your design](#the-task): what you store, what the webhook does, and how the queue pages.
-4. Build it. Run `npm run measure` after each change, and check it against [what done looks like](#what-done-looks-like).
+4. Build it. When the pages read from your store, run `npm run measure` to check it against [what done looks like](#what-done-looks-like). We run it together at the end.
 
 You will not finish everything. We care more about what you choose to do, and why, than how much you finish.
 
@@ -19,11 +19,10 @@ You need Node 24 (`nvm use` reads `.nvmrc`).
 git clone https://github.com/fanvue/app-store-moderation-boilerplate.git
 cd app-store-moderation-boilerplate
 npm i
-npm run dev       # the web app and a Postgres database
-npm run measure   # in a second terminal: page times, API calls, and how edits reach your store
+npm run dev   # the web app and a Postgres database
 ```
 
-Open [http://localhost:3000](http://localhost:3000) and check you see a queue of listings. The first load takes 15 to 25 seconds, or 40 seconds or more on Windows. Run `npm run measure` again after each change.
+Open [http://localhost:3000](http://localhost:3000) and check you see a queue of listings. The first load takes 15 to 25 seconds, or 40 seconds or more on Windows. The bottom of each page shows how many Fanvue API calls it made.
 
 Use any AI tool you like, and read what it changes before you keep it. [`AGENTS.md`](AGENTS.md) tells it how to work in this repo. You may change or delete that file.
 
@@ -99,6 +98,7 @@ The database is Postgres ([PGlite](https://pglite.dev)) through [Kysely](https:/
 ## Commands
 
 ```bash
+npm run measure                    # with npm run dev running: page times, API calls, and how edits reach your store
 npm run send-events                # an event for every listing
 npm run send-events -- --edit 20   # edits 20 listings and sends their events
 npm test                           # the rule tests and the spec
