@@ -11,7 +11,7 @@ function findingsLabel(count: number): string {
  * The moderator's queue. Today it renders every listing in submission order.
  *
  * TODO (yours): render one page of rows from `getQueuePage` in
- * `src/lib/moderation/store.ts`. See the README's "Acceptance criteria".
+ * `src/lib/moderation/store.ts`. See the README's "What done looks like".
  */
 export function ReviewQueue({ rows }: { rows: Review[] }) {
   return (
