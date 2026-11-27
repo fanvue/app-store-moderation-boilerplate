@@ -63,7 +63,7 @@ The mock API behaves like the live one in these ways:
 - One webhook request holds up to 100 events. The same event can arrive twice, in one request or in two, and two events for one listing can arrive in either order.
 - If the webhook does not answer with a 2xx, the API sends the request again. It tries three times, then gives up on those events.
 
-## What your design has to handle
+## What your design should handle
 
 1. A listing is edited. Its stored findings follow, without fetching every listing again.
 2. An edit changes another listing's findings, because [4.2](docs/listing-requirements.md#42-originality) compares listings with each other.
