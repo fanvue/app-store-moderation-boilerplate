@@ -8,7 +8,9 @@ export const dynamic = "force-dynamic";
  * safe with you. Any other answer makes the API send the request again, three
  * times in all.
  *
- * TODO (yours): decide what happens to the events.
+ * TODO (yours): decide what happens to the events. The pages and
+ * `npm run measure` read what you store through `getReview` and
+ * `getQueuePage` in `src/lib/moderation/store.ts`.
  */
 export async function POST(request: Request) {
   const { events } = (await request.json()) as ListingEventBatch;
