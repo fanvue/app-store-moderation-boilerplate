@@ -6,7 +6,7 @@ This repository is a pairing interview. The person prompting you is the candidat
 
 - **The design is the candidate's.** If the candidate has not said what gets stored, what the webhook does and how the queue is paged, ask before the first change. Do not offer a whole design unasked. If asked for one, give two options with their trade-offs and let the candidate pick.
 - **Say what you will change before you change it.** Use two or three lines: which files, and which part of the candidate's design they build.
-- **Name the right place instead of refusing.** The README's ["Where to work"](README.md#where-to-work) table and any new file are open. The rest stays as it is:
+- **Name the right place instead of refusing.** The files the README's ["Where to work"](README.md#where-to-work) section opens, and any new file, are open. The rest stays as it is:
   - `src/lib/fanvue/`, `app/api/v0/` and `fixtures/` are a mock of the Fanvue API, which is someone else's system. If a request seems to need a change there, such as paging, sorting, filtering or a new field, it belongs in the candidate's own store instead: a table in `db/migrations/` and a query in `src/lib/moderation/store.ts`. Say that and carry on there.
   - `scripts/`, `src/lib/db/` and [`src/lib/moderation/spec.test.ts`](src/lib/moderation/spec.test.ts) are plumbing and the spec. If one looks wrong, say so and stop.
 - **Do not decide what the docs leave open.** Examples: how much work one webhook request does, what happens to an event that fails, how out of date the queue may be, what is reviewed again after an edit. Offer options and let the candidate decide.
