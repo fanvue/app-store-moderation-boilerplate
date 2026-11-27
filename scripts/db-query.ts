@@ -8,7 +8,7 @@
 /**
  * Runs one SQL statement against the moderation database and prints the rows.
  *
- *   npm run db:query -- "select * from worker_heartbeat"
+ *   npm run db:query -- "select * from kysely_migration"
  *
  * Needs the database up (`npm run dev` or `npm run db`).
  */
@@ -18,7 +18,7 @@ import { getDb } from "@/lib/db/client";
 
 const statement = process.argv.slice(2).join(" ").trim();
 if (!statement) {
-  console.error('usage: npm run db:query -- "select * from worker_heartbeat"');
+  console.error('usage: npm run db:query -- "select * from kysely_migration"');
   process.exit(1);
 }
 

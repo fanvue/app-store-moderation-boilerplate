@@ -15,7 +15,7 @@ import type { AppListing } from "./types";
 /**
  * What the mock API remembers between calls: the edits made to listings and a
  * log of every call. It is kept in files under `data/mock-api/` because the
- * web app, the worker and the scripts are separate processes and all of them
+ * web app and the scripts are separate processes and all of them
  * must see the same API. `npm run db:reset` deletes it with the database.
  *
  * Mock internals. Nothing in the moderation tool should import this file: the
